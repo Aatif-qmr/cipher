@@ -6,12 +6,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv('/Users/azmatsaif/masterbot/.env')
+# Use home directory to make it machine-agnostic
+HOME = Path.home()
+BASE_DIR = HOME / 'masterbot'
+
+load_dotenv(BASE_DIR / '.env')
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-LOG_PATH = Path('/Users/azmatsaif/masterbot/logs/risk_manager.log')
+LOG_PATH = BASE_DIR / 'logs' / 'risk_manager.log'
 os.makedirs(LOG_PATH.parent, exist_ok=True)
 
 logging.basicConfig(
@@ -36,6 +40,7 @@ def send_telegram_alert(message: str, level: str = 'WARNING') -> bool:
         return False
 
 def check_daily_drawdown(current_balance: float, start_of_day_balance: float, limit_pct: float = 3.0) -> bool:
+    if start_of_day_balance == 0: return True
     drawdown_pct = ((start_of_day_balance - current_balance) / start_of_day_balance) * 100
     
     if drawdown_pct >= limit_pct:
@@ -57,6 +62,7 @@ def check_daily_drawdown(current_balance: float, start_of_day_balance: float, li
     return True
 
 def check_weekly_drawdown(current_balance: float, start_of_week_balance: float, limit_pct: float = 7.0) -> bool:
+    if start_of_week_balance == 0: return True
     drawdown_pct = ((start_of_week_balance - current_balance) / start_of_week_balance) * 100
     
     if drawdown_pct >= limit_pct:
@@ -77,9 +83,10 @@ def check_weekly_drawdown(current_balance: float, start_of_week_balance: float, 
     return True
 
 def check_position_size(trade_amount_usdt: float, total_balance_usdt: float, max_pct: float = 10.0) -> bool:
+    if total_balance_usdt == 0: return True
     position_pct = (trade_amount_usdt / total_balance_usdt) * 100
     if position_pct > max_pct:
-        logging.warning(f"Position size check failed: {position_pct:.2f}% (Max: {max_pct}%) | Amount: {trade_amount_usdt} | Balance: {total_balance_usdt}")
+        logging.warning(f"Position size check failed: {position_pct:.2f}% (Max: {max_pct}%)")
         return False
     return True
 
