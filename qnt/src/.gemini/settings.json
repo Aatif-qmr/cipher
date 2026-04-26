@@ -1,0 +1,14 @@
+{
+  "experimental": {
+    "extensionReloading": true,
+    "modelSteering": true,
+    "autoMemory": true,
+    "gemma": true,
+    "memoryManager": true,
+    "topicUpdateNarration": true,
+    "voiceMode": true
+  },
+  "general": {
+    "devtools": true
+  }
+}
