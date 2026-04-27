@@ -30,13 +30,36 @@ export type QntModel = typeof QNT_MODELS[keyof typeof QNT_MODELS];
 // Fallback chain — if model quota hit or fails
 // null means no further fallback available
 export const FALLBACK_CHAIN: Record<string, string | null> = {
-  [QNT_MODELS.LITE]:             null,
-  [QNT_MODELS.FLASH]:            QNT_MODELS.FLASH_STABLE,
-  [QNT_MODELS.FLASH_STABLE]:     QNT_MODELS.LITE,
-  [QNT_MODELS.PRO]:              QNT_MODELS.PRO_STABLE,
-  [QNT_MODELS.PRO_STABLE]:       QNT_MODELS.FLASH,
-  [QNT_MODELS.FLASH_LITE_STABLE]: null,
+  // Tier 4 Pro chain
+  'gemini-3.1-pro-preview-customtools': 'gemini-2.5-pro',
+  'gemini-2.5-pro':                     'gemini-3-flash-preview',
+  
+  // Tier 2 Flash chain  
+  'gemini-3-flash-preview':             'gemini-2.5-flash',
+  'gemini-2.5-flash':                   'gemini-3.1-flash-lite-preview',
+  
+  // Tier 1 Lite chain (last resort)
+  'gemini-3.1-flash-lite-preview':      'gemini-2.5-flash-lite',
+  'gemini-2.5-flash-lite':              null,
 };
+
+/**
+ * Check if error indicates model not available
+ * (404 = endpoint not found for this account/tier)
+ */
+export function isModelUnavailableError(
+  error: unknown
+): boolean {
+  const msg = String(error).toLowerCase();
+  return (
+    msg.includes('404') ||
+    msg.includes('not found') ||
+    msg.includes('model not found') ||
+    msg.includes('not supported') ||
+    msg.includes('preview') && msg.includes('access') ||
+    msg.includes('cloudcode-pa.googleapis.com')
+  );
+}
 
 // Keywords that classify task complexity
 // Checked in order: PRO first, LITE second, FLASH default
@@ -64,6 +87,10 @@ const LITE_KEYWORDS = [
   'bot healthy', 'everything ok',
 ];
 
+export const PERMANENTLY_UNAVAILABLE = new Set([
+  'gemini-3.1-pro-preview-customtools',
+]);
+
 /**
  * Classify a prompt and return the appropriate model.
  * PRO for complex reasoning, LITE for trivial tasks,
@@ -74,7 +101,12 @@ export function routeToModel(prompt: string): QntModel {
 
   // Check PRO patterns (complex, high-value tasks)
   if (PRO_KEYWORDS.some(kw => lower.includes(kw))) {
-    return QNT_MODELS.PRO;
+    const proModel = QNT_MODELS.PRO;
+    // If Pro not available, use stable Pro instead
+    if (PERMANENTLY_UNAVAILABLE.has(proModel)) {
+      return QNT_MODELS.PRO_STABLE;
+    }
+    return proModel;
   }
 
   // Check LITE patterns (trivial, fast tasks)
@@ -83,7 +115,6 @@ export function routeToModel(prompt: string): QntModel {
   }
 
   // Default: FLASH — best balance for MasterBot tasks
-  // (news, sentiment, inspection, fixes, market data)
   return QNT_MODELS.FLASH;
 }
 

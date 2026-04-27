@@ -95,6 +95,22 @@ function getLimit(model: string): number {
 // Public API
 // ──────────────────────────────────────
 
+// In-memory blacklist for current session only
+// (not persisted — cleared on qnt restart)
+const SESSION_BLACKLIST = new Set<string>();
+
+export function blacklistModel(model: string): void {
+  SESSION_BLACKLIST.add(model);
+  console.log(
+    `[qnt] Model ${model} blacklisted for this session. ` +
+    `(404 endpoint not available on this account)`
+  );
+}
+
+export function isBlacklisted(model: string): boolean {
+  return SESSION_BLACKLIST.has(model);
+}
+
 /**
  * Record one API call for a model.
  * Call this AFTER a successful API response.
@@ -123,6 +139,9 @@ export function recordUsage(model: string): void {
 export function checkQuota(
   model: string
 ): 'ok' | 'warn' | 'exhausted' {
+  // Blacklisted = treat as exhausted
+  if (isBlacklisted(model)) return 'exhausted';
+
   const state = loadState();
   const entry = state.models[model];
   if (!entry) return 'ok'; // unknown model — allow
@@ -177,4 +196,56 @@ export function getQuotaReport(): string {
   lines.push('─'.repeat(52));
   lines.push('🟢 OK  🟡 >75% used  🔴 >90% — switching to fallback');
   return lines.join('\n');
+}
+
+/**
+ * Mark a model as temporarily exhausted.
+ * Forces immediate switch on next request.
+ * Resets at midnight with the daily counter.
+ */
+export function markExhausted(model: string): void {
+  const state = loadState();
+  if (!state.models[model]) {
+    state.models[model] = {
+      used: 0,
+      limit: getLimit(model),
+      last_used: '',
+    };
+  }
+  // Set used to limit to force exhausted status
+  state.models[model].used = state.models[model].limit;
+  state.models[model].last_used = new Date().toISOString();
+  saveState(state);
+  console.log(`[qnt] Model ${model} marked exhausted. Will use fallback.`);
+}
+
+/**
+ * Get the best available model right now.
+ * Walks the fallback chain until finding
+ * a model with quota remaining.
+ * Returns null only if ALL models exhausted.
+ */
+export function getBestAvailableModel(
+  preferredModel: string
+): string | null {
+  const { getFallbackModel } = require('./model_router.js');
+  
+  let current: string | null = preferredModel;
+  const tried = new Set<string>();
+
+  while (current !== null) {
+    if (tried.has(current)) break; // prevent infinite loop
+    tried.add(current);
+
+    const status = checkQuota(current);
+    if (status !== 'exhausted') {
+      return current; // found one with quota
+    }
+
+    current = getFallbackModel(current);
+  }
+
+  // All models in chain exhausted
+  // Return LITE as absolute last resort
+  return 'gemini-3.1-flash-lite-preview';
 }

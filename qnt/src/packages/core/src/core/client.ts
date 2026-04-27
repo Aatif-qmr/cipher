@@ -4,8 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { routeToModel, getFallbackModel, isQuotaError } from '../qnt/model_router.js';
-import { recordUsage, checkQuota } from '../qnt/quota_tracker.js';
+import {
+  routeToModel,
+  getFallbackModel,
+  isQuotaError,
+  isModelUnavailableError
+} from '../qnt/model_router.js';
+import {
+  recordUsage,
+  checkQuota,
+  markExhausted,
+  getBestAvailableModel,
+  blacklistModel
+} from '../qnt/quota_tracker.js';
 import {
   createUserContent,
   type GenerateContentConfig,
@@ -32,11 +43,6 @@ import { getCoreSystemPrompt } from './prompts.js';
 import { checkNextSpeaker } from '../utils/nextSpeakerChecker.js';
 import { reportError } from '../utils/errorReporting.js';
 import { GeminiChat } from './geminiChat.js';
-import {
-  retryWithBackoff,
-  type RetryAvailabilityContext,
-} from '../utils/retry.js';
-import type { ValidationRequiredError } from '../utils/googleQuotaErrors.js';
 import { getErrorMessage, isAbortError } from '../utils/errors.js';
 import { tokenLimit } from './tokenLimits.js';
 import type {
@@ -63,7 +69,6 @@ import {
 } from '../telemetry/types.js';
 import { uiTelemetryService } from '../telemetry/uiTelemetry.js';
 import type { IdeContext, File } from '../ide/types.js';
-import { handleFallback } from '../fallback/handler.js';
 import type { RoutingContext } from '../routing/routingStrategy.js';
 import { debugLogger } from '../utils/debugLogger.js';
 import type { ModelConfigKey } from '../services/modelConfigService.js';
@@ -71,9 +76,8 @@ import { ToolOutputMaskingService } from '../context/toolOutputMaskingService.js
 import { calculateRequestTokenCount } from '../utils/tokenCalculation.js';
 import {
   applyModelSelection,
-  createAvailabilityContextProvider,
 } from '../availability/policyHelpers.js';
-import { getDisplayString, resolveModel } from '../config/models.js';
+import { resolveModel } from '../config/models.js';
 import { partToString } from '../utils/partUtils.js';
 import { coreEvents, CoreEvent } from '../utils/events.js';
 
@@ -901,14 +905,8 @@ export class GeminiClient {
 
     // ── QNT MODEL ROUTER ──────────────────────
     const promptText = partListUnionToString(request);
-    let selectedModel: string = routeToModel(promptText);
-    const quotaStatus = checkQuota(selectedModel);
-    if (quotaStatus === 'exhausted') {
-      const fallback = getFallbackModel(selectedModel);
-      if (fallback) {
-        selectedModel = fallback;
-      }
-    }
+    let selectedModel: string | null = getBestAvailableModel(routeToModel(promptText));
+    
     if (!this.currentSequenceModel && (this.config.getModel() === 'auto' || !this.config.getModel())) {
        this.currentSequenceModel = selectedModel;
     }
@@ -948,15 +946,69 @@ export class GeminiClient {
     let turn = new Turn(this.getChat(), prompt_id);
     let continuationHandled = false;
 
-    try {
-      turn = yield* this.processTurn(
-        request,
-        signal,
-        prompt_id,
-        boundedTurns,
-        isInvalidStreamRetry,
-        displayContent,
-      );
+    // ── QNT RESILIENT STREAM EXECUTION ──────────
+    const MAX_RETRIES = 6;
+    let attempt = 0;
+    let lastError: unknown = null;
+
+    while (attempt < MAX_RETRIES && this.currentSequenceModel !== null) {
+      attempt++;
+      try {
+        turn = yield* this.processTurn(
+          request,
+          signal,
+          prompt_id,
+          boundedTurns,
+          isInvalidStreamRetry,
+          displayContent,
+        );
+
+        // Success — return and continue to AfterAgent hooks
+        break;
+
+      } catch (error: unknown) {
+        lastError = error;
+        if (signal?.aborted || isAbortError(error)) {
+          yield { type: GeminiEventType.UserCancelled };
+          return turn;
+        }
+
+        const isQuota = isQuotaError(error);
+        const isUnavailable = isModelUnavailableError(error);
+
+        if (isQuota || isUnavailable) {
+          const failingModel = this.currentSequenceModel;
+          markExhausted(failingModel);
+          if (isUnavailable) {
+            blacklistModel(failingModel);
+          }
+
+          const reason = isQuota ? '429 quota' : '404 unavailable';
+          // eslint-disable-next-line no-console
+          console.log(
+            `[qnt] ${failingModel} failed (${reason}). ` +
+            `Trying next model... (attempt ${attempt}/${MAX_RETRIES})`
+          );
+
+          const fallback = getFallbackModel(failingModel);
+          if (fallback) {
+            this.currentSequenceModel = fallback;
+            // Small delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            continue;
+          } else {
+            break;
+          }
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    if (attempt >= MAX_RETRIES || this.currentSequenceModel === null) {
+      if (lastError) throw lastError;
+    }
+    // ── END QNT RESILIENT STREAM EXECUTION ──────
 
       // Fire AfterAgent hook if we have a turn and no pending tools
       if (hooksEnabled && messageBus) {
@@ -1055,165 +1107,91 @@ export class GeminiClient {
     abortSignal: AbortSignal,
     role: LlmRole,
   ): Promise<GenerateContentResponse> {
-    const desiredModelConfig =
-      this.config.modelConfigService.getResolvedConfig(modelConfigKey);
-    let {
-      model: currentAttemptModel,
-      generateContentConfig: currentAttemptGenerateContentConfig,
-    } = desiredModelConfig;
+    const userMemory = this.config.getSystemInstructionMemory();
+    const systemInstruction = getCoreSystemPrompt(this.config, userMemory);
 
-    try {
-      // ── QNT MODEL ROUTER ──────────────────────
-      const promptText = contents.map(c => c.parts || []).flat().map(p => p.text || '').join(' ');
-      let selectedModel: string = routeToModel(promptText);
-      const quotaStatus = checkQuota(selectedModel);
-      if (quotaStatus === 'exhausted') {
-        const fallback = getFallbackModel(selectedModel);
-        if (fallback) {
-          // eslint-disable-next-line no-console
-          console.log(`[qnt] ${selectedModel} quota limit. Falling back to ${fallback}`);
-          selectedModel = fallback;
-        }
-      }
-      if (!modelConfigKey.model || modelConfigKey.model === 'auto') {
-        modelConfigKey.model = selectedModel;
-      }
-      // ── END QNT MODEL ROUTER ──────────────────
+    // ── QNT RESILIENT MODEL EXECUTION ──────────
+    const MAX_RETRIES = 6;
+    let attempt = 0;
+    let lastError: unknown = null;
 
-      const userMemory = this.config.getSystemInstructionMemory();
-      const systemInstruction = getCoreSystemPrompt(this.config, userMemory);
-      const {
-        model,
-        config: newConfig,
-        maxAttempts: availabilityMaxAttempts,
-      } = applyModelSelection(this.config, modelConfigKey);
-      currentAttemptModel = model;
-      if (newConfig) {
-        currentAttemptGenerateContentConfig = newConfig;
-      }
+    // Determine starting model from prompt
+    const promptText = contents.map(c => c.parts || []).flat().map(p => p.text || '').join(' ');
+    let currentModel = getBestAvailableModel(routeToModel(promptText));
 
-      // Define callback to refresh context based on currentAttemptModel which might be updated by fallback handler
-      const getAvailabilityContext: () => RetryAvailabilityContext | undefined =
-        createAvailabilityContextProvider(
-          this.config,
-          () => currentAttemptModel,
-        );
+    while (attempt < MAX_RETRIES && currentModel !== null) {
+      attempt++;
 
-      let initialActiveModel = this.config.getActiveModel();
-
-      const apiCall = () => {
-        // AvailabilityService
-        const active = this.config.getActiveModel();
-        if (active !== initialActiveModel) {
-          initialActiveModel = active;
-          // Re-resolve config if model changed
-          const { model: resolvedModel, generateContentConfig } =
-            this.config.modelConfigService.getResolvedConfig({
-              ...modelConfigKey,
-              model: active,
-            });
-          currentAttemptModel = resolvedModel;
-          currentAttemptGenerateContentConfig = generateContentConfig;
-        }
+      try {
+        const { model: resolvedModel, generateContentConfig } =
+          this.config.modelConfigService.getResolvedConfig({
+            ...modelConfigKey,
+            model: currentModel,
+          });
 
         const requestConfig: GenerateContentConfig = {
-          ...currentAttemptGenerateContentConfig,
+          ...generateContentConfig,
           abortSignal,
           systemInstruction,
         };
 
-        return this.getContentGeneratorOrFail().generateContent(
+        const result = await this.getContentGeneratorOrFail().generateContent(
           {
-            model: currentAttemptModel,
+            model: resolvedModel,
             config: requestConfig,
             contents,
           },
           this.lastPromptId,
           role,
         );
-      };
-      const onPersistent429Callback = async (
-        authType?: string,
-        error?: unknown,
-      ) =>
-        // Pass the captured model to the centralized handler.
-        handleFallback(this.config, currentAttemptModel, authType, error);
 
-      const onValidationRequiredCallback = async (
-        validationError: ValidationRequiredError,
-      ) => {
-        // Suppress validation dialog for background calls (e.g. prompt-completion)
-        // to prevent the dialog from appearing on startup or during typing.
-        if (modelConfigKey.model === 'prompt-completion') {
-          throw validationError;
-        }
+        // Success — record usage and return
+        recordUsage(currentModel);
+        return result;
 
-        const handler = this.config.getValidationHandler();
-        if (typeof handler !== 'function') {
-          throw validationError;
-        }
-        return handler(
-          validationError.validationLink,
-          validationError.validationDescription,
-          validationError.learnMoreUrl,
-        );
-      };
+      } catch (error: unknown) {
+        lastError = error;
+        if (abortSignal.aborted) throw error;
 
-      const result = await retryWithBackoff(apiCall, {
-        onPersistent429: onPersistent429Callback,
-        onValidationRequired: onValidationRequiredCallback,
-        authType: this.config.getContentGeneratorConfig()?.authType,
-        maxAttempts: availabilityMaxAttempts,
-        retryFetchErrors: this.config.getRetryFetchErrors(),
-        getAvailabilityContext,
-        onRetry: (attempt, error, delayMs) => {
-          coreEvents.emitRetryAttempt({
-            attempt,
-            maxAttempts:
-              availabilityMaxAttempts ?? this.config.getMaxAttempts(),
-            delayMs,
-            error: error instanceof Error ? error.message : String(error),
-            model: getDisplayString(currentAttemptModel),
-          });
-        },
-      });
+        const isQuota = isQuotaError(error);
+        const isUnavailable = isModelUnavailableError(error);
 
-      // Record successful usage for quota tracking
-      recordUsage(currentAttemptModel);
-      return result;
-    } catch (error: unknown) {
-      if (isQuotaError(error)) {
-        const fallback = getFallbackModel(currentAttemptModel);
-        if (fallback && currentAttemptModel !== fallback) {
+        if (isQuota || isUnavailable) {
+          // Mark this model as exhausted
+          markExhausted(currentModel);
+          if (isUnavailable) {
+            blacklistModel(currentModel);
+          }
+
+          const reason = isQuota ? '429 quota' : '404 unavailable';
           // eslint-disable-next-line no-console
-          console.log(`[qnt] Rate limit hit. Retrying with: ${fallback}`);
-          // Recursively call with fallback model
-          return this.generateContent(
-            { ...modelConfigKey, model: fallback },
-            contents,
-            abortSignal,
-            role,
+          console.log(
+            `[qnt] ${currentModel} failed (${reason}). ` +
+            `Trying next model... (attempt ${attempt}/${MAX_RETRIES})`
           );
+
+          // Get next fallback
+          const fallback = getFallbackModel(currentModel);
+          if (fallback) {
+            currentModel = fallback;
+            // Small delay before retry to avoid hammering
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            continue;
+          } else {
+            break;
+          }
+        } else {
+          // Non-quota error (network, auth, etc)
+          throw error;
         }
       }
-
-      if (abortSignal.aborted) {
-        throw error;
-      }
-
-      await reportError(
-        error,
-        `Error generating content via API with model ${currentAttemptModel}.`,
-        {
-          requestContents: contents,
-          requestConfig: currentAttemptGenerateContentConfig,
-        },
-        'generateContent-api',
-      );
-      throw new Error(
-        `Failed to generate content with model ${currentAttemptModel}: ${getErrorMessage(error)}`,
-      );
     }
+
+    throw new Error(
+      `[qnt] All models exhausted after ${attempt} attempts. ` +
+      `Last error: ${String(lastError)}`
+    );
+    // ── END QNT RESILIENT MODEL EXECUTION ──────
   }
 
   async tryCompressChat(
