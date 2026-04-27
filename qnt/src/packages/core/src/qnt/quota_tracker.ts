@@ -226,10 +226,9 @@ export function markExhausted(model: string): void {
  * Returns null only if ALL models exhausted.
  */
 export function getBestAvailableModel(
-  preferredModel: string
+  preferredModel: string,
+  getFallbackFn: (model: string) => string | null
 ): string | null {
-  const { getFallbackModel } = require('./model_router.js');
-  
   let current: string | null = preferredModel;
   const tried = new Set<string>();
 
@@ -242,7 +241,7 @@ export function getBestAvailableModel(
       return current; // found one with quota
     }
 
-    current = getFallbackModel(current);
+    current = getFallbackFn(current);
   }
 
   // All models in chain exhausted

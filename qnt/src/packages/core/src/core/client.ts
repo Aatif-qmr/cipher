@@ -12,7 +12,6 @@ import {
 } from '../qnt/model_router.js';
 import {
   recordUsage,
-  checkQuota,
   markExhausted,
   getBestAvailableModel,
   blacklistModel
@@ -905,9 +904,9 @@ export class GeminiClient {
 
     // ── QNT MODEL ROUTER ──────────────────────
     const promptText = partListUnionToString(request);
-    let selectedModel: string | null = getBestAvailableModel(routeToModel(promptText));
+    let selectedModel: string | null = getBestAvailableModel(routeToModel(promptText), getFallbackModel);
     
-    if (!this.currentSequenceModel && (this.config.getModel() === 'auto' || !this.config.getModel())) {
+    if (!this.currentSequenceModel) {
        this.currentSequenceModel = selectedModel;
     }
     // ── END QNT MODEL ROUTER ──────────────────
@@ -946,69 +945,52 @@ export class GeminiClient {
     let turn = new Turn(this.getChat(), prompt_id);
     let continuationHandled = false;
 
-    // ── QNT RESILIENT STREAM EXECUTION ──────────
-    const MAX_RETRIES = 6;
-    let attempt = 0;
-    let lastError: unknown = null;
+    try {
+      // ── QNT RESILIENT STREAM EXECUTION ──────────
+      const MAX_RETRIES = 6;
+      let attempt = 0;
 
-    while (attempt < MAX_RETRIES && this.currentSequenceModel !== null) {
-      attempt++;
-      try {
-        turn = yield* this.processTurn(
-          request,
-          signal,
-          prompt_id,
-          boundedTurns,
-          isInvalidStreamRetry,
-          displayContent,
-        );
-
-        // Success — return and continue to AfterAgent hooks
-        break;
-
-      } catch (error: unknown) {
-        lastError = error;
-        if (signal?.aborted || isAbortError(error)) {
-          yield { type: GeminiEventType.UserCancelled };
-          return turn;
-        }
-
-        const isQuota = isQuotaError(error);
-        const isUnavailable = isModelUnavailableError(error);
-
-        if (isQuota || isUnavailable) {
-          const failingModel = this.currentSequenceModel;
-          markExhausted(failingModel);
-          if (isUnavailable) {
-            blacklistModel(failingModel);
-          }
-
-          const reason = isQuota ? '429 quota' : '404 unavailable';
-          // eslint-disable-next-line no-console
-          console.log(
-            `[qnt] ${failingModel} failed (${reason}). ` +
-            `Trying next model... (attempt ${attempt}/${MAX_RETRIES})`
+      while (attempt < MAX_RETRIES && this.currentSequenceModel !== null) {
+        attempt++;
+        try {
+          turn = yield* this.processTurn(
+            request,
+            signal,
+            prompt_id,
+            boundedTurns,
+            isInvalidStreamRetry,
+            displayContent,
           );
+          // Success
+          break;
+        } catch (error: unknown) {
+          const isQuota = isQuotaError(error);
+          const isUnavailable = isModelUnavailableError(error);
+          
+          if (isQuota || isUnavailable) {
+            const failingModel = this.currentSequenceModel;
+            markExhausted(failingModel);
+            if (isUnavailable) {
+              blacklistModel(failingModel);
+            }
 
-          const fallback = getFallbackModel(failingModel);
-          if (fallback) {
-            this.currentSequenceModel = fallback;
-            // Small delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            continue;
-          } else {
-            break;
+            // eslint-disable-next-line no-console
+            console.log(
+              `[qnt] ${failingModel} failed (${isQuota ? '429' : '404'}). ` +
+              `Trying fallback... (attempt ${attempt}/${MAX_RETRIES})`
+            );
+
+            const fallback = getFallbackModel(failingModel);
+            if (fallback) {
+              this.currentSequenceModel = fallback;
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              continue;
+            }
           }
-        } else {
-          throw error;
+          throw error; // Not retryable or no fallback
         }
       }
-    }
-
-    if (attempt >= MAX_RETRIES || this.currentSequenceModel === null) {
-      if (lastError) throw lastError;
-    }
-    // ── END QNT RESILIENT STREAM EXECUTION ──────
+      // ── END QNT RESILIENT STREAM EXECUTION ──────
 
       // Fire AfterAgent hook if we have a turn and no pending tools
       if (hooksEnabled && messageBus) {
@@ -1117,7 +1099,7 @@ export class GeminiClient {
 
     // Determine starting model from prompt
     const promptText = contents.map(c => c.parts || []).flat().map(p => p.text || '').join(' ');
-    let currentModel = getBestAvailableModel(routeToModel(promptText));
+    let currentModel = getBestAvailableModel(routeToModel(promptText), getFallbackModel);
 
     while (attempt < MAX_RETRIES && currentModel !== null) {
       attempt++;
