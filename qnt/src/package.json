@@ -6,7 +6,9 @@
   },
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/cli",
+    "packages/core",
+    "packages/devtools"
   ],
   "private": "true",
   "repository": {
