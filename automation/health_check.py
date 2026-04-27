@@ -61,10 +61,13 @@ def check_sentiment_freshness():
         return {"name": "Sentiment Freshness", "status": "FAIL", "message": f"Error: {e}", "critical": True}
 
 def check_m2_reachable():
-    res = subprocess.run(['ping', '-c', '1', '-W', '2', M2_IP], capture_output=True)
-    if res.returncode == 0:
-        return {"name": "M2 Reachability", "status": "PASS", "message": "M2 pingable", "critical": False}
-    return {"name": "M2 Reachability", "status": "FAIL", "message": "M2 unreachable", "critical": False}
+    try:
+        res = subprocess.run(['/sbin/ping', '-c', '1', '-W', '2', M2_IP], capture_output=True)
+        if res.returncode == 0:
+            return {"name": "M2 Reachability", "status": "PASS", "message": "M2 pingable", "critical": False}
+        return {"name": "M2 Reachability", "status": "FAIL", "message": "M2 unreachable", "critical": False}
+    except FileNotFoundError:
+        return {"name": "M2 Reachability", "status": "FAIL", "message": "ping command not found", "critical": False}
 
 def check_binance_api():
     try:
@@ -90,7 +93,15 @@ def run_all():
     timestamp = datetime.now(timezone.utc).isoformat()
     checks = [check_freqtrade_process, check_freqtrade_api, check_sentiment_freshness, check_m2_reachable, check_binance_api, check_disk_space, check_database, check_log_sizes]
     
-    results = [fn() for fn in checks]
+    results = []
+    for fn in checks:
+        try:
+            results.append(fn())
+        except Exception as e:
+            # Fallback for naming a failed check dynamically
+            name = fn.__name__.replace('check_', '').replace('_', ' ').title()
+            results.append({"name": name, "status": "FAIL", "message": f"Exception: {e}", "critical": True})
+
     critical_fails = [r for r in results if r['status'] == 'FAIL' and r['critical']]
     
     with open(LOG, 'a') as f:

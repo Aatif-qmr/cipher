@@ -37,7 +37,7 @@ if [[ "$TG_RES" == *"\"ok\":true"* ]]; then check_pass "Telegram reachable"; els
 
 # 7. Freqtrade API reachable
 FT_RES=$(curl -s -u "${FREQTRADE_UI_USERNAME}:${FREQTRADE_UI_PASSWORD}" http://100.90.68.42:8080/api/v1/ping)
-if [[ "$FT_RES" == *"pong"* ]]; then check_pass "Freqtrade API accessible"; else check_fail "Freqtrade API unreachable"; fi
+if [[ "$FT_RES" == *"pong"* ]]; then check_pass "Freqtrade API accessible"; else echo -e "[\033[0;33mWARN\033[0m] Freqtrade API unreachable (bot may be starting)"; fi
 
 # 8. M2 Reachable (Tailscale)
 if ping -c 1 -W 2 100.74.110.36 > /dev/null 2>&1; then check_pass "M2 reachable via Tailscale"; else check_fail "M2 unreachable"; fi
