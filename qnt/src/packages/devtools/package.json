@@ -1,5 +1,5 @@
 {
-  "name": "@google/gemini-cli-devtools",
+  "name": "@google/qnt-cli-devtools",
   "version": "0.41.0-nightly.20260423.gaa05b4583",
   "license": "Apache-2.0",
   "type": "module",
