@@ -104,12 +104,12 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     'gemini-3-flash-base': {
       extends: 'base',
       modelConfig: {
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-2.5-flash',
       },
     },
     classifier: {
       modelConfig: {
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-2.5-flash',
         generateContentConfig: {
           temperature: 0,
         },
@@ -266,7 +266,7 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
   },
   classifierIdResolutions: {
     proactive: {
-      default: 'gemini-3-flash-preview',
+      default: 'gemini-2.5-flash',
       contexts: [
         {
           condition: { requestedModels: ['auto-gemini-2.5', 'gemini-2.5-pro'] },

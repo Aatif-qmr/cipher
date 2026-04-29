@@ -151,7 +151,7 @@ export function resolveModel(
       break;
     }
     case GEMINI_MODEL_ALIAS_FLASH: {
-      resolved = PREVIEW_GEMINI_FLASH_MODEL;
+      resolved = DEFAULT_GEMINI_FLASH_MODEL;
       break;
     }
     case GEMINI_MODEL_ALIAS_FLASH_LITE: {

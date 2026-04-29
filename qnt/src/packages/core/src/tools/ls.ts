@@ -295,7 +295,7 @@ class LSToolInvocation extends BaseToolInvocation<LSToolParams, ToolResult> {
       const errorMsg = `Error listing directory: ${error instanceof Error ? error.message : String(error)}`;
       return this.errorResult(
         errorMsg,
-        'Failed to list directory.',
+        errorMsg,
         ToolErrorType.LS_EXECUTION_ERROR,
       );
     }

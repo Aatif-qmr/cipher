@@ -70,6 +70,17 @@ export async function getRipgrepPath(): Promise<string | null> {
     }
   }
 
+  // 5. System PATH
+  try {
+    const { execSync } = await import('node:child_process');
+    const systemRg = execSync('which rg', { encoding: 'utf8' }).trim();
+    if (systemRg && (await fileExists(systemRg))) {
+      return systemRg;
+    }
+  } catch {
+    // ignore errors from 'which'
+  }
+
   return null;
 }
 
