@@ -25,3 +25,7 @@ qnt/src/.cache/
 ~/.qnt/quota_state.json
 qnt/src/Archive.zip
 qnt/src/memory-tests/large-chat-session.json
+qnt/memory/qnt_memory.json
+qnt/memory/.sync_queue
+qnt/memory/*.lock
+qnt/memory/*.tmp
