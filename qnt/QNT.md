@@ -4,7 +4,7 @@
 - Name: qnt
 - Role: Intelligence brain for MasterBot trading system
 - Version: 1.0.0
-- Generated: 2026-05-02T09:12:19Z
+- Generated: 2026-05-02T12:57:23Z
 - Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
@@ -35,7 +35,7 @@ update the system. I act as architect and operator.
 - Mode: PAPER TRADING (dry_run = true)
 - Balance: unavailable
 - Open trades: unknown
-- Sentiment: 0.138 (2026-05-02T09:00:06.020438+00:00)
+- Sentiment: 0.111 (2026-05-02T12:30:04.952886+00:00)
 
 ## Active Strategies
 
@@ -90,6 +90,8 @@ overriding or disabling any of these.
 */30 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py sentiment >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
 0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py anomaly >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
 0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python -c "import sys; sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/shield'); sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory'); from shield import autonomous_shield_check; autonomous_shield_check()" >> /Users/aatifquamre/masterbot/logs/shield.log 2>&1
+0 3 * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/vault/vault_indexer.py >> /Users/aatifquamre/masterbot/logs/vault.log 2>&1
+0 6 * * 1 source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python -c "import sys; sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/vault'); from post_mortem import generate_weekly_post_mortem; generate_weekly_post_mortem()" >> /Users/aatifquamre/masterbot/logs/vault.log 2>&1
 ```
 
 ### M2 Cron Jobs
@@ -241,6 +243,17 @@ qnt-backtest strategy_name     — run backtest on M2
 qnt-evolve strategy_name       — improve strategy from losers
 qnt-optimize strategy_name     — run hyperopt on M2
 qnt-deploy strategy_file       — deploy to active/ (escalates)
+
+## Vault Commands (available from M1 or M2)
+
+qnt-journal "note" — save manual note to long-term memory
+qnt-recall "query" — semantic search through history
+qnt-post-mortem id — AI analysis of a specific trade
+qnt-library        — view patterns and vault statistics
+
+## Cockpit Command
+
+qnt-dashboard      — full-screen terminal intelligence dashboard
 
 All commands work from either M1 or M2.
 Device router handles SSH automatically.

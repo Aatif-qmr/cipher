@@ -312,6 +312,17 @@ qnt-evolve strategy_name       — improve strategy from losers
 qnt-optimize strategy_name     — run hyperopt on M2
 qnt-deploy strategy_file       — deploy to active/ (escalates)
 
+## Vault Commands (available from M1 or M2)
+
+qnt-journal "note" — save manual note to long-term memory
+qnt-recall "query" — semantic search through history
+qnt-post-mortem id — AI analysis of a specific trade
+qnt-library        — view patterns and vault statistics
+
+## Cockpit Command
+
+qnt-dashboard      — full-screen terminal intelligence dashboard
+
 All commands work from either M1 or M2.
 Device router handles SSH automatically.
 All actions logged to qnt_memory.json.
