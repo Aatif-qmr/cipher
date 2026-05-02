@@ -1,0 +1,19 @@
+#!/bin/bash
+set -a
+source /Users/aatifquamre/masterbot/.env
+set +a
+STRATEGY_FILE=${1}
+if [ -z "$STRATEGY_FILE" ]; then
+  echo "Usage: qnt-deploy <strategy_file>"
+  echo "Example: qnt-deploy strategies/candidates/Auto20260502_rsi.py"
+  exit 1
+fi
+/Users/aatifquamre/masterbot/venv/bin/python -c "
+import sys
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/lab')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/bridge')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/shield')
+from lab import deploy_strategy
+deploy_strategy('$STRATEGY_FILE')
+"

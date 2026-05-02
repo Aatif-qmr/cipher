@@ -1,0 +1,20 @@
+#!/bin/bash
+set -a
+source /Users/aatifquamre/masterbot/.env
+set +a
+HYPOTHESIS="$*"
+if [ -z "$HYPOTHESIS" ]; then
+  echo "Usage: qnt-strategy-gen <hypothesis>"
+  echo "Example: qnt-strategy-gen Buy when RSI oversold and volume rising"
+  exit 1
+fi
+/Users/aatifquamre/masterbot/venv/bin/python -c "
+import sys
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/lab')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/bridge')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/shield')
+from lab import generate_strategy
+result = generate_strategy('''$HYPOTHESIS''')
+print(f'Generated: {result}' if result else 'Generation failed')
+"

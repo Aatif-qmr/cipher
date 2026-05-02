@@ -1,0 +1,16 @@
+#!/bin/bash
+set -a
+source /Users/aatifquamre/masterbot/.env
+set +a
+STRATEGY=${1:-MeanReversionV1}
+TIMERANGE=${2:-20240101-20260101}
+/Users/aatifquamre/masterbot/venv/bin/python -c "
+import sys
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/lab')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/bridge')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/shield')
+from lab import run_backtest
+verdict, report, metrics = run_backtest('$STRATEGY', '$TIMERANGE')
+print(report)
+"
