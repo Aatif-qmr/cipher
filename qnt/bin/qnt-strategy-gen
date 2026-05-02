@@ -8,7 +8,7 @@ if [ -z "$HYPOTHESIS" ]; then
   echo "Example: qnt-strategy-gen Buy when RSI oversold and volume rising"
   exit 1
 fi
-qnt-python -c "
+/Users/aatifquamre/masterbot/qnt/bin/qnt-python -c "
 import sys
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/lab')
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')

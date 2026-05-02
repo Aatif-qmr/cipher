@@ -3,7 +3,7 @@ set -a
 source /Users/aatifquamre/masterbot/.env
 set +a
 PERIOD=${1:-daily}
-qnt-python -c "
+/Users/aatifquamre/masterbot/qnt/bin/qnt-python -c "
 import sys
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/shield')
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
