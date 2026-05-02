@@ -74,6 +74,29 @@ def fetch_calendar():
     save_memory(data)
     return events
 
+def check_calendar_risk_today() -> str:
+    """Returns 'LOW', 'MEDIUM', 'HIGH', or 'EXTREME' for today."""
+    data = load_memory()
+    cache = data.get('calendar_cache', {})
+    last_fetched = cache.get('last_fetched')
+    
+    # If cache stale or missing, return safe default
+    if not last_fetched:
+        return 'MEDIUM'
+    
+    last_dt = datetime.fromisoformat(last_fetched.replace('Z', '+00:00'))
+    if datetime.now(timezone.utc) - last_dt > timedelta(hours=CACHE_EXPIRY_HOURS * 2):
+        return 'MEDIUM'
+
+    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    risk = calculate_risk_level(today_str)
+    return risk['level']
+
+def is_safe_to_trade_today() -> bool:
+    """Returns True if risk level is LOW or MEDIUM."""
+    risk_level = check_calendar_risk_today()
+    return risk_level in ['LOW', 'MEDIUM']
+
 def parse_forexfactory(text):
     """Simple parser for ForexFactory text dump."""
     events = []

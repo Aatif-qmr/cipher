@@ -4,7 +4,7 @@
 - Name: qnt
 - Role: Intelligence brain for MasterBot trading system
 - Version: 1.0.0
-- Generated: 2026-05-02T12:57:23Z
+- Generated: 2026-05-02T13:34:50Z
 - Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
@@ -35,14 +35,38 @@ update the system. I act as architect and operator.
 - Mode: PAPER TRADING (dry_run = true)
 - Balance: unavailable
 - Open trades: unknown
-- Sentiment: 0.111 (2026-05-02T12:30:04.952886+00:00)
+- Sentiment: 0.138 (2026-05-02T13:30:03.970045+00:00)
 
 ## Active Strategies
+
+### DailyTrendV1
+- File: /Users/aatifquamre/masterbot/strategies/active/DailyTrendV1.py
+- Timeframe: check file
+- Stop loss: -0.08
+- Sentiment gate: BEARISH blocks entry
+- Risk gate: All 5 risk checks run before entry
+- Exchange stop: stoploss_on_exchange = True
 
 ### MeanReversionV1
 - File: /Users/aatifquamre/masterbot/strategies/active/MeanReversionV1.py
 - Timeframe: check file
 - Stop loss: -0.04
+- Sentiment gate: BEARISH blocks entry
+- Risk gate: All 5 risk checks run before entry
+- Exchange stop: stoploss_on_exchange = True
+
+### ScalpV1
+- File: /Users/aatifquamre/masterbot/strategies/active/ScalpV1.py
+- Timeframe: check file
+- Stop loss: -0.02
+- Sentiment gate: BEARISH blocks entry
+- Risk gate: All 5 risk checks run before entry
+- Exchange stop: stoploss_on_exchange = True
+
+### SwingV1
+- File: /Users/aatifquamre/masterbot/strategies/active/SwingV1.py
+- Timeframe: check file
+- Stop loss: -0.03
 - Sentiment gate: BEARISH blocks entry
 - Risk gate: All 5 risk checks run before entry
 - Exchange stop: stoploss_on_exchange = True
@@ -97,7 +121,7 @@ overriding or disabling any of these.
 ### M2 Cron Jobs
 ```
 */30 * * * * /bin/bash /Users/azmatsaif/masterbot/automation/run_sentiment.sh >> /Users/azmatsaif/masterbot/logs/sentiment_cron.log 2>&1
-0 1 * * 1 /bin/bash /Users/azmatsaif/masterbot/automation/retrain_freqai.sh >> /Users/azmatsaif/masterbot/logs/freqai_cron.log 2>&1
+0 1 * * 1,4 /bin/bash /Users/azmatsaif/masterbot/automation/retrain_freqai.sh >> /Users/azmatsaif/masterbot/logs/freqai_cron.log 2>&1
 0 23 * * 0 /bin/bash /Users/azmatsaif/masterbot/automation/weekly_hyperopt.sh >> /Users/azmatsaif/masterbot/logs/hyperopt_cron.log 2>&1
 0 * * * * scp -r /Users/azmatsaif/masterbot/qnt/browser_output/ aatifquamre@100.90.68.42:/Users/aatifquamre/masterbot/qnt/browser_output/ 2>/dev/null
 0 22 * * 6 bash /Users/azmatsaif/masterbot/automation/weekly_strategy_scan.sh
@@ -263,6 +287,7 @@ All actions logged to qnt_memory.json.
 Format: [DATE] FIXED/NOTED: description
 
 [2026-04-28] NOTED: Full system backup created: masterbot_backup_20260428.tar.gz
+[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
 [2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
 
 *(qnt appends here when it fixes issues)*

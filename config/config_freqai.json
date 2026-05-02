@@ -1,0 +1,31 @@
+{
+    "freqai": {
+        "enabled": true,
+        "purge_old_models": 2,
+        "train_period_days": 60,
+        "backtest_period_days": 14,
+        "live_retrain_when_model_expires": true,
+        "expiration_hours": 72,
+        "write_metrics_to_disk": true,
+        "feature_parameters": {
+            "include_timeframes": ["5m", "15m", "1h", "4h", "1d"],
+            "include_corr_pairlist": ["BTC/USDT", "ETH/USDT"],
+            "label_period_candles": 24,
+            "include_shifted_candles": 0,
+            "DI_threshold": 0.9,
+            "weight_factor": 0.7,
+            "principal_component_analysis": false,
+            "use_SVM_to_remove_outliers": true,
+            "indicator_max_period": 20
+        },
+        "data_split_parameters": {
+            "test_size": 0.25,
+            "random_state": 42
+        },
+        "model_training_parameters": {
+            "n_estimators": 100,
+            "learning_rate": 0.1,
+            "max_depth": 6
+        }
+    }
+}
