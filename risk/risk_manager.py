@@ -24,7 +24,31 @@ logging.basicConfig(
     format='%(asctime)s | %(levelname)s | %(message)s'
 )
 
+import time
+
+COOLDOWN_FILE = '/tmp/risk_alert_cooldown'
+COOLDOWN_SECONDS = 3600  # 1 hour between alerts
+
+def _can_send_alert():
+    try:
+        if os.path.exists(COOLDOWN_FILE):
+            with open(COOLDOWN_FILE, 'r') as f:
+                last = float(f.read())
+            if time.time() - last < COOLDOWN_SECONDS:
+                return False
+    except:
+        pass
+    try:
+        with open(COOLDOWN_FILE, 'w') as f:
+            f.write(str(time.time()))
+    except:
+        pass
+    return True
+
 def send_telegram_alert(message: str, level: str = 'WARNING') -> bool:
+    if level == 'CRITICAL' and not _can_send_alert():
+        return False
+        
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
         return False
     
