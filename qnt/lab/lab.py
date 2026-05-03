@@ -42,6 +42,7 @@ def generate_strategy(hypothesis):
     - Include stoploss_on_exchange = True
     - Include sentiment gate (import from {M1_PATH}/sentiment/reader.py)
     - Include risk manager integration (import run_all_checks from {M1_PATH}/risk/risk_manager.py)
+    - IMPORTANT: When calling run_all_checks, pass recent_trades as a list of dicts including 'profit_ratio' AND 'close_date' from Trade.get_trades_proxy(is_open=False).
     - Add detailed comments explaining logic
     - Class name: {class_name}
     

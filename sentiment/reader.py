@@ -7,7 +7,10 @@ def get_current_sentiment() -> dict:
     """
     Reads the current sentiment score from disk.
     """
-    path = '/Users/aatifquamre/masterbot/sentiment/scores/current_score.json'
+    # Detect BASE_DIR automatically
+    home = os.path.expanduser("~")
+    base_dir = os.path.join(home, "masterbot")
+    path = os.path.join(base_dir, 'sentiment/scores/current_score.json')
     
     fallback = {
         "score": 0.0,

@@ -20,22 +20,27 @@ BASE_DIR = Path('/Users/aatifquamre/masterbot')
 LOG = BASE_DIR / 'logs' / 'health_check.log'
 DB_PATH = BASE_DIR / 'user_data' / 'tradesv3.dryrun.sqlite'
 
-def check_freqtrade_process():
-    cmd = [str(BASE_DIR / 'venv/bin/supervisorctl'), '-c', str(BASE_DIR / 'config/supervisord.conf'), 'status', 'freqtrade']
+def check_freqtrade_processes():
+    cmd = [str(BASE_DIR / 'venv/bin/supervisorctl'), '-c', str(BASE_DIR / 'config/supervisord.conf'), 'status']
     res = subprocess.run(cmd, capture_output=True, text=True)
-    if 'RUNNING' in res.stdout:
-        return {"name": "Freqtrade Process", "status": "PASS", "message": "Process is running", "critical": True}
-    return {"name": "Freqtrade Process", "status": "FAIL", "message": "Process down", "critical": True}
+    mr = 'RUNNING' in [line for line in res.stdout.split('\n') if 'freqtrade_mean_reversion' in line][0] if 'freqtrade_mean_reversion' in res.stdout else False
+    tf = 'RUNNING' in [line for line in res.stdout.split('\n') if 'freqtrade_trend_follow' in line][0] if 'freqtrade_trend_follow' in res.stdout else False
+    
+    if mr and tf:
+        return {"name": "Freqtrade Processes", "status": "PASS", "message": "Both MR and TF running", "critical": True}
+    return {"name": "Freqtrade Processes", "status": "FAIL", "message": f"MR: {'UP' if mr else 'DOWN'} | TF: {'UP' if tf else 'DOWN'}", "critical": True}
 
-def check_freqtrade_api():
+def check_freqtrade_apis():
     try:
-        url = "http://100.90.68.42:8080/api/v1/ping"
-        res = requests.get(url, auth=(FT_USERNAME, FT_PASSWORD), timeout=5)
-        if res.status_code == 200:
-            return {"name": "Freqtrade API", "status": "PASS", "message": "API responding", "critical": True}
-        return {"name": "Freqtrade API", "status": "FAIL", "message": f"API error {res.status_code}", "critical": True}
-    except:
-        return {"name": "Freqtrade API", "status": "FAIL", "message": "Connection failed", "critical": True}
+        url_mr = "http://100.90.68.42:8080/api/v1/ping"
+        url_tf = "http://100.90.68.42:8081/api/v1/ping"
+        res_mr = requests.get(url_mr, auth=(FT_USERNAME, FT_PASSWORD), timeout=5)
+        res_tf = requests.get(url_tf, auth=(FT_USERNAME, FT_PASSWORD), timeout=5)
+        if res_mr.status_code == 200 and res_tf.status_code == 200:
+            return {"name": "Freqtrade APIs", "status": "PASS", "message": "Both APIs responding", "critical": True}
+        return {"name": "Freqtrade APIs", "status": "FAIL", "message": f"MR: {res_mr.status_code} | TF: {res_tf.status_code}", "critical": True}
+    except Exception as e:
+        return {"name": "Freqtrade APIs", "status": "FAIL", "message": f"Connection failed: {e}", "critical": True}
 
 def check_sentiment_freshness():
     path = BASE_DIR / 'sentiment/scores/current_score.json'
@@ -98,8 +103,9 @@ def check_qnt_status() -> dict:
     start = time.time()
     try:
         # Use full path to qnt if possible, or assume it's in PATH
+        qnt_path = '/Users/aatifquamre/.local/share/fnm/node-versions/v25.9.0/installation/bin/qnt'
         result = subprocess.run(
-            ['qnt', '-p', 'reply with exactly: QNT_OK', '--output-format', 'text'],
+            [qnt_path, '-p', 'reply with exactly: QNT_OK', '--output-format', 'text'],
             capture_output=True, text=True, timeout=45, cwd='/Users/aatifquamre/masterbot'
         )
         elapsed = time.time() - start
@@ -142,7 +148,7 @@ def check_qnt_status() -> dict:
 
 def run_all():
     timestamp = datetime.now(timezone.utc).isoformat()
-    checks = [check_freqtrade_process, check_freqtrade_api, check_sentiment_freshness, check_m2_reachable, check_binance_api, check_disk_space, check_database, check_log_sizes, check_qnt_status]
+    checks = [check_freqtrade_processes, check_freqtrade_apis, check_sentiment_freshness, check_m2_reachable, check_binance_api, check_disk_space, check_database, check_log_sizes, check_qnt_status]
     
     results = []
     for fn in checks:

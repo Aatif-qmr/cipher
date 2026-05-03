@@ -25,7 +25,7 @@
         }
     ],
     "telegram": {
-        "enabled": true,
+        "enabled": false,
         "token": "8785066352:AAHJr2HL7uFk5cXN-okGRE1Yend_4UXbXB8",
         "chat_id": "1025751557",
         "allow_commands": true,

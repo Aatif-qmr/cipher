@@ -2,7 +2,7 @@ import os
 import json
 import logging
 import requests
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -103,14 +103,37 @@ def check_order_rate(trades_last_hour: int, max_trades_per_hour: int = 10) -> bo
 
 def check_consecutive_losses(recent_trades: list, max_consecutive: int = 3) -> bool:
     count = 0
+    last_loss_time = None
+    
     for trade in recent_trades:
         if trade.get('profit_ratio', 0) < 0:
             count += 1
+            # First one in list is most recent
+            if count == 1:
+                last_loss_time = trade.get('close_date')
+            
             if count >= max_consecutive:
-                msg = (f"CONSECUTIVE LOSS WARNING\n"
+                # Check cooldown if we have a timestamp
+                if last_loss_time:
+                    if isinstance(last_loss_time, str):
+                        try:
+                            last_loss_time = datetime.fromisoformat(last_loss_time.replace('Z', '+00:00'))
+                        except ValueError:
+                            pass # Fallback to blocking if date format is weird
+                    
+                    if isinstance(last_loss_time, datetime):
+                        if last_loss_time.tzinfo is None:
+                            last_loss_time = last_loss_time.replace(tzinfo=timezone.utc)
+                        
+                        now = datetime.now(timezone.utc)
+                        if (now - last_loss_time) > timedelta(hours=1):
+                            logging.info(f"Consecutive loss cooldown passed. Last loss was at {last_loss_time}")
+                            return True
+
+                msg = (f"CONSECUTIVE LOSS CIRCUIT BREAKER\n"
                        f"{count} losses in a row detected.\n"
-                       f"Strategy may be misaligned with current market.\n"
-                       f"Consider reviewing strategy conditions.")
+                       f"Last loss at: {last_loss_time}\n"
+                       f"ACTION: Entries paused for 1 hour from last loss.")
                 logging.warning(msg.replace('\n', ' | '))
                 send_telegram_alert(msg, 'WARNING')
                 return False

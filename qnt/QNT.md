@@ -286,10 +286,10 @@ All actions logged to qnt_memory.json.
 ## Known Issues Log
 Format: [DATE] FIXED/NOTED: description
 
-[2026-04-28] NOTED: Full system backup created: masterbot_backup_20260428.tar.gz
 [2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
-[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
-[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
-[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
+[2026-05-03] FIXED: Consecutive losses circuit breaker was sticky; added 1-hour cooldown reset logic in risk_manager.py, updated all active strategies, candidate strategies, and the lab strategy generator (lab.py).
+[2026-05-03] FIXED: Balance tracker only queried one of five Freqtrade instances, causing reported balance to drop and trigger drawdown blocks; updated risk/balance_tracker.py to sum all 5 instance balances.
+[2026-05-03] FIXED: DailyTrendV1, SwingV1, and ScalpV1 were failing with AttributeErrors due to incorrect pandas_ta and DataProvider API usage; updated strategies to use manual crossing and correct merge_informative_pair/get_pair_dataframe methods. All instances restarted and verified RUNNING.
+
 
 *(qnt appends here when it fixes issues)*

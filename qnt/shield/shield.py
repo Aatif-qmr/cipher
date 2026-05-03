@@ -3,7 +3,9 @@ import sys
 import json
 import sqlite3
 import pandas as pd
+import requests
 from datetime import datetime, timezone, timedelta
+from requests.auth import HTTPBasicAuth
 
 # Add paths
 BASE_DIR = '/Users/aatifquamre/masterbot'
@@ -12,7 +14,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/bridge'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/oracle'))
 
 from device_router import call_freqtrade_api, get_current_device
-from memory_manager import log_action, load_memory
+from memory_manager import load_memory, log_action
 from qnt_notifier import send_notify, send_escalation
 from autonomy_router import classify, handle, AutonomyLevel
 try:
@@ -42,10 +44,43 @@ def get_db_path():
         except: continue
     return DB_PATH # Default
 
+def call_freqtrade_api_all(endpoint, method='GET', data=None):
+    """Aggregate data from all 5 strategy instances."""
+    results = []
+    ports = [8080, 8081, 8082, 8083, 8084]
+    FT_USER = os.getenv("FREQTRADE_UI_USERNAME")
+    FT_PASS = os.getenv("FREQTRADE_UI_PASSWORD")
+    
+    for port in ports:
+        try:
+            url = f"http://100.90.68.42:{port}/api/v1/{endpoint}"
+            if method == 'GET':
+                res = requests.get(url, auth=HTTPBasicAuth(FT_USER, FT_PASS), timeout=5)
+            else:
+                res = requests.post(url, auth=HTTPBasicAuth(FT_USER, FT_PASS), json=data, timeout=5)
+            if res.status_code == 200:
+                results.append(res.json())
+        except:
+            continue
+    return results
+
 def get_pnl(period='daily'):
     """Calculate P&L stats from SQLite database."""
     try:
         active_db = get_db_path()
+        
+        # Check if trades table exists before querying
+        table_exists = False
+        if os.path.exists(active_db):
+            conn = sqlite3.connect(active_db)
+            cursor = conn.cursor()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='trades'")
+            table_exists = bool(cursor.fetchone())
+            conn.close()
+
+        if not table_exists:
+            return f"💰 QNT P&L Report — {period.upper()}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nNo closed trades in this period (Database empty)."
+
         conn = sqlite3.connect(active_db)
         now = datetime.now(timezone.utc)
         
@@ -69,13 +104,12 @@ def get_pnl(period='daily'):
         if df.empty:
             return f"💰 QNT P&L Report — {period.upper()}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nNo closed trades in this period."
 
-        # Fetch starting balance from balance_state or use a default
         try:
             with open(BALANCE_STATE_PATH, 'r') as f:
                 b_state = json.load(f)
-                starting_balance = b_state.get('start_of_day', 100.0)
+                starting_balance = b_state.get('start_of_day', 50000.0)
         except:
-            starting_balance = 100.0
+            starting_balance = 50000.0
 
         total_profit_usdt = df['profit_abs'].sum()
         total_profit_pct = (total_profit_usdt / starting_balance) * 100
@@ -111,32 +145,36 @@ def get_pnl(period='daily'):
         return f"Error calculating P&L: {e}"
 
 def get_exposure():
-    """Calculate current capital at risk."""
+    """Calculate current capital at risk across all instances."""
     try:
-        open_trades = call_freqtrade_api("status")
-        balance_data = call_freqtrade_api("balance")
-        total_balance = balance_data.get('total', 1.0)
-        free_capital = balance_data.get('free', 0.0)
+        all_status = call_freqtrade_api_all("status")
+        all_balance = call_freqtrade_api_all("balance")
+        
+        total_balance = sum([b.get('total', 0) for b in all_balance])
+        free_capital = sum([b.get('free', 0) for b in all_balance])
+        
+        if total_balance == 0: total_balance = 50000.0
         
         total_deployed = 0
         unrealized_pnl = 0
         max_loss_potential = 0
         
         rows = []
-        for t in open_trades:
-            stake = t.get('stake_amount', 0)
-            profit_abs = t.get('profit_abs', 0)
-            sl_ratio = abs(t.get('stop_loss_ratio', 0))
-            sl_pct = t.get('stop_loss_pct', 0)
-            
-            total_deployed += stake
-            unrealized_pnl += profit_abs
-            exposure_pct = (stake / total_balance) * 100 if total_balance > 0 else 0
-            
-            potential_loss = stake * sl_ratio
-            max_loss_potential += potential_loss
-            
-            rows.append(f"│ {t['pair']:<11} │ {stake:>7.2f} │ {exposure_pct:>7.1f}% │ {sl_pct:>7.1f}% │")
+        for status in all_status:
+            for t in status:
+                stake = t.get('stake_amount', 0)
+                profit_abs = t.get('profit_abs', 0)
+                sl_ratio = abs(t.get('stop_loss_ratio', 0))
+                sl_pct = t.get('stop_loss_pct', 0)
+                
+                total_deployed += stake
+                unrealized_pnl += profit_abs
+                exposure_pct = (stake / total_balance) * 100 if total_balance > 0 else 0
+                
+                potential_loss = stake * sl_ratio
+                max_loss_potential += potential_loss
+                
+                rows.append(f"│ {t['pair']:<11} │ {stake:>7.2f} │ {exposure_pct:>7.1f}% │ {sl_pct:>7.1f}% │")
 
         deployed_pct = (total_deployed / total_balance) * 100 if total_balance > 0 else 0
         max_loss_pct = (max_loss_potential / total_balance) * 100 if total_balance > 0 else 0
@@ -180,7 +218,7 @@ def get_exposure():
         return f"Error getting exposure: {e}"
 
 def risk_check():
-    """Audit system against risk rules."""
+    """Audit system against risk rules across all instances."""
     results = []
     fails = 0
     warnings = 0
@@ -192,8 +230,9 @@ def risk_check():
         with open(BALANCE_STATE_PATH, 'r') as f:
             b_state = json.load(f)
         
-        balance_data = call_freqtrade_api("balance")
-        current_bal = balance_data.get('total', 100.0)
+        all_balance = call_freqtrade_api_all("balance")
+        current_bal = sum([b.get('total', 0) for b in all_balance])
+        if current_bal == 0: current_bal = 50000.0
         
         day_drawdown = (b_state['start_of_day'] - current_bal) / b_state['start_of_day'] * 100 if b_state['start_of_day'] > 0 else 0
         week_drawdown = (b_state['start_of_week'] - current_bal) / b_state['start_of_week'] * 100 if b_state['start_of_week'] > 0 else 0
@@ -216,11 +255,14 @@ def risk_check():
         else:
             results.append(f"✅ Weekly Drawdown:   {week_drawdown:.1f}% (limit: 7%)")
 
-        open_trades = call_freqtrade_api("status")
+        all_status = call_freqtrade_api_all("status")
         max_pos_size = 0
-        for t in open_trades:
-            size = (t['stake_amount'] / current_bal) * 100 if current_bal > 0 else 0
-            if size > max_pos_size: max_pos_size = size
+        total_open = 0
+        for status in all_status:
+            total_open += len(status)
+            for t in status:
+                size = (t['stake_amount'] / current_bal) * 100 if current_bal > 0 else 0
+                if size > max_pos_size: max_pos_size = size
             
         if max_pos_size >= 10.0:
             results.append(f"❌ Position Sizing:   Max {max_pos_size:.1f}% (limit: 10%)")
@@ -228,15 +270,14 @@ def risk_check():
         else:
             results.append(f"✅ Position Sizing:   Max {max_pos_size:.1f}% (limit: 10%)")
 
-        max_open = 3
-        current_open = len(open_trades)
-        if current_open > max_open:
-            results.append(f"❌ Open Trades:       {current_open}/{max_open}")
+        max_open = 10
+        if total_open > max_open:
+            results.append(f"❌ Open Trades:       {total_open}/{max_open}")
             fails += 1
         else:
-            results.append(f"✅ Open Trades:       {current_open}/{max_open}")
+            results.append(f"✅ Open Trades:       {total_open}/{max_open}")
 
-        pairs = [t['pair'] for t in open_trades]
+        pairs = [t['pair'] for status in all_status for t in status]
         if 'BTC/USDT' in pairs and 'ETH/USDT' in pairs:
             results.append(f"⚠️ Correlation:       BTC+ETH: YES")
             warnings += 1
@@ -263,12 +304,17 @@ def risk_check():
         else:
             results.append(f"✅ Consec. Losses:    {consec_losses} in a row")
 
-        stops_active = all(['stop_loss_pct' in t and t['stop_loss_pct'] is not None for t in open_trades])
-        if current_open > 0 and not stops_active:
+        stops_active = True
+        for status in all_status:
+            if not all(['stop_loss_pct' in t and t['stop_loss_pct'] is not None for t in status]):
+                stops_active = False
+                break
+        
+        if total_open > 0 and not stops_active:
             results.append(f"❌ Stop Losses:       MISSING")
             fails += 1
         else:
-            results.append(f"✅ Stop Losses:       {current_open}/{current_open} active")
+            results.append(f"✅ Stop Losses:       {total_open}/{total_open} active")
 
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         risk = calculate_risk_level(today_str)
@@ -307,22 +353,31 @@ def risk_check():
         return f"Error in risk audit: {e}"
 
 def get_balance():
-    """Live balance snapshot."""
+    """Live balance snapshot across all instances."""
     try:
-        balance_data = call_freqtrade_api("balance")
-        total = balance_data.get('total', 0.0)
-        free = balance_data.get('free', 0.0)
+        all_balance = call_freqtrade_api_all("balance")
+        total = sum([b.get('total', 0) for b in all_balance])
+        free = sum([b.get('free', 0) for b in all_balance])
+        
+        if total == 0: total = 50000.0
+        
         used = total - free
         used_pct = (used / total * 100) if total > 0 else 0
         
-        with open(BALANCE_STATE_PATH, 'r') as f:
-            b_state = json.load(f)
+        try:
+            with open(BALANCE_STATE_PATH, 'r') as f:
+                b_state = json.load(f)
+            start_of_day = b_state.get('start_of_day', total)
+            start_of_week = b_state.get('start_of_week', total)
+        except Exception:
+            start_of_day = total
+            start_of_week = total
             
-        today_pnl = total - b_state['start_of_day']
-        today_pnl_pct = (today_pnl / b_state['start_of_day'] * 100) if b_state['start_of_day'] > 0 else 0
+        today_pnl = total - start_of_day
+        today_pnl_pct = (today_pnl / start_of_day * 100) if start_of_day > 0 else 0
         
-        week_pnl = total - b_state['start_of_week']
-        week_pnl_pct = (week_pnl / b_state['start_of_week'] * 100) if b_state['start_of_week'] > 0 else 0
+        week_pnl = total - start_of_week
+        week_pnl_pct = (week_pnl / start_of_week * 100) if start_of_week > 0 else 0
 
         now = get_ist_now().strftime("%H:%M IST")
         output = [
@@ -332,10 +387,10 @@ def get_balance():
             f"Free:     {free:.2f} USDT",
             f"In Use:   {used:.2f} USDT ({used_pct:.1f}%)",
             "",
-            f"Start of Day:  {b_state['start_of_day']:.2f} USDT",
+            f"Start of Day:  {start_of_day:.2f} USDT",
             f"Today's P&L:   {today_pnl:+.2f} USDT ({today_pnl_pct:+.2f}%)",
             "",
-            f"Start of Week: {b_state['start_of_week']:.2f} USDT",
+            f"Start of Week: {start_of_week:.2f} USDT",
             f"Week's P&L:    {week_pnl:+.2f} USDT ({week_pnl_pct:+.2f}%)",
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
             "Mode: PAPER TRADING"
@@ -352,8 +407,9 @@ def autonomous_shield_check():
     try:
         with open(BALANCE_STATE_PATH, 'r') as f:
             b_state = json.load(f)
-        balance_data = call_freqtrade_api("balance")
-        current_bal = balance_data.get('total', 100.0)
+        all_balance = call_freqtrade_api_all("balance")
+        current_bal = sum([b.get('total', 0) for b in all_balance])
+        if current_bal == 0: current_bal = 50000.0
         week_drawdown = (b_state['start_of_week'] - current_bal) / b_state['start_of_week'] * 100 if b_state['start_of_week'] > 0 else 0
         if week_drawdown > 5.0:
             send_escalation(
@@ -365,6 +421,7 @@ def autonomous_shield_check():
     except: pass
 
 if __name__ == "__main__":
+    import sys
     if len(sys.argv) > 1:
         cmd = sys.argv[1]
         if cmd == "pnl": print(get_pnl(sys.argv[2] if len(sys.argv) > 2 else 'daily'))

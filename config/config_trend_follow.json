@@ -1,0 +1,85 @@
+{
+    "max_open_trades": 2,
+    "stake_currency": "USDT",
+    "stake_amount": 500,
+    "tradable_balance_ratio": 0.99,
+    "dry_run": true,
+    "dry_run_wallet": 10000,
+    "exchange": {
+        "name": "binance",
+        "key": "",
+        "secret": "",
+        "pair_whitelist": [
+            "BTC/USDT",
+            "ETH/USDT",
+            "SOL/USDT",
+            "BNB/USDT",
+            "XRP/USDT"
+        ],
+        "pair_blacklist": []
+    },
+    "pairlists": [
+        {
+            "method": "StaticPairList"
+        }
+    ],
+    "telegram": {
+        "enabled": false,
+        "token": "8785066352:AAHJr2HL7uFk5cXN-okGRE1Yend_4UXbXB8",
+        "chat_id": "1025751557",
+        "allow_commands": true,
+        "commands": {
+            "/status": "Show current status",
+            "/profit": "Show profit",
+            "/balance": "Show balance",
+            "/trades": "Show open trades",
+            "/stopentry": "Stop entering new trades",
+            "/forceexit": "Force exit a trade",
+            "/reload_config": "Reload configuration"
+        }
+    },
+    "api_server": {
+        "enabled": true,
+        "listen_ip_address": "100.90.68.42",
+        "listen_port": 8081,
+        "verbosity": "error",
+        "enable_openapi": false,
+        "jwt_secret_key": "super_secret_jwt_key",
+        "CORS_origins": [
+            "http://100.74.110.36:8080",
+            "http://shahids-macbook-air:8080"
+        ],
+        "username": "Aatif-qmr",
+        "password": "2001"
+    },
+    "bot_name": "masterbot",
+    "initial_state": "running",
+    "force_entry_enable": false,
+    "internals": {
+        "process_throttle_secs": 5
+    },
+    "entry_pricing": {
+        "price_side": "same",
+        "use_order_book": true,
+        "order_book_top": 1,
+        "check_depth_of_market": {
+            "enabled": false,
+            "bids_to_ask_delta": 1
+        }
+    },
+    "exit_pricing": {
+        "price_side": "same",
+        "use_order_book": true,
+        "order_book_top": 1
+    },
+    "order_types": {
+        "entry": "limit",
+        "exit": "limit",
+        "emergency_exit": "market",
+        "force_entry": "market",
+        "force_exit": "market",
+        "stoploss": "market",
+        "stoploss_on_exchange": false,
+        "stoploss_on_exchange_interval": 60
+    }
+}

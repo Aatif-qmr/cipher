@@ -30,7 +30,7 @@ def classify(situation_type, context=None):
     if situation_type in [
         "freqai_retrained", "hyperopt_improvement", "strategy_discovered",
         "report_generated", "sync_restored", "risk_level_change",
-        "position_size_auto_adj", "notable_task_result"
+        "position_size_auto_adj", "notable_task_result", "routine_maintenance"
     ]:
         return AutonomyLevel.NOTIFY, "Informational event, no input needed."
 

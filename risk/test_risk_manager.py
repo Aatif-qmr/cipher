@@ -60,6 +60,28 @@ class TestRiskManager(unittest.TestCase):
         ]
         self.assertTrue(check_consecutive_losses(recent_trades))
 
+    def test_consecutive_losses_allows_after_cooldown(self):
+        from datetime import datetime, timezone, timedelta
+        # 3 losses, but the last one was 61 minutes ago
+        last_loss_time = datetime.now(timezone.utc) - timedelta(minutes=61)
+        recent_trades = [
+            {'profit_ratio': -0.02, 'close_date': last_loss_time.isoformat()},
+            {'profit_ratio': -0.03},
+            {'profit_ratio': -0.015}
+        ]
+        self.assertTrue(check_consecutive_losses(recent_trades))
+
+    def test_consecutive_losses_blocks_within_cooldown(self):
+        from datetime import datetime, timezone, timedelta
+        # 3 losses, last one was 30 minutes ago
+        last_loss_time = datetime.now(timezone.utc) - timedelta(minutes=30)
+        recent_trades = [
+            {'profit_ratio': -0.02, 'close_date': last_loss_time.isoformat()},
+            {'profit_ratio': -0.03},
+            {'profit_ratio': -0.015}
+        ]
+        self.assertFalse(check_consecutive_losses(recent_trades))
+
     def test_run_all_checks_returns_correct_structure(self):
         result = run_all_checks(50.0, 50.0, 50.0, 4.0, 2, [])
         self.assertIsInstance(result, dict)

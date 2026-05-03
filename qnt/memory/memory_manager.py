@@ -26,36 +26,20 @@ def get_device_identity():
     """Detect if running on M1 or M2 and return identity dict."""
     username = os.getenv("USER") or os.getenv("USERNAME")
     hostname = socket.gethostname()
+    cwd = os.getcwd()
     
-    if username == M1_USER:
-        return {
-            "device": "M1",
-            "username": username,
-            "hostname": hostname,
-            "role": "execution",
-            "masterbot_path": M1_PATH
-        }
-    elif username == M2_USER:
+    if "azmatsaif" in cwd or username == M2_USER:
         return {
             "device": "M2",
-            "username": username,
+            "username": M2_USER,
             "hostname": hostname,
             "role": "intelligence",
             "masterbot_path": M2_PATH
         }
     else:
-        # Fallback patterns
-        if "M2" in hostname.upper():
-            return {
-                "device": "M2",
-                "username": username,
-                "hostname": hostname,
-                "role": "intelligence",
-                "masterbot_path": M2_PATH
-            }
         return {
             "device": "M1",
-            "username": username,
+            "username": M1_USER,
             "hostname": hostname,
             "role": "execution",
             "masterbot_path": M1_PATH
@@ -104,7 +88,7 @@ def save_memory(data):
     MEMORY_FILE.parent.mkdir(parents=True, exist_ok=True)
     
     data["last_updated"] = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
-    temp_file = MEMORY_FILE.with_suffix(".tmp")
+    temp_file = MEMORY_FILE.with_name(f"{MEMORY_FILE.name}.tmp.{os.getpid()}")
     
     with open(temp_file, 'w') as f:
         fcntl.flock(f, fcntl.LOCK_EX)

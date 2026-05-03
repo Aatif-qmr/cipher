@@ -11,7 +11,7 @@ M1_USER = 'aatifquamre'
 M2_USER = 'azmatsaif'
 M1_PATH = '/Users/aatifquamre/masterbot'
 M2_PATH = '/Users/azmatsaif/masterbot'
-M1_FREQTRADE_API = 'http://127.0.0.1:8080/api/v1'
+M1_FREQTRADE_API = 'http://100.90.68.42:8080/api/v1'
 
 # Load environment
 load_dotenv(f"{M1_PATH}/.env")
@@ -25,15 +25,14 @@ def get_current_device():
     """Detect location and return device context."""
     user = os.getenv("USER") or os.getenv("USERNAME")
     hostname = socket.gethostname()
+    cwd = os.getcwd()
     
-    # Simple detection based on user
-    if user == M1_USER:
-        device = "M1"
-    elif user == M2_USER:
+    if "azmatsaif" in cwd or user == M2_USER:
         device = "M2"
+        user = M2_USER
     else:
-        # Fallback to hostname
-        device = "M2" if "M2" in hostname.upper() else "M1"
+        device = "M1"
+        user = M1_USER
         
     is_m1 = (device == "M1")
     

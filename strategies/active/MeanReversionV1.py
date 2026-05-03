@@ -1,4 +1,4 @@
-import sys, os; home = os.path.expanduser('~'); sys.path.insert(0, os.path.join(home, 'masterbot')); sys.path.insert(0, os.path.join(home, 'masterbot', 'qnt', 'memory')); sys.path.insert(0, os.path.join(home, 'masterbot', 'qnt', 'oracle'));
+import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'masterbot')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'oracle'));
 import logging
 import json
 import sys
@@ -126,7 +126,7 @@ class MeanReversionV1(IStrategy):
             
             # Fetch recent trades for loss counting
             recent_trades = [
-                {'profit_ratio': t.profit_ratio} 
+                {'profit_ratio': t.profit_ratio, 'close_date': t.close_date} 
                 for t in Trade.get_trades_proxy(is_open=False)
             ][:10]
             
