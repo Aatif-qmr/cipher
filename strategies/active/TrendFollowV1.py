@@ -85,6 +85,7 @@ class TrendFollowV1(IStrategy):
             dataframe['macd_hist'] = macd['MACDh_12_26_9']
             dataframe['rsi'] = ta.rsi(dataframe['close'], length=14)
             dataframe = detect_regime(dataframe)
+        dataframe = merge_macro_data(dataframe)
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:

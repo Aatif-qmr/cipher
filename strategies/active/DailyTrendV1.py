@@ -44,6 +44,7 @@ class DailyTrendV1(IStrategy):
         dataframe['ema_50'] = ta.ema(dataframe['close'], length=50)
         dataframe['rsi'] = ta.rsi(dataframe['close'], length=14)
         dataframe['volume_avg'] = ta.sma(dataframe['volume'], length=10)
+        dataframe = merge_macro_data(dataframe)
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:

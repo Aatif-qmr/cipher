@@ -57,6 +57,7 @@ class SwingV1(IStrategy):
             inf_df['ema_50'] = ta.ema(inf_df['close'], length=50)
             dataframe = merge_informative_pair(dataframe, inf_df, self.timeframe, '1h', ffill=True)
 
+        dataframe = merge_macro_data(dataframe)
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:

@@ -113,6 +113,32 @@ def send_telegram_alert(message: str, level: str = 'WARNING') -> bool:
     except:
         return False
 
+def check_macro_headwinds() -> bool:
+    """Blocks new long entries if DXY is pumping aggressively."""
+    try:
+        macro_file = BASE_DIR / 'risk/macro_state.json'
+        if not macro_file.exists():
+            return True
+            
+        with open(macro_file, 'r') as f:
+            state = json.load(f)
+            
+        dxy_change = state.get('dxy_24h_change', 0.0)
+        threshold = float(os.getenv('DXY_THRESHOLD_PCT', '1.0'))
+        
+        if dxy_change >= threshold:
+            msg = (f"MACRO HEADWINDS DETECTED\n"
+                   f"DXY 24h Change: {dxy_change:+.2f}%\n"
+                   f"Threshold: {threshold:.2f}%\n"
+                   f"ACTION: New entries blocked (US Dollar strength).")
+            logging.warning(msg.replace('\n', ' | '))
+            send_telegram_alert(msg, 'WARNING')
+            return False
+        return True
+    except Exception as e:
+        logging.error(f"Error in macro check: {e}")
+        return True
+
 def check_daily_drawdown(current_balance: float, start_of_day_balance: float, limit_pct: float = 3.0) -> bool:
     if start_of_day_balance == 0: return True
     
@@ -238,6 +264,7 @@ def run_all_checks(current_balance, start_of_day_balance, start_of_week_balance,
          current_balance = get_aggregated_balance()
 
     checks = {
+        "macro_headwinds": check_macro_headwinds(),
         "daily_drawdown": check_daily_drawdown(current_balance, start_of_day_balance),
         "weekly_drawdown": check_weekly_drawdown(current_balance, start_of_week_balance),
         "position_size": check_position_size(trade_amount_usdt, current_balance),

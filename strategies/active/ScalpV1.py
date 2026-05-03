@@ -9,7 +9,47 @@ from pandas import DataFrame
 import pandas_ta as ta
 import numpy as np
 
-from freqtrade.strategy import IStrategy, IntParameter, DecimalParameter, merge_informative_pair
+from freqtrade.strategy import IStrategy, IntParameter, DecimalParameter
+from freqtrade.persistence import Trade
+import pandas as pd
+
+def merge_macro_data(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """
+    Injects macro covariates (DXY, Funding, OI) into the dataframe.
+    Uses timestamp-based merging to prevent look-ahead bias.
+    """
+    try:
+        history_file = Path('/Users/aatifquamre/masterbot/risk/macro_history.json')
+        if not history_file.exists():
+            dataframe['dxy_24h_change'] = 0.0
+            dataframe['btc_funding_rate'] = 0.0
+            dataframe['btc_open_interest'] = 0.0
+            return dataframe
+
+        import json
+        with open(history_file, 'r') as f:
+            history = json.load(f)
+
+        macro_df = pd.DataFrame(history)
+        macro_df['date'] = pd.to_datetime(macro_df['timestamp'])
+        macro_df = macro_df.sort_values('date')
+
+        dataframe = dataframe.sort_values('date')
+        dataframe = pd.merge_asof(
+            dataframe,
+            macro_df[['date', 'dxy_24h_change', 'btc_funding_rate', 'btc_open_interest']],
+            on='date',
+            direction='backward'
+        )
+
+        dataframe[['dxy_24h_change', 'btc_funding_rate', 'btc_open_interest']] = \
+            dataframe[['dxy_24h_change', 'btc_funding_rate', 'btc_open_interest']].fillna(0.0)
+
+        return dataframe
+    except Exception as e:
+        return dataframe
+
+, merge_informative_pair
 from freqtrade.persistence import Trade
 
 # Add base directory to path for custom imports
@@ -69,6 +109,7 @@ class ScalpV1(IStrategy):
                 
                 dataframe = merge_informative_pair(dataframe, inf_df, self.timeframe, tf, ffill=True)
 
+        dataframe = merge_macro_data(dataframe)
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:

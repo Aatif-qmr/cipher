@@ -330,6 +330,21 @@ def risk_check(silent=False):
         else:
             results.append(f"✅ Calendar Adjusted: {'YES' if is_adjusted else 'N/A'} (risk: {risk['level']})")
 
+        # Macro Context
+        try:
+            with open(os.path.join(BASE_DIR, 'risk/macro_state.json'), 'r') as f:
+                ms = json.load(f)
+            dxy = ms.get('dxy_24h_change', 0.0)
+            thresh = float(os.getenv('DXY_THRESHOLD_PCT', '1.0'))
+            if dxy >= thresh:
+                results.append(f"❌ Macro Headwinds:  DXY +{dxy:.2f}% (thresh: {thresh}%)")
+                fails += 1
+            else:
+                results.append(f"✅ Macro Headwinds:  DXY {dxy:+.2f}%")
+        except:
+            results.append(f"⚠️ Macro Context:    STALE/MISSING")
+            warnings += 1
+
         overall = "🟢 ALL CLEAR"
         if fails > 0: overall = "🔴 FAILURES"
         elif warnings > 0: overall = "🟡 WARNINGS"
