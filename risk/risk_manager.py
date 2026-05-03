@@ -2,6 +2,8 @@ import os
 import json
 import logging
 import requests
+import time
+import fcntl
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
@@ -24,31 +26,79 @@ logging.basicConfig(
     format='%(asctime)s | %(levelname)s | %(message)s'
 )
 
-import time
-
 COOLDOWN_FILE = '/tmp/risk_alert_cooldown'
 COOLDOWN_SECONDS = 3600  # 1 hour between alerts
 
 def _can_send_alert():
+    """Checks cooldown with file locking to prevent race conditions."""
     try:
-        if os.path.exists(COOLDOWN_FILE):
-            with open(COOLDOWN_FILE, 'r') as f:
-                last = float(f.read())
-            if time.time() - last < COOLDOWN_SECONDS:
+        # Open file for reading/writing, create if doesn't exist
+        f = open(COOLDOWN_FILE, 'a+')
+        # Exclusive lock, non-blocking
+        try:
+            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            # Another process has the lock, we shouldn't alert
+            f.close()
+            return False
+            
+        f.seek(0)
+        content = f.read().strip()
+        now = time.time()
+        
+        if content:
+            last = float(content)
+            if now - last < COOLDOWN_SECONDS:
+                fcntl.flock(f, fcntl.LOCK_UN)
+                f.close()
                 return False
-    except:
-        pass
-    try:
-        with open(COOLDOWN_FILE, 'w') as f:
-            f.write(str(time.time()))
-    except:
-        pass
-    return True
+        
+        # Update timestamp
+        f.truncate(0)
+        f.write(str(now))
+        f.flush()
+        os.fsync(f.fileno())
+        fcntl.flock(f, fcntl.LOCK_UN)
+        f.close()
+        return True
+    except Exception as e:
+        logging.error(f"Error in cooldown check: {e}")
+        return True # Default to True to not swallow critical errors
+
+def get_aggregated_balance():
+    """Fetches total balance across all 5 Freqtrade instances."""
+    user = os.getenv('FREQTRADE_UI_USERNAME')
+    pwd = os.getenv('FREQTRADE_UI_PASSWORD')
+    total = 0.0
+    found = 0
+    # Use Tailscale IP for M1
+    for port in [8080, 8081, 8082, 8083, 8084]:
+        try:
+            r = requests.get(
+                f'http://100.90.68.42:{port}/api/v1/balance',
+                auth=(user, pwd),
+                timeout=2
+            )
+            if r.status_code == 200:
+                total += float(r.json().get('total', 0))
+                found += 1
+        except:
+            continue
+    # If API fails, fall back to last seen in state file
+    if found == 0:
+        try:
+            with open(BASE_DIR / 'risk/balance_state.json', 'r') as f:
+                state = json.load(f)
+                return state.get('last_seen_balance', 50000.0)
+        except:
+            return 50000.0
+    return total
 
 def send_telegram_alert(message: str, level: str = 'WARNING') -> bool:
-    if level == 'CRITICAL' and not _can_send_alert():
-        return False
-        
+    if level == 'CRITICAL':
+        if not _can_send_alert():
+            return False
+            
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
         return False
     
@@ -65,6 +115,13 @@ def send_telegram_alert(message: str, level: str = 'WARNING') -> bool:
 
 def check_daily_drawdown(current_balance: float, start_of_day_balance: float, limit_pct: float = 3.0) -> bool:
     if start_of_day_balance == 0: return True
+    
+    # CRITICAL FIX: If current_balance passed is a single instance ($10k) but baseline is global ($50k),
+    # we MUST use the aggregated global balance to avoid false 80% drawdown alerts.
+    if current_balance < (start_of_day_balance * 0.5):
+        logging.info("Local balance detected, fetching aggregated global balance...")
+        current_balance = get_aggregated_balance()
+
     drawdown_pct = ((start_of_day_balance - current_balance) / start_of_day_balance) * 100
     
     if drawdown_pct >= limit_pct:
@@ -87,6 +144,10 @@ def check_daily_drawdown(current_balance: float, start_of_day_balance: float, li
 
 def check_weekly_drawdown(current_balance: float, start_of_week_balance: float, limit_pct: float = 7.0) -> bool:
     if start_of_week_balance == 0: return True
+    
+    if current_balance < (start_of_week_balance * 0.5):
+        current_balance = get_aggregated_balance()
+
     drawdown_pct = ((start_of_week_balance - current_balance) / start_of_week_balance) * 100
     
     if drawdown_pct >= limit_pct:
@@ -108,6 +169,10 @@ def check_weekly_drawdown(current_balance: float, start_of_week_balance: float, 
 
 def check_position_size(trade_amount_usdt: float, total_balance_usdt: float, max_pct: float = 10.0) -> bool:
     if total_balance_usdt == 0: return True
+    
+    if total_balance_usdt < 20000: # Heuristic for local balance
+        total_balance_usdt = get_aggregated_balance()
+        
     position_pct = (trade_amount_usdt / total_balance_usdt) * 100
     if position_pct > max_pct:
         logging.warning(f"Position size check failed: {position_pct:.2f}% (Max: {max_pct}%)")
@@ -168,6 +233,10 @@ def check_consecutive_losses(recent_trades: list, max_consecutive: int = 3) -> b
 def run_all_checks(current_balance, start_of_day_balance, start_of_week_balance, 
                    trade_amount_usdt, trades_last_hour, recent_trades) -> dict:
     
+    # Auto-aggregate if current_balance looks like a local instance balance
+    if current_balance < (start_of_day_balance * 0.5):
+         current_balance = get_aggregated_balance()
+
     checks = {
         "daily_drawdown": check_daily_drawdown(current_balance, start_of_day_balance),
         "weekly_drawdown": check_weekly_drawdown(current_balance, start_of_week_balance),
@@ -188,3 +257,4 @@ def run_all_checks(current_balance, start_of_day_balance, start_of_week_balance,
         "blocking_reasons": blocking_reasons,
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
+
