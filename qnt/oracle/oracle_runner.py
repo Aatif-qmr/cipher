@@ -5,16 +5,37 @@ import os
 BASE_DIR = '/Users/aatifquamre/masterbot'
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/oracle'))
-
 from oracle_calendar import check_and_act as calendar_check
 from oracle_sentiment import check_and_act as sentiment_check
 from oracle_anomaly import run_all_anomaly_checks
+from hmm_regime import detect_regime
 from memory_manager import log_action, get_device_identity
+import pandas as pd
+import freqtrade.data.history as history
+from pathlib import Path
 
 def run(mode='all'):
     device = get_device_identity()
-    
+
+    if mode == 'hmm' or mode == 'all':
+        try:
+            # HMM requires some data context
+            data_dir = Path(BASE_DIR) / 'data'
+            # If on M2, data is in data/
+            # If on M1, data is in user_data/data/binance or synced
+            # For the runner, we'll try to load recent BTC history
+            data = history.load_pair_history(
+                pair='BTC/USDT',
+                timeframe='1h',
+                datadir=data_dir
+            )
+            regime = detect_regime(data.tail(200))
+            log_action('oracle_hmm_regime', f"Current: {regime['regime']} (Conf: {regime['confidence']:.2f})", device['device'])
+        except Exception as e:
+            print(f"Error in HMM regime check: {e}")
+
     if mode == 'calendar' or mode == 'all':
+...
         try:
             calendar_check()
             log_action('oracle_calendar_check', 'completed', device['device'])

@@ -17,7 +17,7 @@ from freqtrade.persistence import Trade
 sys.path.insert(0, '/Users/aatifquamre/masterbot')
 from risk.risk_manager import run_all_checks
 from sentiment.reader import get_current_sentiment, get_sentiment_signal
-from strategies.regime_detector import detect_regime
+from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +84,6 @@ class TrendFollowV1(IStrategy):
             macd = ta.macd(dataframe['close'], fast=12, slow=26, signal=9)
             dataframe['macd_hist'] = macd['MACDh_12_26_9']
             dataframe['rsi'] = ta.rsi(dataframe['close'], length=14)
-            dataframe = detect_regime(dataframe)
         dataframe = merge_macro_data(dataframe)
         return dataframe
 
@@ -93,11 +92,17 @@ class TrendFollowV1(IStrategy):
         rsi_min = self.buy_rsi_min.value if hasattr(self.buy_rsi_min, 'value') else self.buy_rsi_min
         rsi_max = self.buy_rsi_max.value if hasattr(self.buy_rsi_max, 'value') else self.buy_rsi_max
         
+        # HMM Regime Check
+        regime_data = detect_regime(dataframe)
+        regime_ok = get_regime_for_strategy(dataframe, 'trend_follow')
+        confidence_ok = regime_data['confidence'] >= 0.6
+
         dataframe.loc[
             (
                 (qtpylib.crossed_above(dataframe['ema_fast'], dataframe['ema_slow'])) &
                 (dataframe['macd_hist'] > 0) &
-                (dataframe['regime'] == 'TRENDING_UP') &
+                (regime_ok) &
+                (confidence_ok) &
                 (dataframe['rsi'] > rsi_min) & 
                 (dataframe['rsi'] < rsi_max)
             ),
@@ -119,7 +124,7 @@ class TrendFollowV1(IStrategy):
                             time_in_force: str, current_time: datetime, entry_tag: str,
                             side: str, **kwargs) -> bool:
         
-        # --- LAYER 1: RISK CHECKS ---
+        # --- LAYER 1: RISK & SENTIMENT CHECKS ---
         try:
             total_balance = self.wallets.get_total('USDT')
             
@@ -147,30 +152,27 @@ class TrendFollowV1(IStrategy):
                 start_of_day = total_balance
                 start_of_week = total_balance
             
+            # TrendFollowV1 requires BULLISH sentiment
             risk_result = run_all_checks(
                 current_balance=total_balance,
                 start_of_day_balance=start_of_day,
                 start_of_week_balance=start_of_week,
                 trade_amount_usdt=amount * rate,
                 trades_last_hour=trades_last_hour,
-                recent_trades=recent_trades
+                recent_trades=recent_trades,
+                min_sentiment='BULLISH'
             )
             
             if not risk_result['safe_to_trade']:
-                logger.info(f"[RISK BLOCK] TrendFollow blocked for {pair}. Reasons: {risk_result['blocking_reasons']}")
+                logger.info(f"[RISK/SENTIMENT BLOCK] TrendFollow blocked for {pair}. Reasons: {risk_result['blocking_reasons']}")
                 return False
+
+            # Log sentiment for visibility
+            sentiment = get_current_sentiment()
+            signal = get_sentiment_signal()
+            logger.info(f"[Sentiment Check] {pair} | Score: {sentiment['score']:.3f} | Signal: {signal}")
+
         except Exception as e:
             logger.error(f"[RISK WARNING] Risk check error: {e}")
 
-        # --- LAYER 2: SENTIMENT CHECK ---
-        sentiment = get_current_sentiment()
-        signal = get_sentiment_signal()
-        
-        logger.info(f"[Sentiment] {pair} | Score: {sentiment['score']:.3f} | Signal: {signal}")
-        
-        # TrendFollow requires strictly BULLISH
-        if signal != 'BULLISH':
-            logger.info(f"[Sentiment BLOCK] TrendFollow requires BULLISH. Current: {signal} ({sentiment['score']:.3f}). Blocking entry for {pair}.")
-            return False
-            
         return True

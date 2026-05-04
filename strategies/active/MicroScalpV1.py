@@ -16,6 +16,7 @@ home = os.path.expanduser("~")
 sys.path.append(os.path.join(home, 'masterbot'))
 from risk.risk_manager import run_all_checks
 from sentiment.reader import get_current_sentiment, get_sentiment_signal
+from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
 
 logger = logging.getLogger(__name__)
 
@@ -125,6 +126,11 @@ class MicroScalpV1(IStrategy):
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         sentiment = get_current_sentiment()
         
+        # HMM Regime Check
+        regime_data = detect_regime(dataframe)
+        regime_ok = get_regime_for_strategy(dataframe, 'micro_scalp')
+        confidence_ok = regime_data['confidence'] >= 0.6
+
         dataframe.loc[
             (
                 # Rule 1: Fast RSI Oversold
@@ -136,7 +142,9 @@ class MicroScalpV1(IStrategy):
                 # Rule 4: 5m Trend Filter (Not strongly bearish)
                 (dataframe['close'] >= dataframe['ema_20_5m'] * 0.995) &
                 # Rule 5: Sentiment Gate
-                (sentiment['score'] >= -0.3)
+                (sentiment['score'] >= -0.3) &
+                (regime_ok) &
+                (confidence_ok)
             ),
             'enter_long'] = 1
 

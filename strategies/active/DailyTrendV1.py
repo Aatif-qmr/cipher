@@ -11,6 +11,7 @@ import numpy as np
 
 from freqtrade.strategy import IStrategy
 from freqtrade.persistence import Trade
+import pandas as pd
 
 # Add base directory to path for custom imports
 home = os.path.expanduser("~")
@@ -19,8 +20,46 @@ sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'memory'))
 from risk.risk_manager import run_all_checks
 from sentiment.reader import get_current_sentiment
 from qnt.oracle.oracle_calendar import is_safe_to_trade_today
+from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
 
 logger = logging.getLogger(__name__)
+
+def merge_macro_data(dataframe: DataFrame) -> DataFrame:
+    """
+    Injects macro covariates (DXY, Funding, OI) into the dataframe.
+    Uses timestamp-based merging to prevent look-ahead bias.
+    """
+    try:
+        history_file = Path('/Users/aatifquamre/masterbot/risk/macro_history.json')
+        if not history_file.exists():
+            dataframe['dxy_24h_change'] = 0.0
+            dataframe['btc_funding_rate'] = 0.0
+            dataframe['btc_open_interest'] = 0.0
+            return dataframe
+
+        with open(history_file, 'r') as f:
+            history = json.load(f)
+
+        macro_df = pd.DataFrame(history)
+        macro_df['date'] = pd.to_datetime(macro_df['timestamp'])
+        macro_df = macro_df.sort_values('date')
+
+        # Ensure main dataframe is sorted by date for asof merge
+        dataframe = dataframe.sort_values('date')
+
+        dataframe = pd.merge_asof(
+            dataframe,
+            macro_df[['date', 'dxy_24h_change', 'btc_funding_rate', 'btc_open_interest']],
+            on='date',
+            direction='backward'
+        )
+
+        dataframe[['dxy_24h_change', 'btc_funding_rate', 'btc_open_interest']] = \
+            dataframe[['dxy_24h_change', 'btc_funding_rate', 'btc_open_interest']].fillna(0.0)
+
+        return dataframe
+    except Exception as e:
+        return dataframe
 
 class DailyTrendV1(IStrategy):
     """
@@ -50,13 +89,20 @@ class DailyTrendV1(IStrategy):
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         sentiment = get_current_sentiment()
         
+        # HMM Regime Check
+        regime_data = detect_regime(dataframe)
+        regime_ok = get_regime_for_strategy(dataframe, 'daily_trend')
+        confidence_ok = regime_data['confidence'] >= 0.6
+
         dataframe.loc[
             (
                 (dataframe['close'] > dataframe['ema_50']) &
                 (dataframe['rsi'] > 45) & (dataframe['rsi'].shift(1) <= 45) &
                 (dataframe['volume'] > dataframe['volume_avg']) &
                 (sentiment['score'] >= -0.3) & # Not BEARISH
-                (is_safe_to_trade_today())    # Calendar Gate
+                (is_safe_to_trade_today()) &   # Calendar Gate
+                (regime_ok) &
+                (confidence_ok)
             ),
             'enter_long'] = 1
 
@@ -74,7 +120,7 @@ class DailyTrendV1(IStrategy):
     def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
                            time_in_force: str, current_time: datetime, entry_tag: str,
                            side: str, **kwargs) -> bool:
-        # --- LAYER 1: RISK CHECKS ---
+        # --- LAYER 1: RISK & SENTIMENT CHECKS ---
         try:
             total_balance = self.wallets.get_total('USDT')
             
@@ -102,18 +148,25 @@ class DailyTrendV1(IStrategy):
                 start_of_day = total_balance
                 start_of_week = total_balance
             
+            # DailyTrendV1 requires at least NEUTRAL sentiment
             risk_result = run_all_checks(
                 current_balance=total_balance,
                 start_of_day_balance=start_of_day,
                 start_of_week_balance=start_of_week,
                 trade_amount_usdt=amount * rate,
                 trades_last_hour=trades_last_hour,
-                recent_trades=recent_trades
+                recent_trades=recent_trades,
+                min_sentiment='NEUTRAL'
             )
             
             if not risk_result['safe_to_trade']:
-                logger.info(f"[RISK BLOCK] DailyTrend blocked for {pair}. Reasons: {risk_result['blocking_reasons']}")
+                logger.info(f"[RISK/SENTIMENT BLOCK] DailyTrend blocked for {pair}. Reasons: {risk_result['blocking_reasons']}")
                 return False
+
+            # Log sentiment for visibility
+            sentiment = get_current_sentiment()
+            logger.info(f"[Sentiment Check] {pair} | Score: {sentiment['score']:.3f}")
+
         except Exception as e:
             logger.error(f"[RISK WARNING] Risk check error: {e}")
             

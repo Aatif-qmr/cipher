@@ -13,6 +13,14 @@ from freqtrade.strategy import IStrategy, IntParameter, DecimalParameter
 from freqtrade.persistence import Trade
 import pandas as pd
 
+# Add base directory to path for custom imports
+sys.path.insert(0, '/Users/aatifquamre/masterbot')
+from risk.risk_manager import run_all_checks
+from sentiment.reader import get_current_sentiment, get_sentiment_signal
+from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
+
+logger = logging.getLogger(__name__)
+
 def merge_macro_data(dataframe: DataFrame) -> DataFrame:
     """
     Injects macro covariates (DXY, Funding, OI) into the dataframe.
@@ -56,12 +64,16 @@ class MeanReversionV1(IStrategy):
     
     # Optimized Parameters
     buy_params = {
-        "bb_period": 30,
-        "bb_std": 1.7,
-        "buy_rsi": 30,
+
+        "bb_period": 31,
+        "bb_std": 1.8,
+        "buy_rsi": 32
+
     }
     sell_params = {
-        "sell_rsi": 67,
+
+        "sell_rsi": 68
+
     }
     minimal_roi = {
         "0": 0.426,
@@ -123,16 +135,21 @@ class MeanReversionV1(IStrategy):
         dataframe['bb_lower'] = bb[f'BBL_{self.buy_params["bb_period"]}_{self.buy_params["bb_std"]}']
         dataframe['bb_middle'] = bb[f'BBM_{self.buy_params["bb_period"]}_{self.buy_params["bb_std"]}']
             
-        dataframe = detect_regime(dataframe)
         dataframe = merge_macro_data(dataframe)
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        # HMM Regime Check
+        regime_data = detect_regime(dataframe)
+        regime_ok = get_regime_for_strategy(dataframe, 'mean_reversion')
+        confidence_ok = regime_data['confidence'] >= 0.6
+
         dataframe.loc[
             (
                 (dataframe['rsi'] < self.buy_params['buy_rsi']) &
                 (dataframe['close'] < dataframe['bb_lower']) &
-                (dataframe['regime'] == 'RANGING')
+                (regime_ok) &
+                (confidence_ok)
             ),
             'enter_long'] = 1
         return dataframe
@@ -150,10 +167,9 @@ class MeanReversionV1(IStrategy):
                             time_in_force: str, current_time: datetime, entry_tag: str,
                             side: str, **kwargs) -> bool:
         
-        # --- LAYER 1: RISK CHECKS ---
+        # --- LAYER 1: RISK & SENTIMENT CHECKS ---
         try:
             total_balance = self.wallets.get_total('USDT')
-            current_balance = self.wallets.get_free('USDT')
             
             # Fetch recent trades for loss counting
             recent_trades = [
@@ -179,29 +195,27 @@ class MeanReversionV1(IStrategy):
                 start_of_day = total_balance
                 start_of_week = total_balance
             
+            # MeanReversionV1 requires at least NEUTRAL sentiment
             risk_result = run_all_checks(
                 current_balance=total_balance,
                 start_of_day_balance=start_of_day,
                 start_of_week_balance=start_of_week,
                 trade_amount_usdt=amount * rate,
                 trades_last_hour=trades_last_hour,
-                recent_trades=recent_trades
+                recent_trades=recent_trades,
+                min_sentiment='NEUTRAL'
             )
             
             if not risk_result['safe_to_trade']:
-                logger.info(f"[RISK BLOCK] Trade blocked for {pair}. Reasons: {risk_result['blocking_reasons']}")
+                logger.info(f"[RISK/SENTIMENT BLOCK] MeanReversion blocked for {pair}. Reasons: {risk_result['blocking_reasons']}")
                 return False
+
+            # Log sentiment for visibility
+            sentiment = get_current_sentiment()
+            signal = get_sentiment_signal()
+            logger.info(f"[Sentiment Check] {pair} | Score: {sentiment['score']:.3f} | Signal: {signal}")
+
         except Exception as e:
             logger.error(f"[RISK WARNING] Risk check error: {e}")
 
-        # --- LAYER 2: SENTIMENT CHECK ---
-        sentiment = get_current_sentiment()
-        signal = get_sentiment_signal()
-        
-        logger.info(f"[Sentiment] {pair} | Score: {sentiment['score']:.3f} | Signal: {signal}")
-        
-        if signal == 'BEARISH':
-            logger.info(f"[Sentiment BLOCK] Score {sentiment['score']:.3f} is BEARISH. Blocking entry for {pair}.")
-            return False
-            
         return True

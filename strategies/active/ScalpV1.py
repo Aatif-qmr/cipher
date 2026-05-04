@@ -9,9 +9,18 @@ from pandas import DataFrame
 import pandas_ta as ta
 import numpy as np
 
-from freqtrade.strategy import IStrategy, IntParameter, DecimalParameter
+from freqtrade.strategy import IStrategy, IntParameter, DecimalParameter, merge_informative_pair
 from freqtrade.persistence import Trade
 import pandas as pd
+
+# Add base directory to path for custom imports
+home = os.path.expanduser("~")
+sys.path.append(os.path.join(home, 'masterbot'))
+from risk.risk_manager import run_all_checks
+from sentiment.reader import get_current_sentiment, get_sentiment_signal
+from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
+
+logger = logging.getLogger(__name__)
 
 def merge_macro_data(dataframe: pd.DataFrame) -> pd.DataFrame:
     """
@@ -48,17 +57,6 @@ def merge_macro_data(dataframe: pd.DataFrame) -> pd.DataFrame:
         return dataframe
     except Exception as e:
         return dataframe
-
-, merge_informative_pair
-from freqtrade.persistence import Trade
-
-# Add base directory to path for custom imports
-home = os.path.expanduser("~")
-sys.path.append(os.path.join(home, 'masterbot'))
-from risk.risk_manager import run_all_checks
-from sentiment.reader import get_current_sentiment, get_sentiment_signal
-
-logger = logging.getLogger(__name__)
 
 class ScalpV1(IStrategy):
     """
@@ -113,9 +111,14 @@ class ScalpV1(IStrategy):
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # Sentiment Gate
+        # Sentiment Gate (Current)
         sentiment = get_current_sentiment()
         
+        # HMM Regime Check
+        regime_data = detect_regime(dataframe)
+        regime_ok = get_regime_for_strategy(dataframe, 'scalp')
+        confidence_ok = regime_data['confidence'] >= 0.6
+
         dataframe.loc[
             (
                 (dataframe['rsi'] < 30) &
@@ -124,7 +127,9 @@ class ScalpV1(IStrategy):
                 # HTF Context (if available)
                 (dataframe.get('rsi_15m', 50) < 60) & # Not overbought on 15m
                 (dataframe.get('close', 0) > dataframe.get('ema_200_1h', 0)) & # Above 200 EMA on 1h
-                (sentiment['score'] >= -0.3) # Not BEARISH
+                (sentiment['score'] >= -0.3) & # Global Gate
+                (regime_ok) &
+                (confidence_ok)
             ),
             'enter_long'] = 1
 
@@ -142,7 +147,7 @@ class ScalpV1(IStrategy):
     def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
                            time_in_force: str, current_time: datetime, entry_tag: str,
                            side: str, **kwargs) -> bool:
-        # --- LAYER 1: RISK CHECKS ---
+        # --- LAYER 1: RISK & SENTIMENT CHECKS ---
         try:
             total_balance = self.wallets.get_total('USDT')
             
@@ -170,18 +175,26 @@ class ScalpV1(IStrategy):
                 start_of_day = total_balance
                 start_of_week = total_balance
             
+            # ScalpV1 requires at least NEUTRAL sentiment
             risk_result = run_all_checks(
                 current_balance=total_balance,
                 start_of_day_balance=start_of_day,
                 start_of_week_balance=start_of_week,
                 trade_amount_usdt=amount * rate,
                 trades_last_hour=trades_last_hour,
-                recent_trades=recent_trades
+                recent_trades=recent_trades,
+                min_sentiment='NEUTRAL'
             )
             
             if not risk_result['safe_to_trade']:
-                logger.info(f"[RISK BLOCK] Scalp blocked for {pair}. Reasons: {risk_result['blocking_reasons']}")
+                logger.info(f"[RISK/SENTIMENT BLOCK] Scalp blocked for {pair}. Reasons: {risk_result['blocking_reasons']}")
                 return False
+
+            # Log sentiment for visibility
+            sentiment = get_current_sentiment()
+            signal = get_sentiment_signal()
+            logger.info(f"[Sentiment Check] {pair} | Score: {sentiment['score']:.3f} | Signal: {signal}")
+
         except Exception as e:
             logger.error(f"[RISK WARNING] Risk check error: {e}")
             
