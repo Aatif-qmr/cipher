@@ -4,8 +4,8 @@
 BASE_DIR="/Users/aatifquamre/masterbot"
 DATE=$(date +%Y%m%d)
 
-# 1. Cloudflare R2 Backup (SQLite, ChromaDB, Models)
-echo "Backing up to Cloudflare R2..."
+# 1. Cloud Backup (R2 + Google Drive via rclone)
+echo "Backing up to Cloudflare R2 and Google Drive..."
 $BASE_DIR/qnt/bin/qnt-backup run
 
 # 2. GitHub Backup (Strategies, Configs)
@@ -24,11 +24,11 @@ if [ -f "$BASE_DIR/.env" ]; then
       -d chat_id="${TELEGRAM_CHAT_ID}" \
       -d text="✅ Weekly backup complete.
 Date: $(date)
-R2: SQLite + ChromaDB + Models uploaded
+Cloud: SQLite + ChromaDB + Models (R2 + GDrive)
 GitHub: Strategies and configs pushed
-Storage: Cloudflare R2 (free tier)" > /dev/null
+Storage: R2 (Free) + GDrive (rclone)" > /dev/null
   fi
 fi
 
 # Log to QNT operational history
-echo "[$(date +%Y-%m-%d)] NOTED: Full system backup completed (R2 + GitHub)." >> "$BASE_DIR/qnt/.issues_log"
+echo "[$(date +%Y-%m-%d)] NOTED: Full system backup completed (Cloud + GitHub)." >> "$BASE_DIR/qnt/.issues_log"

@@ -7,7 +7,7 @@ SUBCMD=${1:-run}
 
 case $SUBCMD in
   run)
-    echo "Running full R2 backup..."
+    echo "Running full Cloud (R2 + Google Drive) backup..."
     /Users/aatifquamre/masterbot/venv/bin/python -c "
 import sys
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/backup')

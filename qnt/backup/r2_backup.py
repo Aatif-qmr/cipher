@@ -14,15 +14,30 @@ def get_r2_client():
         region_name='auto'
     )
 
-def upload_to_r2(filepath, key_prefix=''):
+def upload_to_clouds(filepath, key_prefix=''):
     client = get_r2_client()
     bucket = os.getenv('R2_BUCKET')
     filename = Path(filepath).name
     timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M')
     key = f"{key_prefix}/{timestamp}_{filename}"
     
-    client.upload_file(str(filepath), bucket, key)
-    print(f"Uploaded: {key}")
+    # 1. R2 Upload
+    try:
+        client.upload_file(str(filepath), bucket, key)
+        print(f"Uploaded to R2: {key}")
+    except Exception as e:
+        print(f"R2 Upload Error: {e}")
+        
+    # 2. rclone GDrive Upload
+    import subprocess
+    rclone_dest = f"MasterBot:masterbot-backups/{key}"
+    try:
+        subprocess.run(['rclone', 'copyto', str(filepath), rclone_dest], 
+                       check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print(f"Uploaded to GDrive: {rclone_dest}")
+    except Exception as e:
+        print(f"GDrive Upload Error: {e}")
+
     return key
 
 def backup_sqlite_databases():
@@ -37,7 +52,7 @@ def backup_sqlite_databases():
 
     for path in paths:
         if path.exists():
-            upload_to_r2(path, 'databases')
+            upload_to_clouds(path, 'databases')
 
 def backup_chromadb():
     vault_dir = Path('/Users/aatifquamre/masterbot/qnt/vault/chroma_db')
@@ -49,7 +64,7 @@ def backup_chromadb():
     with tarfile.open(archive, 'w:gz') as tar:
         tar.add(vault_dir, arcname='chroma_db')
     
-    upload_to_r2(archive, 'vault')
+    upload_to_clouds(archive, 'vault')
     os.remove(archive)
 
 def backup_models():
@@ -59,7 +74,7 @@ def backup_models():
     ]
     for path in model_files:
         if path.exists():
-            upload_to_r2(path, 'models')
+            upload_to_clouds(path, 'models')
     
     # FreqAI models directory
     freqai_dir = Path('/Users/aatifquamre/masterbot/user_data/models')
@@ -67,7 +82,7 @@ def backup_models():
         archive = '/tmp/freqai_models.tar.gz'
         with tarfile.open(archive, 'w:gz') as tar:
             tar.add(freqai_dir, arcname='freqai_models')
-        upload_to_r2(archive, 'models')
+        upload_to_clouds(archive, 'models')
         os.remove(archive)
 
 def backup_constraints():
@@ -76,7 +91,7 @@ def backup_constraints():
         archive = '/tmp/constraints.tar.gz'
         with tarfile.open(archive, 'w:gz') as tar:
             tar.add(constraints_dir, arcname='constraints')
-        upload_to_r2(archive, 'vault')
+        upload_to_clouds(archive, 'vault')
         os.remove(archive)
 
 def list_backups():
