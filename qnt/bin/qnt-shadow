@@ -1,45 +1,95 @@
 #!/bin/bash
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# qnt-shadow — Control and monitor Shadow Hyperopt on M2
 set -a
-source $BASE_DIR/.env
+source /Users/aatifquamre/masterbot/.env
 set +a
 
-SUBCMD=${1:-status}
+M2_USER="azmatsaif"
+M2_PATH="/Users/azmatsaif/masterbot"
+M2_IP=$(tailscale ip azmatsaif-m2 2>/dev/null || grep M2_TAILSCALE_IP /Users/aatifquamre/masterbot/.env | cut -d= -f2)
 
-case $SUBCMD in
+case "$1" in
   status)
-    echo "=== Shadow Hyperopt Status ==="
-    ssh azmatsaif@$M2_TAILSCALE_IP \
-      "source $BASE_DIR/venv/bin/activate && \
-       supervisorctl -c $BASE_DIR/config/supervisord_shadow.conf status"
+    echo "🌑 Shadow Hyperopt Status"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━"
+    ssh $M2_USER@$M2_IP "$M2_PATH/venv/bin/python $M2_PATH/qnt/shadow/resource_monitor.py" 2>/dev/null | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+    print(f\"RAM: {d['ram_percent']:.1f}% ({d['ram_available_gb']:.1f}GB free)\")
+    print(f\"CPU: {d['cpu_percent']:.1f}%\")
+    print(f\"Swap: {d['swap_percent']:.1f}%\")
+    print(f\"Throttled: {'⚠️ YES' if d['throttled'] else '✅ No'}\")
+    print(f\"Pressure: {d['pressure'].upper()}\")
+except:
+    print('Error: Could not parse resource state from M2')
+"
     echo ""
-    echo "=== M2 Resource State ==="
-    ssh azmatsaif@$M2_TAILSCALE_IP \
-      "python3 -c \"import json, sys; d=json.load(open('$BASE_DIR/qnt/shadow/resource_state.json')); print(json.dumps(d[-1], indent=2))\" 2>/dev/null || echo 'Waiting for initial snapshot...'"
+    echo "Process status:"
+    ssh $M2_USER@$M2_IP "pgrep -f shadow_hyperopt.py && echo '✅ RUNNING' || echo '⏸️  STOPPED'"
     ;;
+    
   report)
-    echo "=== M2 Shadow Hyperopt Daily Report ==="
-    ssh azmatsaif@$M2_TAILSCALE_IP \
-      "$BASE_DIR/venv/bin/python -c \"
-import sys
-sys.path.insert(0, '$BASE_DIR/qnt/shadow')
-from resource_monitor import get_daily_report
-print(get_daily_report())
-\""
+    echo "📊 Shadow Hyperopt Report (last 24h)"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    ssh $M2_USER@$M2_IP "tail -100 $M2_PATH/logs/shadow_hyperopt_*.log 2>/dev/null | grep -E '(Sharpe|improvement|SKIPPED|ERROR)' | tail -20"
     ;;
-  pause)
-    ssh azmatsaif@$M2_TAILSCALE_IP \
-      "source $BASE_DIR/venv/bin/activate && \
-       supervisorctl -c $BASE_DIR/config/supervisord_shadow.conf stop shadow_hyperopt"
-    echo "Shadow Hyperopt paused on M2"
+    
+  start)
+    echo "🚀 Starting Shadow Hyperopt on M2..."
+    ssh $M2_USER@$M2_IP "
+      cd $M2_PATH &&
+      source venv/bin/activate &&
+      nohup python3 qnt/shadow/shadow_hyperopt.py >> logs/shadow_hyperopt_main.log 2>&1 &
+      echo \$! > logs/shadow_hyperopt.pid &&
+      echo \"Started with PID \$(cat logs/shadow_hyperopt.pid)\"
+    "
     ;;
-  resume)
-    ssh azmatsaif@$M2_TAILSCALE_IP \
-      "source $BASE_DIR/venv/bin/activate && \
-       supervisorctl -c $BASE_DIR/config/supervisord_shadow.conf start shadow_hyperopt"
-    echo "Shadow Hyperopt resumed on M2"
+    
+  stop)
+    echo "⏹️  Stopping Shadow Hyperopt on M2..."
+    ssh $M2_USER@$M2_IP "
+      if [ -f $M2_PATH/logs/shadow_hyperopt.pid ]; then
+        kill \$(cat $M2_PATH/logs/shadow_hyperopt.pid) 2>/dev/null &&
+        rm $M2_PATH/logs/shadow_hyperopt.pid &&
+        echo 'Stopped' || echo 'Already stopped'
+      else
+        pkill -f shadow_hyperopt.py && echo 'Stopped by name' || echo 'Not running'
+      fi
+    "
     ;;
+    
+  promote)
+    if [ -z "$2" ]; then
+      echo "Usage: qnt-shadow promote <strategy_name>"
+      exit 1
+    fi
+    echo "🔄 Promoting $2 parameters from Shadow to Active..."
+    # This would copy optimized params from shadow results to active strategy
+    # For now, log the request and notify for manual review
+    ssh $M2_USER@$M2_IP "
+      echo \"[$(date)] PROMOTE_REQUEST: $2\" >> $M2_PATH/logs/shadow_promotions.log
+    "
+    echo "✅ Promotion request logged. Review $M2_PATH/logs/shadow_promotions.log on M2."
+    echo "⚠️  Manual parameter merge required — auto-deploy disabled for safety."
+    ;;
+    
   *)
-    echo "Usage: qnt-shadow [status|report|pause|resume]"
+    echo "qnt-shadow — Shadow Hyperopt controller"
+    echo ""
+    echo "Usage: qnt-shadow <command> [args]"
+    echo ""
+    echo "Commands:"
+    echo "  status     — Show M2 resource usage and process state"
+    echo "  report     — Show recent optimization results"
+    echo "  start      — Launch continuous optimization loop"
+    echo "  stop       — Halt the shadow loop"
+    echo "  promote <strategy> — Flag improved params for review"
+    echo ""
+    echo "Examples:"
+    echo "  qnt-shadow status"
+    echo "  qnt-shadow report"
+    echo "  qnt-shadow start"
+    echo "  qnt-shadow promote MicroScalpV1"
     ;;
 esac
