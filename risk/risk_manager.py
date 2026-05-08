@@ -326,10 +326,27 @@ def check_consecutive_losses(recent_trades: list, max_consecutive: int = 3) -> b
             break
     return True
 
-def run_all_checks(current_balance, start_of_day_balance, start_of_week_balance, 
-                   trade_amount_usdt, trades_last_hour, recent_trades,
+def run_all_checks(current_balance=None, start_of_day_balance=None, start_of_week_balance=None, 
+                   trade_amount_usdt=None, trades_last_hour=None, recent_trades=None,
                    min_sentiment: str = 'NEUTRAL') -> dict:
     
+    # Fetch defaults if not provided
+    if current_balance is None:
+        current_balance = _get_cluster_balance()
+    if start_of_day_balance is None or start_of_week_balance is None:
+        try:
+            with open(BASE_DIR / 'risk/balance_state.json') as f:
+                state = json.load(f)
+            start_of_day_balance = start_of_day_balance or state.get('start_of_day', current_balance)
+            start_of_week_balance = start_of_week_balance or state.get('start_of_week', current_balance)
+        except:
+            start_of_day_balance = start_of_day_balance or current_balance
+            start_of_week_balance = start_of_week_balance or current_balance
+
+    if trade_amount_usdt is None: trade_amount_usdt = 0
+    if trades_last_hour is None: trades_last_hour = 0
+    if recent_trades is None: recent_trades = []
+
     # Auto-aggregate if current_balance looks like a local instance balance
     if current_balance < (start_of_day_balance * 0.5):
          current_balance = _get_cluster_balance()

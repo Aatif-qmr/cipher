@@ -1,8 +1,11 @@
 {
     "max_open_trades": 10,
     "stake_currency": "USDT",
-    "stake_amount": 500,
-    "tradable_balance_ratio": 0.99,
+    "stake_amount": 0.02,
+    "tradable_balance_ratio": 0.90,
+    "timeframes": ["1m", "5m", "15m", "1h", "4h"],
+    "strategy_path": "strategies/active",
+    "strategy_list": ["MeanReversionV1", "TrendFollowV1", "SwingV1", "MicroScalpV1"],
     "dry_run": true,
     "dry_run_wallet": 50000,
     "exchange": {

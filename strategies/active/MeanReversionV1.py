@@ -133,16 +133,14 @@ class MeanReversionV1(IStrategy):
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # HMM Regime Check
-        regime_data = detect_regime(dataframe)
-        regime_ok = get_regime_for_strategy(dataframe, 'mean_reversion')
-        confidence_ok = regime_data['confidence'] >= 0.6
+        regime = detect_regime(dataframe, metadata['pair'])
+        regime_ok = get_regime_for_strategy('MeanReversionV1', regime)
 
         dataframe.loc[
             (
                 (dataframe['rsi'] < self.buy_rsi.value) &
                 (dataframe['close'] < dataframe['bb_lower']) &
-                (regime_ok) &
-                (confidence_ok)
+                (regime_ok)
             ),
             'enter_long'] = 1
         return dataframe
@@ -206,6 +204,37 @@ class MeanReversionV1(IStrategy):
             sentiment = get_current_sentiment()
             signal = get_sentiment_signal()
             logger.info(f"[Sentiment Check] {pair} | Score: {sentiment['score']:.3f} | Signal: {signal}")
+
+            # --- LAYER 2: SKEPTIC AGENT (final gate) ---
+            try:
+                import sys
+                sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/agents')
+                from trade_gate import evaluate_trade
+                from strategist import summarize_signal
+                
+                # Get analyzed dataframe
+                dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+                
+                signal_summary = summarize_signal(dataframe, 'MeanReversionV1', pair)
+                
+                gate_result = evaluate_trade({
+                    **signal_summary,
+                    'sentiment_score': sentiment['score'],
+                    'hmm_regime': detect_regime(dataframe),
+                    'stake_amount': amount * rate,
+                })
+                
+                if gate_result['decision'] == 'BLOCK':
+                    logger.info(
+                        f"[SKEPTIC BLOCK] {pair} "
+                        f"Confidence: {gate_result['failure_confidence']:.0%} "
+                        f"Reason: {gate_result['primary_concern']}"
+                    )
+                    return False
+                else:
+                    logger.info(f"[SKEPTIC ALLOW] {pair} | Proceeding with trade.")
+            except Exception as e:
+                logger.error(f"[SKEPTIC ERROR] {e} — proceeding")
 
         except Exception as e:
             logger.error(f"[RISK WARNING] Risk check error: {e}")
