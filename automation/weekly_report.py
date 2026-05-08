@@ -3,6 +3,7 @@ import json
 import sqlite3
 import requests
 import pandas as pd
+import subprocess
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from dotenv import load_dotenv
@@ -17,7 +18,8 @@ DB_PATHS = [
     '/Users/aatifquamre/masterbot/user_data/trend_follow.sqlite',
     '/Users/aatifquamre/masterbot/user_data/scalp.sqlite',
     '/Users/aatifquamre/masterbot/user_data/swing.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/daily.sqlite'
+    '/Users/aatifquamre/masterbot/user_data/daily.sqlite',
+    '/Users/aatifquamre/masterbot/user_data/micro.sqlite'
 ]
 REPORT_DIR = Path('/Users/aatifquamre/masterbot/logs/reports/')
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
@@ -41,7 +43,6 @@ def get_weekly_trades(db_paths: list, days_ago_start=7, days_ago_end=0) -> list:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             
-            # Freqtrade schema mapping: close_profit -> profit_ratio, close_profit_abs -> profit_abs
             query = """
                 SELECT *, 
                        close_profit AS profit_ratio, 
@@ -111,13 +112,13 @@ def get_sentiment_correlation():
         last_week = df[df['timestamp'] >= (datetime.now() - timedelta(days=7))]
         if last_week.empty: return None
         
-        avg = last_week['final_score'].mean()
+        avg = last_week['score'].mean() # Fixed column name from final_score to score
         return {
             "avg_sentiment_score": round(avg, 3),
             "sentiment_label": "BULLISH" if avg > 0.3 else "BEARISH" if avg < -0.3 else "NEUTRAL",
-            "days_bullish": len(last_week[last_week['final_score'] > 0.3]),
-            "days_bearish": len(last_week[last_week['final_score'] < -0.3]),
-            "days_neutral": len(last_week[(last_week['final_score'] >= -0.3) & (last_week['final_score'] <= 0.3)])
+            "days_bullish": len(last_week[last_week['score'] > 0.3]),
+            "days_bearish": len(last_week[last_week['score'] < -0.3]),
+            "days_neutral": len(last_week[(last_week['score'] >= -0.3) & (last_week['score'] <= 0.3)])
         }
     except: return None
 
@@ -132,17 +133,6 @@ def get_risk_events():
         with open(RISK_LOG, 'r') as f:
             for line in f:
                 line_upper = line.upper()
-                parts = line.split(' | ')
-                if len(parts) < 3: continue
-                
-                try:
-                    # Format: 2026-05-03 02:29:44,975
-                    log_time_str = parts[0].split(',')[0]
-                    log_time = datetime.strptime(log_time_str, '%Y-%m-%d %H:%M:%S')
-                    if log_time < one_week_ago: continue
-                except:
-                    continue
-
                 if 'WARNING' in line_upper and 'DRAWDOWN' in line_upper: events['drawdown_warnings'] += 1
                 if 'LIMIT HIT' in line_upper: events['drawdown_blocks'] += 1
                 if 'SENTIMENT BLOCK' in line_upper: events['sentiment_blocks'] += 1
@@ -151,17 +141,14 @@ def get_risk_events():
     return events
 
 def get_qnt_intelligence(current, sentiment):
-    import subprocess
-    # Use a simpler prompt for faster response
     prompt = f"Act as MasterBot brain. Analyze: {current['total_profit_usdt']} USDT profit, {current['win_rate_pct']}% win rate. Sentiment: {sentiment.get('avg_sentiment_score', 'N/A')}. Give exactly 2 sentences of tactical advice."
-    qnt_path = '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/qnt'
+    qnt_path = '/usr/local/bin/qnt'
     try:
         result = subprocess.run(
             [qnt_path, '-m', 'flash', '-p', prompt, '--output-format', 'text'],
             capture_output=True, text=True, timeout=180, cwd='/Users/aatifquamre/masterbot'
         )
         if result.returncode == 0 and result.stdout.strip():
-            # Extract first two sentences to be safe
             text = result.stdout.strip()
             sentences = text.split('.')
             return '.'.join(sentences[:2]) + '.'
@@ -170,50 +157,58 @@ def get_qnt_intelligence(current, sentiment):
     return "Intelligence node busy. Continuing with standard protocols."
 
 def get_qnt_weekly_brief() -> str:
-    """
-    Ask qnt for a market intelligence summary
-    to append to the weekly Telegram report.
-    Timeout after 180 seconds.
-    """
-    import subprocess
-    qnt_path = '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/qnt'
-
+    qnt_path = '/usr/local/bin/qnt'
     try:
         result = subprocess.run(
             [qnt_path, '-m', 'flash', '-p',
-             'Generate a concise weekly market intelligence summary. '
-             'Cover: sentiment, major news, funding rate, and outlook. '
-             'Maximum 100 words. Plain text only.'],
-            capture_output=True,
-            text=True,
-            timeout=180,
-            cwd='/Users/aatifquamre/masterbot'
+             'Generate a concise weekly market intelligence summary. Maximum 100 words.'],
+            capture_output=True, text=True, timeout=180, cwd='/Users/aatifquamre/masterbot'
         )
-        if result.stdout.strip():
-            return result.stdout.strip()
-        
-        err_msg = result.stderr.strip() if result.stderr else "Empty response"
-        return f"qnt brief unavailable: {err_msg[:60]}"
+        return result.stdout.strip() or "Empty response"
     except Exception as e:
         return f"qnt brief error: {str(e)[:80]}"
 
 def get_m2_resource_report() -> str:
-    """Fetches resource report from M2 node."""
-    import subprocess
     try:
-        cmd = ['ssh', f"azmatsaif@{os.getenv('M2_TAILSCALE_IP')}", 
-               '/Users/azmatsaif/masterbot/venv/bin/python -c "'
-               'import sys; sys.path.insert(0, \'/Users/azmatsaif/masterbot/qnt/shadow\'); '
-               'from resource_monitor import get_daily_report; '
-               'print(get_daily_report())"']
+        M2_IP = os.getenv('M2_TAILSCALE_IP')
+        cmd = ['ssh', f"azmatsaif@{M2_IP}", 
+               '/Users/azmatsaif/masterbot/venv/bin/python /Users/azmatsaif/masterbot/qnt/shadow/resource_monitor.py']
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         return result.stdout.strip()
     except:
         return "M2 resource report unavailable"
 
+def get_skeptic_summary() -> str:
+    """Fetches skeptic agent stats for the report."""
+    try:
+        result = subprocess.run(
+            ['/Users/aatifquamre/masterbot/venv/bin/python', '-c',
+             'import sys; sys.path.insert(0, "/Users/aatifquamre/masterbot/qnt/agents");'
+             'sys.path.insert(0, "/Users/aatifquamre/masterbot/qnt/memory");'
+             'from trade_gate import get_skeptic_stats;'
+             'print(get_skeptic_stats())'],
+            capture_output=True, text=True, timeout=15
+        )
+        return result.stdout.strip()
+    except:
+        return "Skeptic stats unavailable"
+
 def format_telegram_report(current, previous, sentiment, risk, intel, week_start, week_end, qnt_brief):
-...
+    next_monday = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
     m2_report = get_m2_resource_report()
+    skeptic_summary = get_skeptic_summary()
+
+    perf_str = f"Profit: {current['total_profit_usdt']} USDT ({current['total_profit_pct']}%)"
+    comp_trades = f"{current['total_trades']} vs {previous['total_trades']}"
+    
+    wr_arrow = "📈" if current['win_rate_pct'] >= previous['win_rate_pct'] else "📉"
+    pl_arrow = "📈" if current['total_profit_usdt'] >= previous['total_profit_usdt'] else "📉"
+    
+    strat_str = ""
+    for s, data in current['by_strategy'].items():
+        strat_str += f"• {s}: {data['trades']} trades, {data['profit']:.2f} USDT, {data['win_rate']}% WR\n"
+
+    sent_str = f"Avg: {sentiment.get('avg_sentiment_score', 'N/A')} ({sentiment.get('sentiment_label', 'N/A')})"
 
     return f"""📈 MasterBot Weekly Report
 Week: {week_start} → {week_end}
@@ -244,10 +239,13 @@ Drawdown warnings: {risk['drawdown_warnings']}
 Entry blocks: {risk['risk_blocks']}
 Sentiment blocks: {risk['sentiment_blocks']}
 
+🔍 Skeptic Agent
+{skeptic_summary}
+
 🧠 QNT Intelligence Brief
 {qnt_brief}
 
-️ M2 RESOURCE REPORT (SHADOW HYPEROPT)
+🖥️ M2 RESOURCE REPORT
 {m2_report}
 
 ──────────────────────
@@ -265,8 +263,6 @@ def save_html_report(metrics, filename):
     <tr><td>Total Trades</td><td>{metrics['total_trades']}</td></tr>
     <tr><td>Win Rate</td><td>{metrics['win_rate_pct']}%</td></tr>
     <tr><td>Net P&L</td><td>{metrics['total_profit_usdt']} USDT</td></tr>
-    <tr><td>Best Trade</td><td>{metrics['best_trade_usdt']} ({metrics['best_trade_pair']})</td></tr>
-    <tr><td>Worst Trade</td><td>{metrics['worst_trade_usdt']} ({metrics['worst_trade_pair']})</td></tr>
     </table>
     </body></html>
     """
@@ -287,9 +283,10 @@ if __name__ == '__main__':
     intel = get_qnt_intelligence(curr_metrics, sentiment or {})
     qnt_brief = get_qnt_weekly_brief()
     
-    report = format_telegram_report(curr_metrics, prev_metrics, sentiment, risk, intel, week_start, week_end, qnt_brief)
+    report = format_telegram_report(curr_metrics, prev_metrics, sentiment or {}, risk, intel, week_start, week_end, qnt_brief)
     
-    res = requests.post(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", data={'chat_id': TELEGRAM_CHAT_ID, 'text': report})
-    print("✅ Telegram report sent" if res.status_code == 200 else f"❌ Failed: {res.text}")
+    if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
+        res = requests.post(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", data={'chat_id': TELEGRAM_CHAT_ID, 'text': report})
+        print("✅ Telegram report sent" if res.status_code == 200 else f"❌ Failed: {res.text}")
     
     save_html_report(curr_metrics, f"weekly_report_{today.strftime('%Y%m%d')}.html")

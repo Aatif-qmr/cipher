@@ -4,7 +4,7 @@
 - Name: qnt
 - Role: Intelligence brain for MasterBot trading system
 - Version: 1.0.0
-- Generated: 2026-05-02T14:24:35Z
+- Generated: 2026-05-08T11:40:40Z
 - Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
@@ -33,11 +33,19 @@ update the system. I act as architect and operator.
 ## Current Bot Status (at time of generation)
 - Freqtrade: 
 - Mode: PAPER TRADING (dry_run = true)
-- Balance: 50000.0 USDT
-- Open trades: 0
-- Sentiment: 0.147 (2026-05-02T14:00:05.889066+00:00)
+- Balance: 10000.927541000001 USDT
+- Open trades: 2
+- Sentiment: -0.248 (2026-05-08T11:30:18.434433+00:00)
 
 ## Active Strategies
+
+### Auto202605030340
+- File: /Users/aatifquamre/masterbot/strategies/active/Auto202605030340.py
+- Timeframe: check file
+- Stop loss: -0.04
+- Sentiment gate: BEARISH blocks entry
+- Risk gate: All 5 risk checks run before entry
+- Exchange stop: stoploss_on_exchange = True
 
 ### DailyTrendV1
 - File: /Users/aatifquamre/masterbot/strategies/active/DailyTrendV1.py
@@ -51,6 +59,14 @@ update the system. I act as architect and operator.
 - File: /Users/aatifquamre/masterbot/strategies/active/MeanReversionV1.py
 - Timeframe: check file
 - Stop loss: -0.04
+- Sentiment gate: BEARISH blocks entry
+- Risk gate: All 5 risk checks run before entry
+- Exchange stop: stoploss_on_exchange = True
+
+### MicroScalpV1
+- File: /Users/aatifquamre/masterbot/strategies/active/MicroScalpV1.py
+- Timeframe: 1m
+- Stop loss: -0.025
 - Sentiment gate: BEARISH blocks entry
 - Risk gate: All 5 risk checks run before entry
 - Exchange stop: stoploss_on_exchange = True
@@ -116,6 +132,13 @@ overriding or disabling any of these.
 0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python -c "import sys; sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/shield'); sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory'); from shield import autonomous_shield_check; autonomous_shield_check()" >> /Users/aatifquamre/masterbot/logs/shield.log 2>&1
 0 3 * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/vault/vault_indexer.py >> /Users/aatifquamre/masterbot/logs/vault.log 2>&1
 0 6 * * 1 source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python -c "import sys; sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/vault'); from post_mortem import generate_weekly_post_mortem; generate_weekly_post_mortem()" >> /Users/aatifquamre/masterbot/logs/vault.log 2>&1
+0 * * * * /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_macro.py >> /Users/aatifquamre/masterbot/logs/oracle_macro.log 2>&1
+0 */2 * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/vault/post_mortem_loop.py >> /Users/aatifquamre/masterbot/logs/post_mortem.log 2>&1
+50 23 * * * bash /Users/aatifquamre/masterbot/automation/qnt_daily_report.sh >> /Users/aatifquamre/masterbot/logs/qnt_report.log 2>&1
+15 * * * * /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/automation/qnt_sheets_sync.py >> /Users/aatifquamre/masterbot/logs/sheets_sync.log 2>&1
+0 9 * * 0 bash /Users/aatifquamre/masterbot/automation/qnt_market_oracle.sh >> /Users/aatifquamre/masterbot/logs/qnt_oracle.log 2>&1
+0 */2 * * * /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/automation/post_mortem.py >> /Users/aatifquamre/masterbot/logs/post_mortem.log 2>&1
+*/15 * * * * /Users/aatifquamre/masterbot/automation/sync_order_flow.sh >> /Users/aatifquamre/masterbot/logs/sync_order_flow.log 2>&1
 ```
 
 ### M2 Cron Jobs
@@ -125,6 +148,11 @@ overriding or disabling any of these.
 0 23 * * 0 /bin/bash /Users/azmatsaif/masterbot/automation/weekly_hyperopt.sh >> /Users/azmatsaif/masterbot/logs/hyperopt_cron.log 2>&1
 0 * * * * scp -r /Users/azmatsaif/masterbot/qnt/browser_output/ aatifquamre@100.90.68.42:/Users/aatifquamre/masterbot/qnt/browser_output/ 2>/dev/null
 0 22 * * 6 bash /Users/azmatsaif/masterbot/automation/weekly_strategy_scan.sh
+0 * * * * /Users/azmatsaif/masterbot/venv/bin/python /Users/azmatsaif/masterbot/qnt/oracle/oracle_macro.py >> /Users/azmatsaif/masterbot/logs/oracle_macro.log 2>&1
+5 * * * * scp /Users/azmatsaif/masterbot/risk/macro_history.json aatifquamre@100.90.68.42:/Users/aatifquamre/masterbot/risk/macro_history.json
+0 3 * * * /Users/azmatsaif/masterbot/venv/bin/python /Users/azmatsaif/masterbot/qnt/vault/vault_indexer.py >> /Users/azmatsaif/masterbot/logs/vault_cron.log 2>&1
+0 2 * * 3 cd /Users/azmatsaif/masterbot && source venv/bin/activate && python3 qnt/oracle/hmm_regime.py --retrain >> logs/hmm_retrain.log 2>&1
+*/15 * * * * source /Users/azmatsaif/masterbot/venv/bin/activate && python3 /Users/azmatsaif/masterbot/qnt/oracle/order_flow.py >> /Users/azmatsaif/masterbot/logs/order_flow.log 2>&1
 ```
 
 ## Key File Map
@@ -185,21 +213,8 @@ Hard rules I follow without exception:
 - Restart Freqtrade in production
 - Run stop_bot.sh
 
-### Google Workspace Automation (MAX UTILIZATION)
-- **MasterBot Vault:** Organized folder structure in Google Drive (`id: 11TJ77LppWiUVz5Cl2i3n40iOWFrAWgEZ`).
-- **Automated Reporter:** Python script at `automation/workspace_reporter.py`.
-    - Generates rich-text Google Docs with trade stats.
-    - Automatically emails report links to `aatifqmr@gmail.com`.
-- **Calendar Risk-Sync:** (Available) Maps economic events to high-volatility zones.
-
-### SQLite Database Analysis (NEW)
-- Direct integration with `user_data/tradesv3.sqlite`
-- Use natural language to query trade history, win rates, and drawdown
-- Autonomous performance reporting and anomaly detection in trades
-
 ### Always Safe To Do Without Asking
 - Read any log file
-- Use `cat` to read files and `for` loops for batch operations
 - Run health_check.py (read-only)
 - Check sentiment scores
 - Read strategy files
@@ -299,12 +314,11 @@ All actions logged to qnt_memory.json.
 ## Known Issues Log
 Format: [DATE] FIXED/NOTED: description
 
+[2026-04-28] NOTED: Full system backup created: masterbot_backup_20260428.tar.gz
 [2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
-[2026-05-03] FIXED: Consecutive losses circuit breaker was sticky; added 1-hour cooldown reset logic in risk_manager.py, updated all active strategies, candidate strategies, and the lab strategy generator (lab.py).
-[2026-05-03] FIXED: Balance tracker only queried one of five Freqtrade instances, causing reported balance to drop and trigger drawdown blocks; updated risk/balance_tracker.py to sum all 5 instance balances.
-[2026-05-03] FIXED: DailyTrendV1, SwingV1, and ScalpV1 were failing with AttributeErrors due to incorrect pandas_ta and DataProvider API usage; updated strategies to use manual crossing and correct merge_informative_pair/get_pair_dataframe methods. All instances restarted and verified RUNNING.
-[2026-05-04] VERIFIED: MeanReversionV1 and TrendFollowV1 confirmed healthy; they were non-impacted by the AttributeError bug due to single-timeframe architecture, but are fully updated with the v1.1 circuit breaker cooldown.
-[2026-05-08] FIXED: SQLite MCP server was disconnected due to incorrect package name '@modelcontextprotocol/server-sqlite' in .qnt/settings.json. Updated to 'mcp-server-sqlite' and verified connectivity.
-
+[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
+[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
+[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
+[2026-05-03] NOTED: Full system backup created: masterbot_backup_20260503.tar.gz
 
 *(qnt appends here when it fixes issues)*

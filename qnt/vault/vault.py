@@ -92,6 +92,19 @@ def add_entry(category, text, metadata):
     metadata['category'] = category
     return store_lesson(entry_id, text, metadata)
 
+class Vault:
+    """Wrapper class for Vault functions."""
+    def store(self, content_dict, tags=None):
+        lesson_id = f"lesson_{int(time.time())}_{content_dict.get('pair', 'global')}"
+        text = json.dumps(content_dict)
+        metadata = content_dict.copy()
+        if tags:
+            metadata['tags'] = ",".join(tags)
+        return store_lesson(lesson_id, text, metadata)
+
+    def query(self, text, n_results=3):
+        return recall_lessons(text, n_results)
+
 if __name__ == "__main__":
     # Quick test
     if len(sys.argv) > 1 and sys.argv[1] == "stats":
