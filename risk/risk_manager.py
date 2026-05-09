@@ -330,6 +330,10 @@ def run_all_checks(current_balance=None, start_of_day_balance=None, start_of_wee
                    trade_amount_usdt=None, trades_last_hour=None, recent_trades=None,
                    min_sentiment: str = 'NEUTRAL') -> dict:
     
+    # Handle case where first arg is a pair name (string) from legacy strategy calls
+    if isinstance(current_balance, str):
+        current_balance = None
+
     # Fetch defaults if not provided
     if current_balance is None:
         current_balance = _get_cluster_balance()

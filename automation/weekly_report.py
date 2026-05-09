@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv('/Users/aatifquamre/masterbot/.env')
 
-TELEGRAM_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+TELEGRAM_TOKEN = os.getenv('QNT_TELEGRAM_TOKEN')
+TELEGRAM_CHAT_ID = os.getenv('QNT_TELEGRAM_CHAT_ID')
 
 DB_PATHS = [
     '/Users/aatifquamre/masterbot/user_data/mean_reversion.sqlite',

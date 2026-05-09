@@ -29,7 +29,8 @@ def check_freqtrade_processes():
         'freqtrade_mean_reversion',
         'freqtrade_scalp',
         'freqtrade_swing',
-        'freqtrade_trend_follow'
+        'freqtrade_trend_follow',
+        'freqtrade_micro'
     ]
     
     status_map = {}
@@ -43,13 +44,13 @@ def check_freqtrade_processes():
     message = " | ".join([f"{k[10:] if k.startswith('freqtrade_') else k}: {v}" for k, v in status_map.items()])
     
     if all_running:
-        return {"name": "Freqtrade Processes", "status": "PASS", "message": "All 5 instances running", "critical": True}
+        return {"name": "Freqtrade Processes", "status": "PASS", "message": f"All {len(programs)} instances running", "critical": True}
     return {"name": "Freqtrade Processes", "status": "FAIL", "message": message, "critical": True}
 
 def check_freqtrade_apis():
     user = os.getenv('FREQTRADE_UI_USERNAME')
     pwd = os.getenv('FREQTRADE_UI_PASSWORD')
-    ports = [8080, 8081, 8082, 8083, 8084]
+    ports = [8080, 8081, 8082, 8083, 8084, 8085]
     results = {}
     all_ok = True
     
@@ -68,7 +69,7 @@ def check_freqtrade_apis():
             
     message = " | ".join([f"{p}: {v}" for p, v in results.items()])
     if all_ok:
-        return {"name": "Freqtrade APIs", "status": "PASS", "message": "All 5 APIs responding", "critical": True}
+        return {"name": "Freqtrade APIs", "status": "PASS", "message": f"All {len(ports)} APIs responding", "critical": True}
     return {"name": "Freqtrade APIs", "status": "FAIL", "message": message, "critical": True}
 
 def check_sentiment_freshness():
@@ -139,7 +140,27 @@ def check_log_sizes():
 def check_qnt_status():
     try:
         # Detect qnt binary
-        qnt_bin = shutil.which('qnt') or '/usr/local/bin/qnt'
+        qnt_bin = shutil.which('qnt')
+        if not qnt_bin:
+            # Common paths and NVM specific path
+            potential_paths = [
+                '/usr/local/bin/qnt',
+                '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/qnt',
+                '/opt/homebrew/bin/qnt'
+            ]
+            for p in potential_paths:
+                if os.path.exists(p):
+                    qnt_bin = p
+                    break
+        
+        if not qnt_bin:
+            return {
+                'name': 'QNT Status',
+                'status': 'FAIL',
+                'message': 'qnt binary not found in PATH or common locations',
+                'critical': False
+            }
+            
         result = subprocess.run([qnt_bin, '/model_info'], capture_output=True, text=True, timeout=45)
         if result.returncode == 0:
             return {
@@ -215,6 +236,50 @@ def check_nats_connection() -> dict:
             'critical': False
         }
 
+def check_m2_shadow_health() -> dict:
+    """Verify M2 shadow process and resources are healthy."""
+    try:
+        result = subprocess.run([
+            "ssh", "azmatsaif@100.74.110.36",
+            "/Users/azmatsaif/masterbot/venv/bin/python", "/Users/azmatsaif/masterbot/qnt/shadow/resource_monitor.py"
+        ], capture_output=True, text=True, timeout=30)
+        
+        if result.returncode != 0:
+            return {
+                'name': 'M2 Shadow Health',
+                'status': 'FAIL',
+                'message': f'M2 resource monitor failed: {result.stderr[:100]}',
+                'critical': False
+            }
+        
+        data = json.loads(result.stdout)
+        
+        if data["pressure"] == "critical":
+            return {
+                'name': 'M2 Shadow Health',
+                'status': 'FAIL',
+                'message': f'CRITICAL: {data["ram_percent"]:.1f}% RAM, throttled={data["throttled"]}',
+                'critical': False
+            }
+        
+        status = 'PASS'
+        if data["throttled"] or data["pressure"] == "medium":
+            status = 'WARN'
+
+        return {
+            'name': 'M2 Shadow Health',
+            'status': status,
+            'message': f'{data["pressure"].upper()} pressure, RAM {data["ram_percent"]:.1f}%',
+            'critical': False
+        }
+    except Exception as e:
+        return {
+            'name': 'M2 Shadow Health',
+            'status': 'WARN',
+            'message': f'M2 shadow check error: {str(e)[:100]}',
+            'critical': False
+        }
+
 def run_all():
     timestamp = datetime.now(timezone.utc).isoformat()
     checks = [
@@ -227,7 +292,8 @@ def run_all():
         check_database, 
         check_log_sizes, 
         check_qnt_status,
-        check_nats_connection
+        check_nats_connection,
+        check_m2_shadow_health
     ]
     
     results = []

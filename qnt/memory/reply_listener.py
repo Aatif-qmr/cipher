@@ -3,13 +3,70 @@ import json
 import time
 import requests
 import sys
+import subprocess
+from pathlib import Path
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
 # Add memory dir to path for imports
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(BASE_DIR / 'qnt/memory'))
 from memory_manager import load_memory, save_memory, log_action
 from qnt_notifier import parse_reply, TOKEN, CHAT_ID, API_URL
+
+def handle_command(text):
+    """Executes system commands and returns output."""
+    cmd_map = {
+        "/status": "qnt-bot status",
+        "/qnt_status": "qnt-bot status",
+        "/backup": "qnt-backup run",
+        "/skeptic": "qnt-skeptic stats",
+        "/shadow": "qnt-shadow status",
+        "/health": "python3 automation/health_check.py",
+        "/logs": "tail -n 20 logs/supervisord.log",
+        "/risk": "qnt-risk-check"
+    }
+    
+    # Handle help specifically
+    if text in ["/start", "/help", "/qnt"]:
+        help_text = """🚀 <b>MasterBot QNT Controller</b>
+━━━━━━━━━━━━━━━━━━━━━
+/status  - Overall system status
+/health  - Run 11-point health audit
+/skeptic - Skeptic Agent performance
+/shadow  - M2 Shadow Hyperopt status
+/backup  - Trigger Cloud/GDrive backup
+/risk    - Current risk levels
+/logs    - Recent system logs
+━━━━━━━━━━━━━━━━━━━━━"""
+        return help_text
+
+    command = cmd_map.get(text.split()[0].lower())
+    if not command:
+        return None
+
+    print(f"Executing command: {command}")
+    try:
+        # Run command from project root
+        result = subprocess.run(
+            command.split(), 
+            capture_output=True, 
+            text=True, 
+            timeout=60,
+            cwd=str(BASE_DIR)
+        )
+        
+        output = result.stdout.strip() or result.stderr.strip()
+        if not output:
+            output = "Command executed with no output."
+            
+        # Clean output for Telegram (HTML)
+        import html
+        output = html.escape(output)
+        
+        return f"🖥️ <b>{command}</b>\n<pre>{output[:3500]}</pre>"
+    except Exception as e:
+        return f"❌ <b>Error:</b> {str(e)}"
 
 def process_update(update):
     if 'message' not in update or 'text' not in update['message']:
@@ -23,9 +80,24 @@ def process_update(update):
     if chat_id != str(CHAT_ID):
         return
 
-    print(f"Received reply: {text}")
+    print(f"Received from Telegram: {text}")
     
-    # Parse reply
+    # Check if it's a command
+    if text.startswith('/'):
+        response = handle_command(text)
+        if response:
+            try:
+                requests.post(f"{API_URL}/sendMessage", json={
+                    "chat_id": CHAT_ID,
+                    "text": response,
+                    "parse_mode": "HTML"
+                })
+                log_action("telegram_command_executed", f"Command: {text}")
+                return
+            except:
+                pass
+    
+    # Parse as reply to escalation
     parsed = parse_reply(text)
     
     # Load memory to find what we are responding to

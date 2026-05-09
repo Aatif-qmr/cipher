@@ -1,9 +1,12 @@
 import numpy as np
 import pandas as pd
 import talib.abstract as ta
+import logging
 from datetime import datetime
 from pathlib import Path
 import sys
+
+logger = logging.getLogger(__name__)
 
 # Add project root to sys.path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -38,7 +41,7 @@ class MicroScalpV1(IStrategy):
         dataframe["volume_avg_20"] = dataframe["volume"].rolling(20).mean()
         
         # Informative 5m trend filter
-        if metadata["timeframe"] == "5m":
+        if metadata.get("timeframe") == "5m":
             dataframe["ema_20_5m"] = ta.EMA(dataframe, timeperiod=20)
             dataframe["trend_5m_bearish"] = dataframe["close"] < dataframe["ema_20_5m"]
         
@@ -46,7 +49,7 @@ class MicroScalpV1(IStrategy):
 
     def populate_entry_trend(self, dataframe: pd.DataFrame, metadata: dict) -> pd.DataFrame:
         # Risk & Sentiment Gate
-        risk_result = run_all_checks(metadata["pair"])
+        risk_result = run_all_checks()
         if isinstance(risk_result, dict) and not risk_result.get('safe_to_trade', True):
             dataframe.loc[:, "enter_long"] = 0
             return dataframe
@@ -65,15 +68,24 @@ class MicroScalpV1(IStrategy):
         # Optional: Reduce stake in BEAR regime (already handled by risk_manager, but explicit here)
         if regime == "BEAR":
             # Log for audit, risk_manager enforces actual sizing
-            self.logger.info(f"MicroScalpV1: BEAR regime detected for {metadata['pair']}, proceeding with caution")
+            logger.info(f"MicroScalpV1: BEAR regime detected for {metadata['pair']}, proceeding with caution")
 
         # --- Order Flow Trap Filter ---
         import json
-        of_path = Path("/Users/aatifquamre/masterbot/qnt/oracle/order_flow_state.json")
+        of_path = Path("/Users/aatifquamre/masterbot/qnt/oracle/order_flow_live.json")
+        if not of_path.exists():
+            # Fallback to 15m polling file
+            of_path = Path("/Users/aatifquamre/masterbot/qnt/oracle/order_flow_state.json")
+        
         if of_path.exists():
             with open(of_path) as f:
                 of_data = json.load(f)
             
+            # High-frequency CVD data (if available)
+            live_cvd = of_data.get("cvd", 0)
+            live_delta = of_data.get("delta", 0)
+            
+            # Standard order flow state from polling (fallback or combined)
             liq_trend = of_data.get("liquidation", {}).get("trend", "neutral")
             cvd_div = of_data.get("cvd_divergence", "neutral")
             
@@ -85,12 +97,11 @@ class MicroScalpV1(IStrategy):
             if liq_trend == "short_squeeze_risk":
                 dataframe.loc[:, "enter_short"] = 0
                 
-            # DIVERGENCE CHECK: If Price is rising but Volume is low (Bearish Divergence)
-            # We avoid Long entries here as the move is weak.
+            # DIVERGENCE CHECK
             if cvd_div == "bearish_divergence":
                 dataframe.loc[:, "enter_long"] = 0
 
-        # 1m Entry Logic
+            # --- SKEPTIC AGENT (final gate) ---
         # Ensure we have trend_5m_bearish (it comes from informative merge)
         # Note: Freqtrade appends timeframe to columns for informatives by default
         trend_col = "trend_5m_bearish_5m" if "trend_5m_bearish_5m" in dataframe.columns else "trend_5m_bearish"
@@ -149,15 +160,15 @@ class MicroScalpV1(IStrategy):
             })
             
             if gate_result['decision'] == 'BLOCK':
-                self.logger.info(
+                logger.info(
                     f"[SKEPTIC BLOCK] {pair} "
                     f"Confidence: {gate_result['failure_confidence']:.0%} "
                     f"Reason: {gate_result['primary_concern']}"
                 )
                 return False
             else:
-                self.logger.info(f"[SKEPTIC ALLOW] {pair} | Proceeding with trade.")
+                logger.info(f"[SKEPTIC ALLOW] {pair} | Proceeding with trade.")
         except Exception as e:
-            self.logger.error(f"[SKEPTIC ERROR] {e} — proceeding")
+            logger.error(f"[SKEPTIC ERROR] {e} — proceeding")
             
         return True

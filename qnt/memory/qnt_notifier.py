@@ -3,10 +3,12 @@ import json
 import time
 import requests
 from datetime import datetime, timezone
+from pathlib import Path
 from dotenv import load_dotenv
 
 # --- CONFIGURATION ---
-ENV_PATH = "/Users/aatifquamre/masterbot/.env"
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+ENV_PATH = BASE_DIR / ".env"
 load_dotenv(ENV_PATH)
 
 TOKEN = os.getenv("QNT_TELEGRAM_TOKEN")

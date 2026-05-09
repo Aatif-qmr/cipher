@@ -1,0 +1,9 @@
+{
+  "last_updated": "2026-05-10T01:45:00.696460",
+  "liquidation": {
+    "ratio": 0.7215083333333333,
+    "trend": "short_squeeze_risk",
+    "timestamp": "2026-05-10T01:45:01.455334"
+  },
+  "cvd_divergence": "bullish_divergence"
+}

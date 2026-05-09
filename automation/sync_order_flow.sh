@@ -11,5 +11,8 @@ M1_PATH="/Users/aatifquamre/masterbot/qnt/oracle/order_flow_state.json"
 # Ensure directory exists on M1
 mkdir -p "$(dirname "$M1_PATH")"
 
+echo "⏳ Waiting 30s for M2 Oracle to finish..."
+sleep 30
+
 echo "📡 Syncing Order Flow from M2..."
 scp -q azmatsaif@$M2_IP:$M2_PATH $M1_PATH

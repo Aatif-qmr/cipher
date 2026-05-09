@@ -7,6 +7,7 @@ SUBJECTS = {
     'HMM':       'qnt.intelligence.regime',
     'ANOMALY':   'qnt.intelligence.anomaly',
     'CALENDAR':  'qnt.intelligence.calendar',
+    'ORDERFLOW_LIVE': 'qnt.intelligence.orderflow.live',
 
     # M1 publishes → M2 subscribes
     'TRADE_OPEN':   'qnt.execution.trade.open',
