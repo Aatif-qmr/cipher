@@ -35,7 +35,6 @@ def run(mode='all'):
             print(f"Error in HMM regime check: {e}")
 
     if mode == 'calendar' or mode == 'all':
-...
         try:
             calendar_check()
             log_action('oracle_calendar_check', 'completed', device['device'])
