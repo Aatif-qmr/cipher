@@ -109,18 +109,17 @@ def _get_cluster_balance() -> float:
                 found += 1
         except:
             continue
-    
-    # If API fails, fall back to last seen in state file
-    if found == 0:
+
+    # If any API fails, fall back to last seen in state file to prevent false drawdown alerts
+    if found < 6:
         try:
             with open(BASE_DIR / 'risk/balance_state.json', 'r') as f:
                 state = json.load(f)
                 return state.get('last_seen_balance', 50000.0)
         except:
             return 50000.0
-            
-    return total
 
+    return total
 def send_telegram_alert(message: str, level: str = 'WARNING') -> bool:
     if level == 'CRITICAL':
         if not _can_send_alert():
