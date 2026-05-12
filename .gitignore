@@ -1,39 +1,8 @@
-```yaml
-# Dependencies
-node_modules/
-__pycache__/
+```
+# Compiled Python files
 *.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-ENV/
-.venv/
-.env
-.env.local
-.env.*
-.envrc
-# Build outputs
-dist/
-build/
-*.egg-info/
-.coverage
-coverage/
-htmlcov/
-.pytest_cache/
-.mypy_cache/
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-# Logs
+__pycache__/
+
+# Original rules preserved
 *.log
-# OS files
-.DS_Store
-Thumbs.db
-# GitHub CodeQL
-.github/workflows/codeql.yml
 ```
