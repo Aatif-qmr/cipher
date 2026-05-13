@@ -41,7 +41,7 @@ def merge_macro_data(dataframe: DataFrame) -> DataFrame:
             history = json.load(f)
 
         macro_df = pd.DataFrame(history)
-        macro_df['date'] = pd.to_datetime(macro_df['timestamp'])
+        macro_df['date'] = pd.to_datetime(macro_df['timestamp'], format='ISO8601')
         macro_df = macro_df.sort_values('date')
 
         # Ensure main dataframe is sorted by date for asof merge
@@ -90,9 +90,8 @@ class DailyTrendV1(IStrategy):
         sentiment = get_current_sentiment()
         
         # HMM Regime Check
-        regime_data = detect_regime(dataframe)
-        regime_ok = get_regime_for_strategy(dataframe, 'daily_trend')
-        confidence_ok = regime_data['confidence'] >= 0.6
+        regime = detect_regime(dataframe, metadata['pair'])
+        regime_ok = get_regime_for_strategy('DailyTrendV1', regime)
 
         dataframe.loc[
             (
@@ -101,8 +100,7 @@ class DailyTrendV1(IStrategy):
                 (dataframe['volume'] > dataframe['volume_avg']) &
                 (sentiment['score'] >= -0.3) & # Not BEARISH
                 (is_safe_to_trade_today()) &   # Calendar Gate
-                (regime_ok) &
-                (confidence_ok)
+                (regime_ok)
             ),
             'enter_long'] = 1
 

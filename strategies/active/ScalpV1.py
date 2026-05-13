@@ -40,7 +40,7 @@ def merge_macro_data(dataframe: pd.DataFrame) -> pd.DataFrame:
             history = json.load(f)
 
         macro_df = pd.DataFrame(history)
-        macro_df['date'] = pd.to_datetime(macro_df['timestamp'])
+        macro_df['date'] = pd.to_datetime(macro_df['timestamp'], format='ISO8601')
         macro_df = macro_df.sort_values('date')
 
         dataframe = dataframe.sort_values('date')
@@ -115,9 +115,8 @@ class ScalpV1(IStrategy):
         sentiment = get_current_sentiment()
         
         # HMM Regime Check
-        regime_data = detect_regime(dataframe)
-        regime_ok = get_regime_for_strategy(dataframe, 'scalp')
-        confidence_ok = regime_data['confidence'] >= 0.6
+        regime = detect_regime(dataframe, metadata['pair'])
+        regime_ok = get_regime_for_strategy('ScalpV1', regime)
 
         dataframe.loc[
             (
@@ -128,8 +127,7 @@ class ScalpV1(IStrategy):
                 (dataframe.get('rsi_15m', 50) < 60) & # Not overbought on 15m
                 (dataframe.get('close', 0) > dataframe.get('ema_200_1h', 0)) & # Above 200 EMA on 1h
                 (sentiment['score'] >= -0.3) & # Global Gate
-                (regime_ok) &
-                (confidence_ok)
+                (regime_ok)
             ),
             'enter_long'] = 1
 

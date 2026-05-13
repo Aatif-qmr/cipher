@@ -39,7 +39,7 @@ def merge_macro_data(dataframe: DataFrame) -> DataFrame:
             history = json.load(f)
 
         macro_df = pd.DataFrame(history)
-        macro_df['date'] = pd.to_datetime(macro_df['timestamp'])
+        macro_df['date'] = pd.to_datetime(macro_df['timestamp'], format='ISO8601')
         macro_df = macro_df.sort_values('date')
 
         # Ensure main dataframe is sorted by date for asof merge
@@ -131,16 +131,14 @@ class TrendFollowV1(IStrategy):
         rsi_max = self.buy_rsi_max.value if hasattr(self.buy_rsi_max, 'value') else self.buy_rsi_max
         
         # HMM Regime Check
-        regime_data = detect_regime(dataframe)
-        regime_ok = get_regime_for_strategy(dataframe, 'trend_follow')
-        confidence_ok = regime_data['confidence'] >= 0.6
+        regime = detect_regime(dataframe, metadata['pair'])
+        regime_ok = get_regime_for_strategy('TrendFollowV1', regime)
 
         dataframe.loc[
             (
                 (qtpylib.crossed_above(dataframe['ema_fast'], dataframe['ema_slow'])) &
                 (dataframe['macd_hist'] > 0) &
                 (regime_ok) &
-                (confidence_ok) &
                 (dataframe['rsi'] > rsi_min) & 
                 (dataframe['rsi'] < rsi_max)
             ),

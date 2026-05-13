@@ -38,7 +38,7 @@ def merge_macro_data(dataframe: DataFrame) -> DataFrame:
             history = json.load(f)
 
         macro_df = pd.DataFrame(history)
-        macro_df['date'] = pd.to_datetime(macro_df['timestamp'])
+        macro_df['date'] = pd.to_datetime(macro_df['timestamp'], format='ISO8601')
         macro_df = macro_df.sort_values('date')
 
         # Ensure main dataframe is sorted by date for asof merge

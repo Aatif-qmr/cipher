@@ -39,7 +39,7 @@ def merge_macro_data(dataframe: DataFrame) -> DataFrame:
             history = json.load(f)
 
         macro_df = pd.DataFrame(history)
-        macro_df['date'] = pd.to_datetime(macro_df['timestamp'])
+        macro_df['date'] = pd.to_datetime(macro_df['timestamp'], format='ISO8601')
         macro_df = macro_df.sort_values('date')
 
         # Ensure main dataframe is sorted by date for asof merge
@@ -103,9 +103,8 @@ class SwingV1(IStrategy):
         sentiment = get_current_sentiment()
         
         # HMM Regime Check
-        regime_data = detect_regime(dataframe)
-        regime_ok = get_regime_for_strategy(dataframe, 'swing')
-        confidence_ok = regime_data['confidence'] >= 0.6
+        regime = detect_regime(dataframe, metadata['pair'])
+        regime_ok = get_regime_for_strategy('SwingV1', regime)
 
         dataframe.loc[
             (
@@ -114,8 +113,7 @@ class SwingV1(IStrategy):
                 # HTF confirmation
                 (dataframe.get('close', 0) > dataframe.get('ema_50_1h', 0)) &
                 (sentiment['score'] >= -0.3) & # Not BEARISH
-                (regime_ok) &
-                (confidence_ok)
+                (regime_ok)
             ),
             'enter_long'] = 1
 

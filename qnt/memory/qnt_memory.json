@@ -1,0 +1,6245 @@
+{
+  "version": "1.0",
+  "created": "2026-05-02T19:30:02Z",
+  "last_updated": "2026-05-13T00:30:09Z",
+  "last_sync_m2": "2026-05-13T00:55:04.032653Z",
+  "action_log": [
+    {
+      "timestamp": "2026-05-02T19:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T19:30:08Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T19:59:17Z",
+      "device": "M1",
+      "action": "risk_audit_fail",
+      "result": "2 fails, 0 warns",
+      "escalated": true,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:00:41Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:00:49Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: supervisorctl -c /Users/aatifquamre/masterbot/conf... | Exit: 127",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:00:49Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:00:49Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:00:49Z",
+      "device": "M1",
+      "action": "bot_status_query",
+      "result": "Status snapshot generated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:01:32Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: supervisorctl -c /Users/aatifquamre/masterbot/conf... | Exit: 127",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:01:32Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:01:32Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:01:32Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:02:50Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:02:51Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:02:51Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:02:51Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:03:35Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: supervisorctl -c /Users/aatifquamre/masterbot/conf... | Exit: 127",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:03:35Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 8 /Users/aatifquamre/masterbot/logs/freqtr... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:07Z",
+      "device": "M1",
+      "action": "full_system_test_m1",
+      "result": "Test action from M1",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:07Z",
+      "device": "M2",
+      "action": "full_system_test_m2",
+      "result": "Test action from M2",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:34Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:34Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:34Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:34Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:34Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:35Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: supervisorctl -c /Users/aatifquamre/masterbot/conf... | Exit: 127",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:35Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/freqt... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:36Z",
+      "device": "M2",
+      "action": "stream_logs",
+      "result": "Viewed 50 lines (follow=False)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:36Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:37Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:37Z",
+      "device": "M2",
+      "action": "bot_status_query",
+      "result": "Status snapshot generated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:53Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:53Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:53Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:54Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:54Z",
+      "device": "M1",
+      "action": "get_exposure",
+      "result": "Exposure report: 0.0% deployed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:19:54Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:21:44Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:21:45Z",
+      "device": "M2",
+      "action": "run_on_m2_local",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 1",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:21:45Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:21:45Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "MeanReversionV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:21:47Z",
+      "device": "M2",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:22:46Z",
+      "device": "M1",
+      "action": "strategy_generated",
+      "result": "Auto202605030151_buy_sol_when_price_b.py",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:23:25Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:23:25Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "TrendFollowV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:11Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:11Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:12Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:12Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:12Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:13Z",
+      "device": "M2",
+      "action": "full_system_test_m2",
+      "result": "Test action from M2",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:14Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/freqt... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:15Z",
+      "device": "M2",
+      "action": "stream_logs",
+      "result": "Viewed 50 lines (follow=False)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:15Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:16Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:17Z",
+      "device": "M2",
+      "action": "bot_status_query",
+      "result": "Status snapshot generated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:33Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/freqt... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:24:33Z",
+      "device": "M2",
+      "action": "stream_logs",
+      "result": "Viewed 50 lines (follow=False)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:25:16Z",
+      "device": "M2",
+      "action": "run_on_m2_local",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 1",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:25:17Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:25:17Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:25:17Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "ScalpV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:25:18Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:25:18Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "MeanReversionV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:25:18Z",
+      "device": "M1",
+      "action": "journal_entry_saved",
+      "result": "ID: 97fbc050-bf9e-4e84-9ee9-d6e4196a03ae",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:26:19Z",
+      "device": "M1",
+      "action": "strategy_generated",
+      "result": "Auto202605030155_buy_sol_when_price_b.py",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:28:05Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:28:05Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "ScalpV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:29:08Z",
+      "device": "M2",
+      "action": "run_on_m2_local",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 1",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:29:10Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:29:10Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "ScalpV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:29:15Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:29:17Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:29:17Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:29:17Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:30:02Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_detected",
+      "result": "\u26a0\ufe0f BULLISH DIVERGENCE: High short leverage despite bullish news (Short Squeeze potential)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:37:20Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:41:56Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:41:56Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "TrendFollowV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:44:42Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:44:47Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:44:47Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "TrendFollowV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:48:14Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:48:58Z",
+      "device": "M2",
+      "action": "run_on_m2_local",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:48:58Z",
+      "device": "M2",
+      "action": "backtest_completed",
+      "result": "TrendFollowV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:49:42Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:49:46Z",
+      "device": "M2",
+      "action": "run_on_m2_local",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:49:47Z",
+      "device": "M2",
+      "action": "backtest_completed",
+      "result": "TrendFollowV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:52:45Z",
+      "device": "M1",
+      "action": "full_system_test_m1",
+      "result": "Test action from M1",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:52:46Z",
+      "device": "M2",
+      "action": "full_system_test_m2",
+      "result": "Test action from M2",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:06Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:06Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:06Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:06Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:06Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:07Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/freqt... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:07Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:07Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:07Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:07Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: supervisorctl -c /Users/aatifquamre/masterbot/conf... | Exit: 127",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:07Z",
+      "device": "M2",
+      "action": "stream_logs",
+      "result": "Viewed 50 lines (follow=False)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:08Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:10Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:54:10Z",
+      "device": "M2",
+      "action": "bot_status_query",
+      "result": "Status snapshot generated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:15Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:15Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:15Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:15Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:16Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:16Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:16Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:16Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:16Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: supervisorctl -c /Users/aatifquamre/masterbot/conf... | Exit: 127",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:17Z",
+      "device": "M1",
+      "action": "get_exposure",
+      "result": "Exposure report: 0.0% deployed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:17Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:17Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:18Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:18Z",
+      "device": "M2",
+      "action": "bot_status_query",
+      "result": "Status snapshot generated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:19Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:20Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/freqt... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:20Z",
+      "device": "M2",
+      "action": "stream_logs",
+      "result": "Viewed 50 lines (follow=False)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:21Z",
+      "device": "M2",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:56:21Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:57:34Z",
+      "device": "M1",
+      "action": "strategy_generated",
+      "result": "Auto202605030226_buy_sol_when_price_b.py",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:57:40Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:57:40Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "MeanReversionV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:57:51Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:57:51Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "ScalpV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:58:03Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:58:07Z",
+      "device": "M2",
+      "action": "run_on_m2_local",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T20:58:08Z",
+      "device": "M2",
+      "action": "backtest_completed",
+      "result": "TrendFollowV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T21:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T21:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T21:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_detected",
+      "result": "\u26a0\ufe0f BULLISH DIVERGENCE: High short leverage despite bullish news (Short Squeeze potential)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T21:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T21:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T21:30:04Z",
+      "device": "M1",
+      "action": "vault_indexed",
+      "result": "Trades: 0, Research: 0, Patterns: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:09:20Z",
+      "device": "M1",
+      "action": "full_system_test_m1",
+      "result": "Test action from M1",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:09:22Z",
+      "device": "M2",
+      "action": "full_system_test_m2",
+      "result": "Test action from M2",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:34Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:34Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:34Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:34Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:35Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:35Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:35Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:35Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:36Z",
+      "device": "M1",
+      "action": "get_exposure",
+      "result": "Exposure report: 0.0% deployed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:36Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:39Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: supervisorctl -c /Users/aatifquamre/masterbot/conf... | Exit: 127",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:40Z",
+      "device": "M2",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:41Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:41Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:42Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:43Z",
+      "device": "M2",
+      "action": "bot_status_query",
+      "result": "Status snapshot generated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:43Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:44Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/freqt... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:10:44Z",
+      "device": "M2",
+      "action": "stream_logs",
+      "result": "Viewed 50 lines (follow=False)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:11:27Z",
+      "device": "M1",
+      "action": "strategy_generated",
+      "result": "Auto202605030340_buy_btc_when_rsi_bel.py",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:11:32Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:11:32Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "MeanReversionV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:11:43Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:11:43Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "ScalpV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:11:44Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:11:50Z",
+      "device": "M2",
+      "action": "run_on_m2_local",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:11:50Z",
+      "device": "M2",
+      "action": "backtest_completed",
+      "result": "TrendFollowV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:16:21Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:16:21Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:16:21Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:16:21Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:16:22Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:16:47Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:30:02Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_detected",
+      "result": "\u26a0\ufe0f BULLISH DIVERGENCE: High short leverage despite bullish news (Short Squeeze potential)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:34:58Z",
+      "device": "M1",
+      "action": "full_system_test_m1",
+      "result": "Test action from M1",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:35:00Z",
+      "device": "M2",
+      "action": "full_system_test_m2",
+      "result": "Test action from M2",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:36Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:36Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:36Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:36Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:39Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: supervisorctl -c /Users/aatifquamre/masterbot/conf... | Exit: 127",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:43Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:45Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:46Z",
+      "device": "M2",
+      "action": "bot_status_query",
+      "result": "Status snapshot generated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:47Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:50Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/freqt... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:36:51Z",
+      "device": "M2",
+      "action": "stream_logs",
+      "result": "Viewed 50 lines (follow=False)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:38:05Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:38:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:38:05Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:38:05Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:38:06Z",
+      "device": "M1",
+      "action": "get_exposure",
+      "result": "Exposure report: 0.0% deployed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:38:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:38:11Z",
+      "device": "M2",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:38:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:39:32Z",
+      "device": "M1",
+      "action": "strategy_generated",
+      "result": "Auto202605030408_buy_sol_when_price_b.py",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:39:39Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:39:39Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "MeanReversionV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:39:52Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:39:52Z",
+      "device": "M1",
+      "action": "backtest_completed",
+      "result": "ScalpV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:39:54Z",
+      "device": "M1",
+      "action": "run_on_m2_remote",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      unse... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:40:00Z",
+      "device": "M2",
+      "action": "run_on_m2_local",
+      "result": "Cmd: \n      cd /Users/azmatsaif/masterbot &&\n      sour... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:40:01Z",
+      "device": "M2",
+      "action": "backtest_completed",
+      "result": "TrendFollowV1: FAIL",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:40:14Z",
+      "device": "M1",
+      "action": "journal_entry_saved",
+      "result": "ID: 78b014d6-266a-4917-a41f-792211463940",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:40:17Z",
+      "device": "M1",
+      "action": "vault_indexed",
+      "result": "Trades: 0, Research: 0, Patterns: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:46:45Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:46:45Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:46:45Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:46:45Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:49:11Z",
+      "device": "M1",
+      "action": "telegram_reply_received",
+      "result": "User replied: Scan the whole project on both the devices and list me the issue /error/bugs you find to escalation 2026-05-02T22:36:36Z",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:56:41Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:56:41Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:56:41Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T22:56:41Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:06:42Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:06:42Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:06:42Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:06:42Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:07:34Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:07:34Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:07:34Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:07:34Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:09:15Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:09:16Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:09:16Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:09:16Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:10:04Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:10:04Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:10:04Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:10:04Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:16:57Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:16:57Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:16:57Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:16:57Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:17:01Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-02T23:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T00:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T00:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_detected",
+      "result": "\u26a0\ufe0f BULLISH DIVERGENCE: High short leverage despite bullish news (Short Squeeze potential)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T00:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T00:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T01:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T01:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_detected",
+      "result": "\u26a0\ufe0f BULLISH DIVERGENCE: High short leverage despite bullish news (Short Squeeze potential)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T01:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T01:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T02:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T02:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T02:30:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T03:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T03:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T03:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T04:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T04:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T04:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T04:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T05:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T05:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T05:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T06:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T06:30:02Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T06:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T07:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T07:23:23Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T07:28:58Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T07:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T07:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T08:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T08:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T08:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T08:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T08:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T09:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T09:30:12Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T10:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T10:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T10:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T11:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T11:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T11:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T11:56:48Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:09:51Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:21:50Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:21:51Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:26:27Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:27:27Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 50 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:31:23Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:31:23Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/trend... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:31:23Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/scalp... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:31:23Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/swing... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T12:31:23Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/daily... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T13:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T13:19:27Z",
+      "device": "M2",
+      "action": "vault_store",
+      "result": "Stored lesson test_loss_1",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T13:19:29Z",
+      "device": "M2",
+      "action": "vault_store",
+      "result": "Stored lesson test_win_1",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T13:20:10Z",
+      "device": "M2",
+      "action": "vault_recall",
+      "result": "Queried: When should I avoid SOL trades?",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T13:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T13:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T14:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T14:07:58Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T14:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T14:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_detected",
+      "result": "\u26a0\ufe0f BULLISH DIVERGENCE: High short leverage despite bullish news (Short Squeeze potential)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T14:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T14:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T15:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T15:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_detected",
+      "result": "\u26a0\ufe0f BULLISH DIVERGENCE: High short leverage despite bullish news (Short Squeeze potential)",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T15:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T15:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T15:48:12Z",
+      "device": "M1",
+      "action": "telegram_reply_received",
+      "result": "User replied: Check of the trading bot for telegram is working and connected to escalation 2026-05-02T22:09:23Z",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T16:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T16:30:14Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T17:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T17:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T17:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T17:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T18:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T18:30:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T18:30:05Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T18:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T19:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T19:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T19:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T20:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T20:09:21Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T20:09:21Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T20:09:21Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T20:09:21Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T20:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T20:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T20:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T21:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T21:30:04Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T21:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T22:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T22:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T22:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T22:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T23:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T23:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-03T23:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T00:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T00:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T01:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T01:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T02:28:16Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T02:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T02:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T03:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T03:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T03:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T03:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T03:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T04:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T04:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T04:30:02Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T04:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T05:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T05:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T05:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T06:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T06:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T06:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T06:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T06:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T07:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T07:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T07:30:02Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T07:30:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T07:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T08:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T08:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T08:30:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T09:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T10:33:13Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T11:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T11:30:04Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T11:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T12:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T12:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T12:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T12:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T13:00:01Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T13:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T13:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T13:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T14:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T14:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T14:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T15:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T15:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T15:30:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T15:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T16:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T16:30:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T16:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T16:55:51Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T16:56:59Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:24:17Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:24:17Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/trend... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:24:17Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/scalp... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:24:17Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/swing... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:24:17Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/daily... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:24:55Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/mean_... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:24:55Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/trend... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:24:55Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/scalp... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:24:55Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/swing... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:24:55Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: tail -n 10 /Users/aatifquamre/masterbot/logs/daily... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:30:03Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:41:57Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T17:41:58Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T18:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T18:00:37Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T18:01:03Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T18:02:26Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T18:04:13Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T18:04:14Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T18:05:04Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T18:05:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T18:30:05Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T18:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T19:00:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T19:30:02Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T19:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T20:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T20:30:11Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T20:30:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T21:00:02Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T21:30:04Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T21:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T22:00:03Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T22:30:06Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T22:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T23:13:04Z",
+      "device": "M2",
+      "action": "vault_recall",
+      "result": "Queried: avoid strategy when sentiment bearish",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-04T23:30:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T00:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T01:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T02:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T03:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T04:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T05:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T06:30:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T07:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T08:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T09:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T11:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T12:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T13:30:19Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T14:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T15:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T16:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T17:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T18:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T19:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T20:30:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T21:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T22:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-05T23:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T00:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T01:30:01Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T02:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T03:30:19Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T04:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T05:30:01Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T06:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T07:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T08:28:52Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T08:30:01Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T08:30:35Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 50000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T08:41:23Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 60000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T09:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T09:49:44Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 60000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T09:52:38Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 60000.00 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T10:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T11:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T12:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T13:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T14:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T15:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T16:30:13Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T17:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T18:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T19:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T20:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T21:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T22:30:08Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-06T23:30:20Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T00:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T01:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T02:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T03:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T04:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T05:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T06:30:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T07:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T08:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T09:30:07Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T10:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T11:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T12:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T13:30:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T14:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T15:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T16:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T17:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T18:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T19:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T20:30:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T21:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T22:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:15:02Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:15:07Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:15:07Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:15:07Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:23:15Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:23:17Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:23:18Z",
+      "device": "M2",
+      "action": "run_on_m1_remote",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:23:18Z",
+      "device": "M2",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:23:30Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:23:30Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:23:30Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:23:30Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-07T23:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T00:30:08Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T00:39:33Z",
+      "device": "M1",
+      "action": "telegram_reply_received",
+      "result": "User replied: Hello to escalation 2026-05-02T20:52:57Z",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T01:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T02:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T03:30:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T04:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T05:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T06:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T07:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T08:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T09:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T10:30:15Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T11:13:00Z",
+      "device": "M1",
+      "action": "vault_recall",
+      "result": "Queried: MeanReversionV1 BTC/USDT loss failure",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T11:20:59Z",
+      "device": "M1",
+      "action": "vault_recall",
+      "result": "Queried: MeanReversionV1 BTC/USDT loss failure",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T11:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T12:10:18Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T12:10:19Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T12:10:19Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T12:10:19Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T12:18:44Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T12:18:44Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T12:18:44Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T12:18:44Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T12:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T13:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "1 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T14:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T15:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T16:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T17:30:14Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T18:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T19:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T20:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T21:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T21:49:22Z",
+      "device": "M1",
+      "action": "vault_recall",
+      "result": "Queried: MeanReversionV1 BTC/USDT loss failure",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T21:49:57Z",
+      "device": "M1",
+      "action": "vault_store",
+      "result": "Stored lesson trade_memory_1778276996",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T21:54:33Z",
+      "device": "M1",
+      "action": "vault_recall",
+      "result": "Queried: MeanReversionV1 BTC/USDT loss failure",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T21:54:59Z",
+      "device": "M1",
+      "action": "vault_store",
+      "result": "Stored lesson trade_memory_1778277299",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T21:55:28Z",
+      "device": "M1",
+      "action": "vault_recall",
+      "result": "Queried: MeanReversionV1 BTC/USDT loss failure",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T21:55:52Z",
+      "device": "M1",
+      "action": "vault_store",
+      "result": "Stored lesson trade_memory_1778277352",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T22:04:41Z",
+      "device": "M1",
+      "action": "vault_recall",
+      "result": "Queried: MeanReversionV1 BTC/USDT loss failure",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T22:06:22Z",
+      "device": "M1",
+      "action": "vault_store",
+      "result": "Stored lesson trade_memory_1778277982",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T22:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-08T23:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T00:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T01:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T02:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T03:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T04:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T05:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T06:30:15Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T07:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T08:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T09:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T10:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T11:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T12:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T13:30:14Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T14:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T15:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T16:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T17:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T18:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T19:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T20:30:16Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T21:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T22:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-09T23:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T00:30:10Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T01:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T02:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T03:30:19Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T04:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T05:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T06:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T07:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T08:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T09:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T10:30:20Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T11:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T12:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T13:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T14:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T15:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T16:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T17:30:15Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T18:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T19:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T20:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T21:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T22:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-10T23:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T00:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T01:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T02:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T03:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T04:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T05:30:02Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T06:30:17Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T07:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T07:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T07:30:06Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T08:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T08:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T08:30:08Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T09:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T09:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T09:30:06Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T10:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T10:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T10:30:08Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T11:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T11:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T11:30:06Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T12:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T12:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T12:30:08Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T13:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T13:30:16Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T14:00:06Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T14:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T14:30:09Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T15:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T15:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T15:30:07Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T16:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T16:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T16:30:09Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T17:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T17:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T17:30:06Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T18:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T18:30:18Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T18:30:26Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T19:00:09Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T19:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T19:30:08Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T20:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T20:30:17Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T21:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T21:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T21:30:09Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T22:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T22:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T22:30:09Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:26:16Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:26:17Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:26:17Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:26:17Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:27:58Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: /Users/aatifquamre/masterbot/venv/bin/supervisorct... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:27:58Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/sentiment/scores/... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:27:58Z",
+      "device": "M1",
+      "action": "run_on_m1_local",
+      "result": "Cmd: cat /Users/aatifquamre/masterbot/risk/balance_stat... | Exit: 0",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:27:58Z",
+      "device": "M1",
+      "action": "bot_status_query_all",
+      "result": "Status snapshot aggregated",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:30:12Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-11T23:30:23Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T00:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T00:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T00:30:09Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T01:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T01:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T01:30:06Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T02:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T02:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T02:30:08Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T03:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T03:30:17Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T04:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T04:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T04:30:07Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T04:30:07Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T05:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T05:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T05:30:06Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T06:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T06:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T06:30:09Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T07:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T07:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T07:30:07Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T08:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T08:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T08:30:08Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T09:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T09:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T09:30:08Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T10:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T10:30:25Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T11:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T11:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T11:30:07Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T12:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T12:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T12:30:11Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T13:00:06Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T13:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T13:30:08Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T14:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T14:30:07Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T14:30:14Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T15:00:06Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T15:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T15:30:05Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T16:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T16:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T16:30:07Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T16:30:07Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T17:00:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T17:30:21Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T18:00:09Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T18:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T18:30:10Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T19:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T19:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T19:30:06Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T20:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T20:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T20:30:08Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T21:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T21:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T21:30:08Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T22:00:06Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T22:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T22:30:11Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T23:00:05Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T23:30:08Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-12T23:30:10Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-13T00:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-13T00:30:09Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-13T00:30:09Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    }
+  ],
+  "device_state": {
+    "M1": {
+      "last_seen": "2026-05-13T00:30:09Z",
+      "last_action": "oracle_anomaly_check",
+      "hostname": "Aatifs-MacBook-Air.local"
+    },
+    "M2": {
+      "last_seen": "2026-05-07T23:23:18Z",
+      "last_action": "bot_status_query_all",
+      "hostname": "Aatifs-MacBook-Air.local"
+    }
+  },
+  "decisions": [
+    {
+      "timestamp": "2026-05-02T20:19:34Z",
+      "device": "M1",
+      "situation": "System test escalation \u2014 testing reply flow",
+      "options_presented": [
+        "Option A \u2014 test choice 1",
+        "Option B \u2014 test choice 2",
+        "Option C \u2014 test choice 3",
+        "Option D \u2014 cancel test"
+      ],
+      "chosen": "PENDING",
+      "reasoning": "Option D \u2014 this is just a test",
+      "outcome": null
+    },
+    {
+      "timestamp": "2026-05-02T20:24:12Z",
+      "device": "M1",
+      "situation": "System test escalation \u2014 testing reply flow",
+      "options_presented": [
+        "Option A \u2014 test choice 1",
+        "Option B \u2014 test choice 2",
+        "Option C \u2014 test choice 3",
+        "Option D \u2014 cancel test"
+      ],
+      "chosen": "PENDING",
+      "reasoning": "Option D \u2014 this is just a test",
+      "outcome": null
+    },
+    {
+      "timestamp": "2026-05-02T20:52:57Z",
+      "device": "M1",
+      "situation": "System test escalation \u2014 testing reply flow",
+      "options_presented": [
+        "Option A \u2014 test choice 1",
+        "Option B \u2014 test choice 2",
+        "Option C \u2014 test choice 3",
+        "Option D \u2014 cancel test"
+      ],
+      "chosen": "PENDING",
+      "reasoning": "Option D \u2014 this is just a test",
+      "outcome": "User instructed: Hello"
+    },
+    {
+      "timestamp": "2026-05-02T22:09:23Z",
+      "device": "M1",
+      "situation": "System test escalation \u2014 testing reply flow",
+      "options_presented": [
+        "Option A",
+        "Option B",
+        "Option C",
+        "Option D"
+      ],
+      "chosen": "PENDING",
+      "reasoning": "Option D",
+      "outcome": "User instructed: Check of the trading bot for telegram is working and connected"
+    },
+    {
+      "timestamp": "2026-05-02T22:36:36Z",
+      "device": "M1",
+      "situation": "System test escalation \u2014 testing reply flow",
+      "options_presented": [
+        "Option A",
+        "Option B",
+        "Option C",
+        "Option D"
+      ],
+      "chosen": "PENDING",
+      "reasoning": "Option D",
+      "outcome": "User instructed: Scan the whole project on both the devices and list me the issue /error/bugs you find"
+    }
+  ],
+  "site_maps": {},
+  "calendar_cache": {
+    "last_fetched": "2026-05-13T00:00:18.548984Z",
+    "events": []
+  },
+  "strategy_history": [],
+  "escalation_log": [],
+  "autonomous_actions_today": 763,
+  "autonomous_actions_total": 763,
+  "indexed_research_files": [
+    "scan_20260428.md"
+  ],
+  "pending_replies": [
+    {
+      "timestamp": "2026-05-02T22:49:10Z",
+      "raw_text": "Scan the whole project on both the devices and list me the issue /error/bugs you find",
+      "parsed": {
+        "type": "custom",
+        "value": "Scan the whole project on both the devices and list me the issue /error/bugs you find"
+      },
+      "responded_to": "2026-05-02T22:36:36Z",
+      "processed": false
+    },
+    {
+      "timestamp": "2026-05-03T15:48:12Z",
+      "raw_text": "Check of the trading bot for telegram is working and connected",
+      "parsed": {
+        "type": "custom",
+        "value": "Check of the trading bot for telegram is working and connected"
+      },
+      "responded_to": "2026-05-02T22:09:23Z",
+      "processed": false
+    },
+    {
+      "timestamp": "2026-05-08T00:39:32Z",
+      "raw_text": "Hello",
+      "parsed": {
+        "type": "custom",
+        "value": "Hello"
+      },
+      "responded_to": "2026-05-02T20:52:57Z",
+      "processed": false
+    }
+  ],
+  "skeptic_stats": {
+    "total": 6,
+    "blocked": 4,
+    "allowed": 2
+  }
+}
