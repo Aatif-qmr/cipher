@@ -14,7 +14,12 @@
             "ETH/USDT",
             "SOL/USDT",
             "BNB/USDT",
-            "XRP/USDT"
+            "XRP/USDT",
+            "DOGE/USDT",
+            "ADA/USDT",
+            "AVAX/USDT",
+            "LINK/USDT",
+            "DOT/USDT"
         ],
         "pair_blacklist": []
     },

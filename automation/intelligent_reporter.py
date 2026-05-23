@@ -25,7 +25,8 @@ DEST_EMAIL = 'aatifqmr@gmail.com'
 from dotenv import load_dotenv
 load_dotenv('/Users/aatifquamre/masterbot/.env')
 
-MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
+MISTRAL_API_KEY = "buk3FCIeMTkBXiweHG6xuRmcQ0VeeczB"
+# MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
 TELEGRAM_TOKEN = os.getenv('QNT_TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('QNT_TELEGRAM_CHAT_ID')
 
@@ -103,7 +104,7 @@ def analyze_with_mistral(data):
     if not MISTRAL_API_KEY:
         return "Intelligence module deactivated (No API Key)."
 
-    client = Mistral(api_key=MISTRAL_API_KEY)
+    client = Mistral(api_key=MISTRAL_API_KEY, server_url="https://codestral.mistral.ai")
     
     prompt = f"""
     Act as the MasterBot Intelligence Layer. Analyze the following trading performance and sentiment data.
@@ -120,7 +121,7 @@ def analyze_with_mistral(data):
     """
     
     chat_response = client.chat.complete(
-        model="mistral-large-latest",
+        model="codestral-latest",
         messages=[{"role": "user", "content": prompt}]
     )
     return chat_response.choices[0].message.content

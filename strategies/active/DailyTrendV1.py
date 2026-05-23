@@ -21,6 +21,7 @@ from risk.risk_manager import run_all_checks
 from sentiment.reader import get_current_sentiment
 from qnt.oracle.oracle_calendar import is_safe_to_trade_today
 from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
+from qnt.thesis.thesis_reader import read_thesis
 
 logger = logging.getLogger(__name__)
 
@@ -80,9 +81,17 @@ class DailyTrendV1(IStrategy):
     }
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe['ema_50'] = ta.ema(dataframe['close'], length=50)
-        dataframe['rsi'] = ta.rsi(dataframe['close'], length=14)
-        dataframe['volume_avg'] = ta.sma(dataframe['volume'], length=10)
+        import polars as pl
+        from qnt.polars_ohlcv import pandas_to_polars, ohlcv_to_pandas
+        from qnt.polars_indicators import add_ema, add_rsi, add_sma
+        
+        df_pl = pandas_to_polars(dataframe)
+        
+        df_pl = add_ema(df_pl, period=50, alias="ema_50")
+        df_pl = add_rsi(df_pl, period=14, alias="rsi")
+        df_pl = add_sma(df_pl, period=10, column="volume", alias="volume_avg")
+        
+        dataframe = ohlcv_to_pandas(df_pl)
         dataframe = merge_macro_data(dataframe)
         return dataframe
 
@@ -118,13 +127,24 @@ class DailyTrendV1(IStrategy):
     def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
                            time_in_force: str, current_time: datetime, entry_tag: str,
                            side: str, **kwargs) -> bool:
+        # --- LAYER 0: THESIS GATE ---
+        thesis = read_thesis(pair)
+        if thesis["bias"] == "SELL":
+            logger.info(f"[THESIS BLOCK] {pair} bias=SELL confidence={thesis['confidence']:.2f} — {thesis['reasoning']}")
+            return False
+        stake_modifier = thesis.get("stake_modifier", 1.0)
+
         # --- LAYER 1: RISK & SENTIMENT CHECKS ---
         try:
             total_balance = self.wallets.get_total('USDT')
             
             # Fetch recent trades for loss counting
             recent_trades = [
-                {'profit_ratio': t.profit_ratio, 'close_date': t.close_date} 
+                {
+                    'profit_ratio': float(getattr(t, 'close_profit', None) or
+                                         getattr(t, 'profit_ratio', None) or 0.0),
+                    'close_date': getattr(t, 'close_date', None)
+                }
                 for t in Trade.get_trades_proxy(is_open=False)
             ][:10]
             
@@ -151,7 +171,7 @@ class DailyTrendV1(IStrategy):
                 current_balance=total_balance,
                 start_of_day_balance=start_of_day,
                 start_of_week_balance=start_of_week,
-                trade_amount_usdt=amount * rate,
+                trade_amount_usdt=amount * rate * stake_modifier,
                 trades_last_hour=trades_last_hour,
                 recent_trades=recent_trades,
                 min_sentiment='NEUTRAL'

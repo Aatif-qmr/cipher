@@ -1,0 +1,44 @@
+{
+  "_meta_ScalpV1": {
+    "cooldowns": {
+      "buy_rsi": 2
+    },
+    "cycle": 21
+  },
+  "ScalpV1": {
+    "buy_rsi": 27,
+    "sell_rsi": 55
+  },
+  "MeanReversionV1": {
+    "buy_rsi": 25,
+    "bb_period": 15,
+    "bb_std": 1.5,
+    "sell_rsi": 60
+  },
+  "TrendFollowV1": {
+    "buy_rsi_min": 30,
+    "buy_rsi_max": 70,
+    "sell_rsi_limit": 70
+  },
+  "_backtest_meta": {
+    "calibrated_at": "2026-05-23T00:46:55.985005+00:00",
+    "method": "walk_forward_3window",
+    "timeframes": {
+      "ScalpV1": "5m",
+      "MeanReversionV1": "1h",
+      "TrendFollowV1": "1h"
+    },
+    "pairs": [
+      "BTC_USDT",
+      "ETH_USDT",
+      "SOL_USDT",
+      "BNB_USDT",
+      "XRP_USDT",
+      "DOGE_USDT",
+      "ADA_USDT",
+      "AVAX_USDT",
+      "LINK_USDT",
+      "DOT_USDT"
+    ]
+  }
+}

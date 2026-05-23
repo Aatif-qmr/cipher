@@ -1,0 +1,54 @@
+{
+    "max_open_trades": 10,
+    "stake_currency": "USDC",
+    "stake_amount": "unlimited",
+    "tradable_balance_ratio": 0.90,
+    "timeframes": ["1m", "5m", "15m", "1h", "4h"],
+    "strategy_path": "strategies/active",
+    "dry_run": true,
+    "dry_run_wallet": 10000,
+    "exchange": {
+        "name": "hyperliquid",
+        "key": "",
+        "secret": "",
+        "ccxt_config": {
+            "options": {
+                "defaultType": "future"
+            }
+        },
+        "pair_whitelist": [
+            "BTC/USDC:USDC",
+            "ETH/USDC:USDC",
+            "SOL/USDC:USDC",
+            "BNB/USDC:USDC",
+            "XRP/USDC:USDC"
+        ],
+        "pair_blacklist": [
+        ]
+    },
+    "pairlists": [
+        {
+            "method": "StaticPairList"
+        }
+    ],
+    "api_server": {
+        "enabled": true,
+        "listen_ip_address": "0.0.0.0",
+        "listen_port": 8086,
+        "verbosity": "error",
+        "enable_openapi": false,
+        "username": "Aatif-qmr",
+        "password": "2001"
+    },
+    "bot_name": "masterbot_hyperliquid",
+    "initial_state": "running",
+    "order_types": {
+        "entry": "market",
+        "exit": "market",
+        "emergency_exit": "market",
+        "force_entry": "market",
+        "force_exit": "market",
+        "stoploss": "market",
+        "stoploss_on_exchange": false
+    }
+}

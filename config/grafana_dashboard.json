@@ -1,0 +1,40 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "MasterBot Freqtrade Dashboard",
+    "tags": ["freqtrade", "masterbot"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Total Profit (ABS)",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+        "targets": [{ "expr": "freqtrade_profit_abs", "legendFormat": "{{instance}}" }]
+      },
+      {
+        "title": "Open Trades",
+        "type": "gauge",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+        "targets": [{ "expr": "freqtrade_open_trades", "legendFormat": "{{instance}}" }]
+      },
+      {
+        "title": "Daily Profit",
+        "type": "bar_chart",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+        "targets": [{ "expr": "freqtrade_daily_profit", "legendFormat": "{{instance}}" }]
+      },
+      {
+        "title": "System Resources",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+        "targets": [
+          { "expr": "system_cpu_usage", "legendFormat": "CPU" },
+          { "expr": "system_memory_usage", "legendFormat": "RAM" }
+        ]
+      }
+    ],
+    "schemaVersion": 36,
+    "version": 1
+  },
+  "overwrite": true
+}

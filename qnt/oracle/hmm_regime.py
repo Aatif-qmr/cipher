@@ -39,11 +39,20 @@ def load_hmm_model():
         except:
             return None
 
+_regime_cache: dict = {}   # pair → (regime, expires_at)
+_REGIME_CACHE_TTL = 300    # 5 minutes per pair
+
+
 def detect_regime(dataframe: pd.DataFrame, pair: str = "BTC/USDT") -> str:
     """
     Returns: 'BULL', 'BEAR', or 'RANGING'
-    Uses last 100 candles of 1m data for micro-scalp context.
+    Uses last 100 candles of the pair's own data. Cached per-pair for 5 min.
     """
+    import time
+    cached = _regime_cache.get(pair)
+    if cached and time.time() < cached[1]:
+        return cached[0]
+
     model_data = load_hmm_model()
     if model_data is None:
         return "RANGING"  # Safe default
@@ -75,18 +84,19 @@ def detect_regime(dataframe: pd.DataFrame, pair: str = "BTC/USDT") -> str:
         dominant_state = np.argmax(state_counts)
         
         # Map HMM state to regime label
-        # If we have a state_map from the sophisticated training, use it.
-        # Otherwise use the default 3-state map.
         if state_map:
-            # Convert sophisticated names to BULL/BEAR/RANGING for simplicity
             res = state_map.get(dominant_state, "RANGING")
-            if res == "TRENDING_UP": return "BULL"
-            if res == "TRENDING_DOWN": return "BEAR"
-            if res == "VOLATILE": return "BEAR" # Volatile is risky
-            return "RANGING"
-            
-        regime_map = {0: "BEAR", 1: "RANGING", 2: "BULL"}
-        return regime_map.get(dominant_state, "RANGING")
+            if res == "TRENDING_UP": result = "BULL"
+            elif res == "TRENDING_DOWN": result = "BEAR"
+            elif res == "VOLATILE": result = "BEAR"
+            else: result = "RANGING"
+        else:
+            regime_map = {0: "BEAR", 1: "RANGING", 2: "BULL"}
+            result = regime_map.get(dominant_state, "RANGING")
+
+        import time
+        _regime_cache[pair] = (result, time.time() + _REGIME_CACHE_TTL)
+        return result
     except Exception as e:
         print(f"HMM Detection Error: {e}")
         return "RANGING"
@@ -102,4 +112,24 @@ def get_regime_for_strategy(strategy_name: str, current_regime: str) -> bool:
         return current_regime != "BULL"  # Mean-rev underperforms in strong trends
     if strategy_name in ["TrendFollowV1", "DailyTrendV1"]:
         return current_regime != "RANGING"  # Trend strategies need direction
+    if strategy_name == "SwingV1":
+        return current_regime == "BULL"  # EMA crossovers need a trending bull market
+    if strategy_name == "BearScalpV1":
+        return current_regime == "BEAR"  # Short-only strategy
     return True
+
+
+_REGIME_LABELS = {0: "BEAR", 1: "RANGING", 2: "BULL"}
+
+def detect_regime_full(dataframe: pd.DataFrame, pair: str = "BTC/USDT") -> dict:
+    """
+    Returns current + predicted next regime with confidence.
+    Routes to the high-performance ONNX Runtime implementation.
+    """
+    try:
+        from qnt.oracle.onnx_inference import detect_regime_onnx
+        return detect_regime_onnx(dataframe, pair)
+    except Exception as e:
+        print(f"Error routing to ONNX regime inference: {e}")
+        current = detect_regime(dataframe, pair)
+        return {"current_regime": current, "next_regime": current, "confidence": 0.5}

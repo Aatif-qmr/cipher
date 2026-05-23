@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Automated post-mortem analysis for losing trades.
+Automated post-mortem analysis for losing and winning trades.
 Runs every 2 hours via cron. Logs lessons to qnt vault.
 """
 import json
@@ -9,15 +9,23 @@ from pathlib import Path
 from datetime import datetime, timedelta
 import sys
 import os
+from dotenv import load_dotenv
+import pandas as pd
 
 # Detect BASE_DIR
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
+sys.path.insert(0, str(BASE_DIR / 'qnt/oracle'))
 
-from qnt.vault.vault import Vault
+# Load environment variables
+load_dotenv(BASE_DIR / '.env')
+MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
 
-def analyze_losing_trades(db_path: str, hours: int = 2) -> list:
-    """Extract losing trades from last N hours."""
+from qnt.vault.vault import store_lesson
+from qnt.oracle.hmm_regime import detect_regime_full
+
+def analyze_recent_trades(db_path: str, hours: int = 2) -> list:
+    """Extract losing and winning trades from last N hours."""
     if not os.path.exists(db_path):
         return []
         
@@ -29,13 +37,14 @@ def analyze_losing_trades(db_path: str, hours: int = 2) -> list:
     
     # Try to find the correct table structure
     try:
+        # Fetch losses > 1% (close_profit < -0.01) and wins > 3% (close_profit > 0.03)
         query = """
         SELECT pair, open_date, close_date, close_profit as profit_ratio, 
                open_rate, close_rate, stake_amount, strategy
         FROM trades 
         WHERE close_date IS NOT NULL 
           AND close_date >= ?
-          AND close_profit < -0.01  /* Losses > 1% */
+          AND (close_profit < -0.01 OR close_profit > 0.03)
         ORDER BY close_date DESC
         """
 
@@ -48,48 +57,173 @@ def analyze_losing_trades(db_path: str, hours: int = 2) -> list:
     conn.close()
     return trades
 
-def generate_lesson(trade: dict) -> dict:
-    """Convert losing trade to structured lesson for Vault."""
-    return {
-        "type": "losing_trade_analysis",
-        "timestamp": datetime.now().isoformat(),
-        "pair": trade["pair"],
-        "strategy": trade["strategy"],
-        "loss_pct": trade["profit_ratio"] * 100,
-        "entry_price": trade["open_rate"],
-        "exit_price": trade["close_rate"],
-        "duration_minutes": (
+def get_market_context_at_open(trade: dict) -> dict:
+    """Retrieves sentiment score and HMM regime at trade open time."""
+    context = {
+        "sentiment_score": "0.0",
+        "regime": "RANGING",
+        "regime_confidence": 0.5
+    }
+    
+    # 1. Get sentiment score from sentiment/scores/history.csv
+    try:
+        sentiment_csv = BASE_DIR / 'sentiment/scores/history.csv'
+        if sentiment_csv.exists():
+            hist = pd.read_csv(sentiment_csv)
+            hist['timestamp'] = pd.to_datetime(hist['timestamp'], utc=True).dt.tz_localize(None)
+            open_dt = pd.to_datetime(trade['open_date'], utc=True).tz_localize(None)
+            closest = hist.iloc[(hist['timestamp'] - open_dt).abs().argsort()[:1]]
+            if not closest.empty:
+                context["sentiment_score"] = f"{closest.iloc[0]['score']:.4f}"
+    except Exception as e:
+        print(f"Error fetching sentiment at open: {e}")
+        
+    # 2. Get HMM regime from BTC_USDT-1h.feather
+    try:
+        feather_path = BASE_DIR / "user_data/data/binance/BTC_USDT-1h.feather"
+        if feather_path.exists():
+            df = pd.read_feather(feather_path)
+            df['date'] = pd.to_datetime(df['date'], utc=True).dt.tz_localize(None)
+            open_dt = pd.to_datetime(trade['open_date'], utc=True).tz_localize(None)
+            df_at_open = df[df['date'] <= open_dt].tail(200)
+            
+            reg_info = detect_regime_full(df_at_open)
+            context["regime"] = reg_info.get("current_regime", "RANGING")
+            context["regime_confidence"] = reg_info.get("confidence", 0.5)
+    except Exception as e:
+        print(f"Error fetching HMM regime at open: {e}")
+        
+    return context
+
+def generate_ai_analysis(trade: dict, context: dict) -> str:
+    """Generates detailed AI analysis using Mistral Codestral API."""
+    try:
+        duration_minutes = (
             datetime.fromisoformat(trade["close_date"].replace("Z", "+00:00")) -
             datetime.fromisoformat(trade["open_date"].replace("Z", "+00:00"))
-        ).total_seconds() / 60 if trade["close_date"] else None,
-        "hypothesis": f"Loss may indicate regime mismatch or sentiment lag for {trade['strategy']} on {trade['pair']}",
-        "action_items": [
-            f"Review {trade['strategy']} entry conditions during similar market conditions",
-            "Check if sentiment score was stale at entry time",
-            "Consider adding regime filter if not already present"
-        ]
-    }
+        ).total_seconds() / 60 if trade["close_date"] else 0
+    except:
+        duration_minutes = 0
+
+    outcome = "WIN" if trade["profit_ratio"] > 0 else "LOSS"
+    
+    prompt = f"""
+    Act as a Senior Quant at a high-frequency algorithmic trading firm. Analyze the following trade and its market context.
+    
+    TRADE DETAILS:
+    - Pair: {trade['pair']}
+    - Strategy: {trade['strategy']}
+    - Outcome: {outcome} ({trade['profit_ratio']*100:.2f}% profit ratio)
+    - Entry Rate: {trade['open_rate']} (Date: {trade['open_date']})
+    - Exit Rate: {trade['close_rate']} (Date: {trade['close_date']})
+    - Stake Amount: {trade['stake_amount']}
+    - Duration: {duration_minutes:.1f} minutes
+    
+    MARKET CONTEXT AT ENTRY:
+    - Global Sentiment Score: {context['sentiment_score']}
+    - Market Regime: {context['regime']} (Confidence: {context['regime_confidence']})
+    
+    Provide a detailed Senior Quant breakdown with three distinct sections:
+    1. Detailed Performance Assessment: Analyze the entry/exit execution relative to the sentiment and market regime.
+    2. Hypothesis: Formulate a clear hypothesis on why the trade succeeded or failed (e.g., regime mismatch, trend persistence, exit triggers, news lag, indicator delay).
+    3. Actionable Recommendations: Specific suggestions for parameter refinement, regime filters, or execution modifications to improve reliability.
+    
+    Be quantitative, objective, and highly technical. Return only markdown text.
+    """
+    
+    if not MISTRAL_API_KEY:
+        # Fallback to simple default analysis if API Key is missing
+        return f"### Post-mortem Analysis (No API Key)\n\n" \
+               f"Trade {trade['pair']} on strategy {trade['strategy']} ended with a {outcome} ({trade['profit_ratio']*100:.2f}%).\n\n" \
+               f"**Hypothesis**: Default regime mismatch under {context['regime']} regime (Sentiment: {context['sentiment_score']})."
+               
+    try:
+        from mistralai.client import Mistral
+        client = Mistral(api_key=MISTRAL_API_KEY, server_url="https://codestral.mistral.ai")
+        chat_response = client.chat.complete(
+            model="codestral-latest",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return chat_response.choices[0].message.content
+    except Exception as e:
+        print(f"Mistral API error: {e}")
+        return f"### Post-mortem Analysis (API Error: {e})\n\n" \
+               f"Trade {trade['pair']} on strategy {trade['strategy']} ended with a {outcome} ({trade['profit_ratio']*100:.2f}%).\n\n" \
+               f"**Market context**: Sentiment={context['sentiment_score']}, Regime={context['regime']}."
+
+STRATEGY_DBS = {
+    'ScalpV1':       BASE_DIR / 'user_data/scalp.sqlite',
+    'SwingV1':       BASE_DIR / 'user_data/swing.sqlite',
+    'MeanReversionV1': BASE_DIR / 'user_data/mean_reversion.sqlite',
+    'TrendFollowV1': BASE_DIR / 'user_data/trend_follow.sqlite',
+    'DailyTrendV1':  BASE_DIR / 'user_data/daily.sqlite',
+    'BearScalpV1':   BASE_DIR / 'user_data/bear_scalp.sqlite',
+    'MicroScalpV1':  BASE_DIR / 'user_data/tradesv3_micro.sqlite',
+}
+
 
 def main():
-    vault = Vault()
-    db_path = BASE_DIR / "user_data/tradesv3_micro.sqlite"
-    
-    if not db_path.exists():
-        # Fallback to main paper dryrun db if micro one doesn't have trades yet
-        db_path = BASE_DIR / "user_data/tradesv3.dryrun.sqlite"
-        
-    if not db_path.exists():
-        print(f"DB not found: {db_path}")
+    hours = 2
+    if len(sys.argv) > 1:
+        try:
+            hours = int(sys.argv[1])
+        except ValueError:
+            pass
+
+    all_trades = []
+    for strategy_name, db_path in STRATEGY_DBS.items():
+        if not db_path.exists():
+            continue
+        trades = analyze_recent_trades(str(db_path), hours=hours)
+        # Tag with strategy name in case the DB column is missing
+        for t in trades:
+            if not t.get('strategy'):
+                t['strategy'] = strategy_name
+        all_trades.extend(trades)
+
+    if not all_trades:
+        print(f"No notable trades in last {hours}h across all strategy DBs.")
         return
-    
-    losing_trades = analyze_losing_trades(str(db_path))
-    
-    for trade in losing_trades:
-        lesson = generate_lesson(trade)
-        vault.store(lesson, tags=["post_mortem", lesson["strategy"], lesson["pair"]])
-        print(f"Logged post-mortem: {trade['pair']} {trade['profit_ratio']*100:.2f}% loss")
-    
-    print(f"Post-mortem loop complete. Processed {len(losing_trades)} losing trades.")
+
+    # Group summary by strategy
+    by_strategy: dict = {}
+    for t in all_trades:
+        s = t.get('strategy', 'unknown')
+        by_strategy.setdefault(s, []).append(t)
+
+    for s, trades in by_strategy.items():
+        wins = [t for t in trades if t['profit_ratio'] > 0]
+        losses = [t for t in trades if t['profit_ratio'] <= 0]
+        avg_profit = sum(t['profit_ratio'] for t in trades) / len(trades)
+        print(f"[{s}] {len(trades)} trades | {len(wins)}W/{len(losses)}L | avg {avg_profit*100:+.2f}%")
+
+    for trade in all_trades:
+        is_win = trade["profit_ratio"] > 0
+        outcome_type = "trade_success" if is_win else "trade_postmortem"
+
+        context = get_market_context_at_open(trade)
+        analysis_text = generate_ai_analysis(trade, context)
+
+        timestamp_str = datetime.now().isoformat()
+        timestamp_clean = timestamp_str.replace(':', '-').replace('.', '_')
+        lesson_id = f"{outcome_type}_{trade.get('pair','unk').replace('/', '_')}_{timestamp_clean}"
+
+        metadata = {
+            "pair": trade["pair"],
+            "strategy": trade["strategy"],
+            "type": outcome_type,
+            "timestamp": timestamp_str,
+            "profit_ratio": float(trade["profit_ratio"]),
+            "sentiment_score": float(context["sentiment_score"]) if context["sentiment_score"] != "N/A" else 0.0,
+            "regime": context["regime"],
+            "regime_confidence": float(context["regime_confidence"])
+        }
+
+        store_lesson(lesson_id, analysis_text, metadata)
+        outcome_str = f"Win (+{trade['profit_ratio']*100:.2f}%)" if is_win else f"Loss ({trade['profit_ratio']*100:.2f}%)"
+        print(f"Logged {outcome_type}: {trade['pair']} [{trade['strategy']}] {outcome_str}")
+
+    print(f"Post-mortem complete. Processed {len(all_trades)} trades across {len(by_strategy)} strategies.")
 
 if __name__ == "__main__":
     main()

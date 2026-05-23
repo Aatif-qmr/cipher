@@ -187,6 +187,84 @@ def get_m2_resource_report() -> str:
     except:
         return "M2 resource report unavailable"
 
+def get_strategy_win_rate_trend(db_paths: list, weeks: int = 4) -> dict:
+    """
+    Returns per-strategy win rate for each of the last `weeks` weeks.
+    Result: {strategy: [wr_oldest, ..., wr_last_week, wr_this_week]}
+    Each value is a float 0-100 or None if no trades that week.
+    """
+    now = datetime.now(timezone.utc)
+    trend = {}
+
+    for db_path in db_paths:
+        if not os.path.exists(db_path):
+            continue
+        try:
+            conn = sqlite3.connect(db_path)
+            for w in range(weeks, -1, -1):  # weeks ago → this week (0)
+                week_start = (now - timedelta(days=(w + 1) * 7)).strftime('%Y-%m-%d %H:%M:%S')
+                week_end   = (now - timedelta(days=w * 7)).strftime('%Y-%m-%d %H:%M:%S')
+                rows = conn.execute(
+                    "SELECT strategy, close_profit FROM trades "
+                    "WHERE is_open=0 AND close_date >= ? AND close_date < ?",
+                    (week_start, week_end)
+                ).fetchall()
+                for strategy, profit in rows:
+                    if strategy not in trend:
+                        trend[strategy] = [None] * (weeks + 1)
+                    idx = weeks - w
+                    if trend[strategy][idx] is None:
+                        trend[strategy][idx] = {'wins': 0, 'total': 0}
+                    trend[strategy][idx]['total'] += 1
+                    if profit and profit > 0:
+                        trend[strategy][idx]['wins'] += 1
+            conn.close()
+        except Exception as e:
+            print(f"Trend DB error ({os.path.basename(db_path)}): {e}")
+
+    # Convert raw counts to percentages
+    result = {}
+    for strategy, weeks_data in trend.items():
+        result[strategy] = [
+            round(d['wins'] / d['total'] * 100, 1) if d and d['total'] > 0 else None
+            for d in weeks_data
+        ]
+    return result
+
+
+def format_trend_table(trend: dict, weeks: int = 4) -> str:
+    """Format win-rate trend as a Telegram-friendly text table."""
+    if not trend:
+        return "No trade history yet."
+
+    now = datetime.now(timezone.utc)
+    headers = []
+    for w in range(weeks, -1, -1):
+        label = "Now" if w == 0 else f"W-{w}"
+        headers.append(label)
+
+    lines = ["<b>Win Rate Trend</b>"]
+    lines.append("Strategy           " + "  ".join(f"{h:>5}" for h in headers) + "  Δ")
+    lines.append("─" * 54)
+
+    for strategy, wrs in sorted(trend.items()):
+        name = strategy[:16].ljust(16)
+        cells = []
+        for wr in wrs:
+            cells.append(f"{wr:.0f}%" if wr is not None else "  — ")
+        # Trend arrow: compare last two non-None values
+        non_none = [w for w in wrs if w is not None]
+        if len(non_none) >= 2:
+            delta = non_none[-1] - non_none[-2]
+            arrow = f"{'📈' if delta > 0 else '📉' if delta < 0 else '➡️'}{delta:+.0f}pp"
+        else:
+            arrow = "  —"
+        row = f"{name}  " + "  ".join(f"{c:>5}" for c in cells) + f"  {arrow}"
+        lines.append(row)
+
+    return "\n".join(lines)
+
+
 def get_skeptic_summary() -> str:
     """Fetches skeptic agent stats for the report."""
     try:
@@ -202,7 +280,7 @@ def get_skeptic_summary() -> str:
     except:
         return "Skeptic stats unavailable"
 
-def format_telegram_report(current, previous, sentiment, risk, intel, week_start, week_end, qnt_brief):
+def format_telegram_report(current, previous, sentiment, risk, intel, week_start, week_end, qnt_brief, trend_table=""):
     next_monday = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
     m2_report = get_m2_resource_report()
     skeptic_summary = get_skeptic_summary()
@@ -239,6 +317,8 @@ P&L: {current['total_profit_usdt']:.2f} vs {previous['total_profit_usdt']:.2f} U
 
 🤖 Strategy Breakdown
 {strat_str if strat_str else 'No strategy data available.'}
+📈 Learning Progress
+{trend_table}
 
 🧠 Sentiment This Week
 {sent_str}
@@ -283,16 +363,18 @@ if __name__ == '__main__':
     
     trades = get_weekly_trades(DB_PATHS, 7, 0)
     prev_trades = get_weekly_trades(DB_PATHS, 14, 7)
-    
+
     curr_metrics = calculate_metrics(trades)
     prev_metrics = calculate_metrics(prev_trades)
-    
-    sentiment = get_sentiment_correlation()
-    risk = get_risk_events()
-    intel = get_qnt_intelligence(curr_metrics, sentiment or {})
-    qnt_brief = get_qnt_weekly_brief()
-    
-    report = format_telegram_report(curr_metrics, prev_metrics, sentiment or {}, risk, intel, week_start, week_end, qnt_brief)
+
+    sentiment  = get_sentiment_correlation()
+    risk       = get_risk_events()
+    intel      = get_qnt_intelligence(curr_metrics, sentiment or {})
+    qnt_brief  = get_qnt_weekly_brief()
+    trend_data = get_strategy_win_rate_trend(DB_PATHS, weeks=4)
+    trend_table = format_trend_table(trend_data, weeks=4)
+
+    report = format_telegram_report(curr_metrics, prev_metrics, sentiment or {}, risk, intel, week_start, week_end, qnt_brief, trend_table)
     
     if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
         res = requests.post(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", data={'chat_id': TELEGRAM_CHAT_ID, 'text': report})

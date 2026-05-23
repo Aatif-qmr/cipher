@@ -1517,5 +1517,1251 @@
     "btc_funding_rate": 5.47e-05,
     "btc_open_interest": 105361.459,
     "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T01:30:04.574147+00:00Z",
+    "dxy_24h_change": 0.4207,
+    "btc_funding_rate": 5.036e-05,
+    "btc_open_interest": 105218.916,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T02:30:06.887830+00:00Z",
+    "dxy_24h_change": 0.3727,
+    "btc_funding_rate": 4.566e-05,
+    "btc_open_interest": 105310.822,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T03:30:03.854384+00:00Z",
+    "dxy_24h_change": 0.3941,
+    "btc_funding_rate": 5.242e-05,
+    "btc_open_interest": 105482.883,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T04:30:04.389692+00:00Z",
+    "dxy_24h_change": 0.0356,
+    "btc_funding_rate": 5.72e-05,
+    "btc_open_interest": 105709.405,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T05:30:04.421451+00:00Z",
+    "dxy_24h_change": 0.0397,
+    "btc_funding_rate": 5.772e-05,
+    "btc_open_interest": 105623.556,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T06:30:04.272747+00:00Z",
+    "dxy_24h_change": 0.0743,
+    "btc_funding_rate": 5.825e-05,
+    "btc_open_interest": 105852.709,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T07:30:04.602044+00:00Z",
+    "dxy_24h_change": 0.1435,
+    "btc_funding_rate": 5.373e-05,
+    "btc_open_interest": 105753.322,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T08:30:03.046400+00:00Z",
+    "dxy_24h_change": 0.1852,
+    "btc_funding_rate": 4.896e-05,
+    "btc_open_interest": 105465.988,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T09:30:03.615320+00:00Z",
+    "dxy_24h_change": 0.29,
+    "btc_funding_rate": 4.705e-05,
+    "btc_open_interest": 106079.123,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T10:30:03.603127+00:00Z",
+    "dxy_24h_change": 0.2472,
+    "btc_funding_rate": 4.35e-05,
+    "btc_open_interest": 105872.085,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T11:30:03.859666+00:00Z",
+    "dxy_24h_change": 0.1994,
+    "btc_funding_rate": 2.888e-05,
+    "btc_open_interest": 104809.924,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T12:30:04.326501+00:00Z",
+    "dxy_24h_change": 0.2238,
+    "btc_funding_rate": 2.084e-05,
+    "btc_open_interest": 104471.617,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T13:30:06.007393+00:00Z",
+    "dxy_24h_change": 0.2645,
+    "btc_funding_rate": 1.339e-05,
+    "btc_open_interest": 104133.858,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T14:30:03.884743+00:00Z",
+    "dxy_24h_change": 0.2442,
+    "btc_funding_rate": 1.473e-05,
+    "btc_open_interest": 103980.333,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T15:30:03.902139+00:00Z",
+    "dxy_24h_change": 0.2228,
+    "btc_funding_rate": 1.628e-05,
+    "btc_open_interest": 104044.772,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T16:30:04.877809+00:00Z",
+    "dxy_24h_change": 0.2004,
+    "btc_funding_rate": 2.158e-05,
+    "btc_open_interest": 104466.931,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T17:30:04.839852+00:00Z",
+    "dxy_24h_change": 0.2076,
+    "btc_funding_rate": 1.335e-05,
+    "btc_open_interest": 105086.313,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T18:30:04.165365+00:00Z",
+    "dxy_24h_change": 0.2442,
+    "btc_funding_rate": 5.47e-06,
+    "btc_open_interest": 104701.259,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T19:30:04.113197+00:00Z",
+    "dxy_24h_change": 0.2167,
+    "btc_funding_rate": -4.67e-06,
+    "btc_open_interest": 104341.24,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T20:30:04.207814+00:00Z",
+    "dxy_24h_change": 0.1974,
+    "btc_funding_rate": -7.87e-06,
+    "btc_open_interest": 104433.603,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T21:30:03.053374+00:00Z",
+    "dxy_24h_change": 0.1831,
+    "btc_funding_rate": -2.5e-06,
+    "btc_open_interest": 104079.551,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T22:30:04.322621+00:00Z",
+    "dxy_24h_change": 0.1658,
+    "btc_funding_rate": 1.16e-05,
+    "btc_open_interest": 104006.508,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-13T23:30:04.510847+00:00Z",
+    "dxy_24h_change": 0.1658,
+    "btc_funding_rate": 3.023e-05,
+    "btc_open_interest": 104232.438,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T00:30:03.166908+00:00Z",
+    "dxy_24h_change": 0.1699,
+    "btc_funding_rate": 5.005e-05,
+    "btc_open_interest": 104253.842,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T01:30:04.739148+00:00Z",
+    "dxy_24h_change": 0.178,
+    "btc_funding_rate": 6.493e-05,
+    "btc_open_interest": 104262.223,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T02:30:04.147843+00:00Z",
+    "dxy_24h_change": 0.2106,
+    "btc_funding_rate": 7.364e-05,
+    "btc_open_interest": 104359.342,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T03:30:03.628026+00:00Z",
+    "dxy_24h_change": 0.2096,
+    "btc_funding_rate": 7.083e-05,
+    "btc_open_interest": 103983.219,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T04:30:05.039570+00:00Z",
+    "dxy_24h_change": -0.0274,
+    "btc_funding_rate": 6.509e-05,
+    "btc_open_interest": 104060.672,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T05:30:05.501164+00:00Z",
+    "dxy_24h_change": 0.0101,
+    "btc_funding_rate": 5.819e-05,
+    "btc_open_interest": 104037.176,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T06:30:04.441406+00:00Z",
+    "dxy_24h_change": 0.0223,
+    "btc_funding_rate": 4.446e-05,
+    "btc_open_interest": 103697.125,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T07:30:04.612236+00:00Z",
+    "dxy_24h_change": 0.0274,
+    "btc_funding_rate": 3.785e-05,
+    "btc_open_interest": 103966.412,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T08:30:04.554490+00:00Z",
+    "dxy_24h_change": 0.0294,
+    "btc_funding_rate": 2.171e-05,
+    "btc_open_interest": 104200.171,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T09:30:03.562249+00:00Z",
+    "dxy_24h_change": 0.0162,
+    "btc_funding_rate": 8.8e-06,
+    "btc_open_interest": 104066.8,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T10:30:04.656085+00:00Z",
+    "dxy_24h_change": 0.0366,
+    "btc_funding_rate": 3.98e-06,
+    "btc_open_interest": 104002.554,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T11:30:04.505665+00:00Z",
+    "dxy_24h_change": 0.0538,
+    "btc_funding_rate": -1.33e-06,
+    "btc_open_interest": 103932.396,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T12:30:03.550644+00:00Z",
+    "dxy_24h_change": 0.069,
+    "btc_funding_rate": 7.39e-06,
+    "btc_open_interest": 103947.291,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T13:30:03.223243+00:00Z",
+    "dxy_24h_change": 0.135,
+    "btc_funding_rate": 4.68e-06,
+    "btc_open_interest": 104903.311,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-14T14:30:04.204248+00:00Z",
+    "dxy_24h_change": 0.1056,
+    "btc_funding_rate": 2.646e-05,
+    "btc_open_interest": 105297.331,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-16T14:30:04.581990+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 6.016e-05,
+    "btc_open_interest": 101632.875,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-16T15:30:05.049389+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 5.817e-05,
+    "btc_open_interest": 101758.299,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-16T16:30:04.912575+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 4.352e-05,
+    "btc_open_interest": 101969.635,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-16T17:30:04.880130+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 2.807e-05,
+    "btc_open_interest": 101858.63,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-16T18:30:04.025574+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 2.515e-05,
+    "btc_open_interest": 101816.711,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-16T19:30:04.106746+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 2.984e-05,
+    "btc_open_interest": 101916.565,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-16T20:30:04.733488+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 2.378e-05,
+    "btc_open_interest": 101927.846,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-16T21:30:04.451992+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 2.838e-05,
+    "btc_open_interest": 101890.909,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-16T22:30:04.073869+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 3.485e-05,
+    "btc_open_interest": 101975.057,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-16T23:30:03.709044+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 3.841e-05,
+    "btc_open_interest": 101875.01,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-17T00:30:03.659115+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 4.445e-05,
+    "btc_open_interest": 102082.186,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-17T01:30:05.190343+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 4.581e-05,
+    "btc_open_interest": 102700.072,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-17T02:30:04.916133+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 4.558e-05,
+    "btc_open_interest": 102548.854,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-17T03:30:04.034522+00:00Z",
+    "dxy_24h_change": 0.3944,
+    "btc_funding_rate": 4.327e-05,
+    "btc_open_interest": 102539.927,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-17T04:30:04.554016+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 4.062e-05,
+    "btc_open_interest": 102494.283,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T05:30:05.040232+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 3.355e-05,
+    "btc_open_interest": 102396.157,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T06:30:03.900163+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 2.176e-05,
+    "btc_open_interest": 102458.242,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T07:30:04.783029+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 1.696e-05,
+    "btc_open_interest": 102423.455,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T08:30:04.635391+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 6.5e-06,
+    "btc_open_interest": 102478.48,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T09:30:03.699574+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 4.23e-06,
+    "btc_open_interest": 102455.774,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T10:30:04.840156+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 4.74e-06,
+    "btc_open_interest": 102246.902,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T11:30:03.790497+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": -8.43e-06,
+    "btc_open_interest": 102047.04,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T12:30:04.021799+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": -8.98e-06,
+    "btc_open_interest": 102063.208,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T13:30:03.938988+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": -7.48e-06,
+    "btc_open_interest": 102079.225,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T14:30:03.426809+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": -2.91e-06,
+    "btc_open_interest": 101968.366,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T15:30:03.746729+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 1.35e-06,
+    "btc_open_interest": 102234.867,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T16:30:13.491475+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 1.69e-06,
+    "btc_open_interest": 102572.604,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T17:30:03.828530+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": -6.26e-06,
+    "btc_open_interest": 102538.979,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T18:30:04.931185+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": -1.936e-05,
+    "btc_open_interest": 102592.34,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T19:30:06.501252+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": -2.839e-05,
+    "btc_open_interest": 102588.715,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T20:30:05.015892+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": -3.709e-05,
+    "btc_open_interest": 102491.565,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T21:30:05.485183+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": -3.527e-05,
+    "btc_open_interest": 102331.175,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-17T22:30:03.731951+00:00Z",
+    "dxy_24h_change": 0.0141,
+    "btc_funding_rate": -3.458e-05,
+    "btc_open_interest": 102375.896,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-17T23:30:04.067737+00:00Z",
+    "dxy_24h_change": 0.0171,
+    "btc_funding_rate": -2.242e-05,
+    "btc_open_interest": 102802.808,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-18T00:30:04.031462+00:00Z",
+    "dxy_24h_change": 0.0786,
+    "btc_funding_rate": -5.33e-06,
+    "btc_open_interest": 100367.514,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-18T01:30:05.590897+00:00Z",
+    "dxy_24h_change": 0.1138,
+    "btc_funding_rate": 4.51e-06,
+    "btc_open_interest": 100963.578,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-18T02:30:04.498221+00:00Z",
+    "dxy_24h_change": 0.0756,
+    "btc_funding_rate": 1.014e-05,
+    "btc_open_interest": 101148.463,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-18T03:30:03.808790+00:00Z",
+    "dxy_24h_change": 0.0766,
+    "btc_funding_rate": 2.892e-05,
+    "btc_open_interest": 101424.884,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-18T04:30:05.227422+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 4.285e-05,
+    "btc_open_interest": 101551.57,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T05:30:05.734279+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 5.757e-05,
+    "btc_open_interest": 101704.376,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T06:30:04.590530+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 5.466e-05,
+    "btc_open_interest": 102152.361,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T07:30:04.483027+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 6.186e-05,
+    "btc_open_interest": 102257.43,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T08:30:04.076869+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 5.318e-05,
+    "btc_open_interest": 102164.671,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T09:30:04.908165+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 5.936e-05,
+    "btc_open_interest": 102457.211,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T10:30:04.964548+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 5.54e-05,
+    "btc_open_interest": 102524.614,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T11:30:04.814386+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 5.345e-05,
+    "btc_open_interest": 102678.927,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T12:30:05.676020+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 5.366e-05,
+    "btc_open_interest": 102626.531,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T13:30:04.952943+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 3.537e-05,
+    "btc_open_interest": 102629.491,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T14:30:06.183746+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 3.979e-05,
+    "btc_open_interest": 103994.687,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T15:30:04.190238+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 5.473e-05,
+    "btc_open_interest": 104712.457,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T16:30:03.983423+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 8.272e-05,
+    "btc_open_interest": 106468.506,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T17:30:04.282427+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 9.047e-05,
+    "btc_open_interest": 105519.424,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T18:30:04.803184+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 8.953e-05,
+    "btc_open_interest": 105700.461,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T19:30:04.536588+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 9.993e-05,
+    "btc_open_interest": 104788.253,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T20:30:04.480395+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0001,
+    "btc_open_interest": 104920.528,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T21:30:05.171608+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 8.853e-05,
+    "btc_open_interest": 104364.54,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T22:30:04.128381+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 6.756e-05,
+    "btc_open_interest": 104284.15,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-18T23:30:04.707555+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 5.294e-05,
+    "btc_open_interest": 104503.052,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-19T00:30:04.211371+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 4.809e-05,
+    "btc_open_interest": 104608.158,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-19T01:30:04.226064+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 3.821e-05,
+    "btc_open_interest": 104433.636,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-19T02:30:05.050752+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 5.601e-05,
+    "btc_open_interest": 104694.677,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-19T03:30:04.862099+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 6.098e-05,
+    "btc_open_interest": 104738.696,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-19T04:30:03.858276+00:00Z",
+    "dxy_24h_change": 0.1283,
+    "btc_funding_rate": 5.516e-05,
+    "btc_open_interest": 104747.673,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-19T05:30:04.080541+00:00Z",
+    "dxy_24h_change": 0.1617,
+    "btc_funding_rate": 5.852e-05,
+    "btc_open_interest": 104723.47,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-19T06:30:04.257530+00:00Z",
+    "dxy_24h_change": 0.1182,
+    "btc_funding_rate": 5.493e-05,
+    "btc_open_interest": 104641.564,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-19T07:30:04.860225+00:00Z",
+    "dxy_24h_change": 0.2071,
+    "btc_funding_rate": 4.724e-05,
+    "btc_open_interest": 104669.559,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-19T08:30:04.950820+00:00Z",
+    "dxy_24h_change": 0.2132,
+    "btc_funding_rate": 4.578e-05,
+    "btc_open_interest": 104599.643,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T03:30:02.853536+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0,
+    "btc_open_interest": 0.0,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-20T04:30:01.856130+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0,
+    "btc_open_interest": 0.0,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-20T05:30:02.052954+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0,
+    "btc_open_interest": 0.0,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-20T06:30:02.181425+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0,
+    "btc_open_interest": 0.0,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-20T07:30:01.677160+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0,
+    "btc_open_interest": 0.0,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-20T08:30:08.908160+00:00Z",
+    "dxy_24h_change": 0.1631,
+    "btc_funding_rate": 7.863e-05,
+    "btc_open_interest": 102993.017,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T09:30:22.432440+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0,
+    "btc_open_interest": 0.0,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-20T10:30:21.595072+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0,
+    "btc_open_interest": 0.0,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-20T11:31:02.141476+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0,
+    "btc_open_interest": 0.0,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-20T12:30:21.533858+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0,
+    "btc_open_interest": 0.0,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-20T13:30:21.861465+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 0.0,
+    "btc_open_interest": 0.0,
+    "status": "DEGRADED"
+  },
+  {
+    "timestamp": "2026-05-20T14:30:18.203829+00:00Z",
+    "dxy_24h_change": -0.0695,
+    "btc_funding_rate": 7.29e-05,
+    "btc_open_interest": 101698.512,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T15:30:04.157427+00:00Z",
+    "dxy_24h_change": -0.2497,
+    "btc_funding_rate": 7.177e-05,
+    "btc_open_interest": 101958.456,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T16:30:05.502159+00:00Z",
+    "dxy_24h_change": -0.2236,
+    "btc_funding_rate": 6.663e-05,
+    "btc_open_interest": 101857.302,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T17:30:04.148817+00:00Z",
+    "dxy_24h_change": -0.1712,
+    "btc_funding_rate": 7.013e-05,
+    "btc_open_interest": 101900.096,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T18:30:06.486736+00:00Z",
+    "dxy_24h_change": -0.1803,
+    "btc_funding_rate": 6.566e-05,
+    "btc_open_interest": 101849.409,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T19:30:04.022069+00:00Z",
+    "dxy_24h_change": -0.2185,
+    "btc_funding_rate": 5.263e-05,
+    "btc_open_interest": 101848.077,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T20:30:03.796209+00:00Z",
+    "dxy_24h_change": -0.1923,
+    "btc_funding_rate": 4.584e-05,
+    "btc_open_interest": 102004.784,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T21:30:04.902187+00:00Z",
+    "dxy_24h_change": -0.1793,
+    "btc_funding_rate": 3.638e-05,
+    "btc_open_interest": 101812.759,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T22:30:03.386071+00:00Z",
+    "dxy_24h_change": -0.1752,
+    "btc_funding_rate": 2.771e-05,
+    "btc_open_interest": 101649.8,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-20T23:30:04.379158+00:00Z",
+    "dxy_24h_change": -0.1752,
+    "btc_funding_rate": 2.188e-05,
+    "btc_open_interest": 101705.044,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T00:30:04.048331+00:00Z",
+    "dxy_24h_change": -0.1541,
+    "btc_funding_rate": 2.024e-05,
+    "btc_open_interest": 101510.077,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T01:30:03.843251+00:00Z",
+    "dxy_24h_change": -0.2246,
+    "btc_funding_rate": 2.424e-05,
+    "btc_open_interest": 101981.011,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T02:30:04.067559+00:00Z",
+    "dxy_24h_change": -0.1309,
+    "btc_funding_rate": 2.36e-05,
+    "btc_open_interest": 102029.093,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T03:30:04.097387+00:00Z",
+    "dxy_24h_change": -0.1239,
+    "btc_funding_rate": 2.448e-05,
+    "btc_open_interest": 101974.256,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T04:30:07.317356+00:00Z",
+    "dxy_24h_change": 0.0726,
+    "btc_funding_rate": 2.56e-05,
+    "btc_open_interest": 101745.818,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T05:30:04.939292+00:00Z",
+    "dxy_24h_change": 0.0676,
+    "btc_funding_rate": 1.494e-05,
+    "btc_open_interest": 101661.831,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T06:30:04.908571+00:00Z",
+    "dxy_24h_change": 0.0676,
+    "btc_funding_rate": 2.551e-05,
+    "btc_open_interest": 101531.051,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T07:30:03.330030+00:00Z",
+    "dxy_24h_change": 0.221,
+    "btc_funding_rate": 3.587e-05,
+    "btc_open_interest": 101461.129,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T08:30:03.969633+00:00Z",
+    "dxy_24h_change": 0.0293,
+    "btc_funding_rate": 4.387e-05,
+    "btc_open_interest": 101529.278,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T09:30:04.076941+00:00Z",
+    "dxy_24h_change": 0.0151,
+    "btc_funding_rate": 5.526e-05,
+    "btc_open_interest": 101501.841,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T10:30:04.376834+00:00Z",
+    "dxy_24h_change": 0.0595,
+    "btc_funding_rate": 5.788e-05,
+    "btc_open_interest": 100915.39,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T11:30:05.555207+00:00Z",
+    "dxy_24h_change": 0.1241,
+    "btc_funding_rate": 6.843e-05,
+    "btc_open_interest": 101080.692,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T12:30:04.584558+00:00Z",
+    "dxy_24h_change": 0.23,
+    "btc_funding_rate": 6.398e-05,
+    "btc_open_interest": 101170.455,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T13:30:05.725231+00:00Z",
+    "dxy_24h_change": 0.3239,
+    "btc_funding_rate": 6.07e-05,
+    "btc_open_interest": 101255.977,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T14:30:04.044373+00:00Z",
+    "dxy_24h_change": 0.336,
+    "btc_funding_rate": 6.369e-05,
+    "btc_open_interest": 101430.458,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T15:30:04.115229+00:00Z",
+    "dxy_24h_change": 0.3128,
+    "btc_funding_rate": 6.306e-05,
+    "btc_open_interest": 101571.461,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T16:30:04.183581+00:00Z",
+    "dxy_24h_change": 0.2906,
+    "btc_funding_rate": 6.55e-05,
+    "btc_open_interest": 101694.5,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T17:30:04.472626+00:00Z",
+    "dxy_24h_change": 0.1392,
+    "btc_funding_rate": 7.233e-05,
+    "btc_open_interest": 101858.059,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T18:30:04.440973+00:00Z",
+    "dxy_24h_change": 0.0252,
+    "btc_funding_rate": 6.225e-05,
+    "btc_open_interest": 101499.079,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T19:30:04.770998+00:00Z",
+    "dxy_24h_change": 0.0908,
+    "btc_funding_rate": 6.222e-05,
+    "btc_open_interest": 100831.311,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T20:30:03.991719+00:00Z",
+    "dxy_24h_change": 0.0928,
+    "btc_funding_rate": 5.992e-05,
+    "btc_open_interest": 100760.079,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T21:30:03.776956+00:00Z",
+    "dxy_24h_change": 0.0716,
+    "btc_funding_rate": 5.068e-05,
+    "btc_open_interest": 100729.014,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T22:30:03.706099+00:00Z",
+    "dxy_24h_change": 0.0817,
+    "btc_funding_rate": 3.875e-05,
+    "btc_open_interest": 100767.857,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-21T23:30:03.643498+00:00Z",
+    "dxy_24h_change": 0.0817,
+    "btc_funding_rate": 3.833e-05,
+    "btc_open_interest": 100797.467,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T00:30:03.751061+00:00Z",
+    "dxy_24h_change": 0.1342,
+    "btc_funding_rate": 3.291e-05,
+    "btc_open_interest": 100812.138,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T01:30:03.997505+00:00Z",
+    "dxy_24h_change": 0.1312,
+    "btc_funding_rate": 4.096e-05,
+    "btc_open_interest": 100832.604,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T02:30:03.507354+00:00Z",
+    "dxy_24h_change": 0.1473,
+    "btc_funding_rate": 3.95e-05,
+    "btc_open_interest": 100727.869,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T03:30:03.764209+00:00Z",
+    "dxy_24h_change": 0.1544,
+    "btc_funding_rate": 3.831e-05,
+    "btc_open_interest": 100830.943,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T04:30:04.360281+00:00Z",
+    "dxy_24h_change": 0.0363,
+    "btc_funding_rate": 2.693e-05,
+    "btc_open_interest": 100986.506,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T05:30:03.960206+00:00Z",
+    "dxy_24h_change": 0.0363,
+    "btc_funding_rate": 1.278e-05,
+    "btc_open_interest": 100839.679,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T07:30:04.514725+00:00Z",
+    "dxy_24h_change": 0.129,
+    "btc_funding_rate": -5.24e-06,
+    "btc_open_interest": 100736.356,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T08:30:03.643340+00:00Z",
+    "dxy_24h_change": 0.0514,
+    "btc_funding_rate": -7.51e-06,
+    "btc_open_interest": 100688.561,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T09:30:04.648105+00:00Z",
+    "dxy_24h_change": 0.1482,
+    "btc_funding_rate": 7.69e-06,
+    "btc_open_interest": 100697.359,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T10:30:03.481761+00:00Z",
+    "dxy_24h_change": 0.0978,
+    "btc_funding_rate": 1.303e-05,
+    "btc_open_interest": 100765.774,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T11:30:03.597321+00:00Z",
+    "dxy_24h_change": 0.1764,
+    "btc_funding_rate": 1.51e-05,
+    "btc_open_interest": 100823.786,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T12:30:08.623685+00:00Z",
+    "dxy_24h_change": 0.1038,
+    "btc_funding_rate": 1.744e-05,
+    "btc_open_interest": 100827.472,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T13:30:03.678878+00:00Z",
+    "dxy_24h_change": 0.0272,
+    "btc_funding_rate": 1.957e-05,
+    "btc_open_interest": 100911.558,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T14:30:04.054761+00:00Z",
+    "dxy_24h_change": 0.2077,
+    "btc_funding_rate": 2.819e-05,
+    "btc_open_interest": 101932.495,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T15:30:08.848421+00:00Z",
+    "dxy_24h_change": 0.121,
+    "btc_funding_rate": 2.554e-05,
+    "btc_open_interest": 104252.828,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T16:30:05.513739+00:00Z",
+    "dxy_24h_change": 0.1038,
+    "btc_funding_rate": 3.462e-05,
+    "btc_open_interest": 104580.891,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T17:30:03.815837+00:00Z",
+    "dxy_24h_change": 0.0494,
+    "btc_funding_rate": 3.126e-05,
+    "btc_open_interest": 104281.632,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T18:30:11.547750+00:00Z",
+    "dxy_24h_change": 0.0605,
+    "btc_funding_rate": 3.902e-05,
+    "btc_open_interest": 104378.304,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T19:30:04.066885+00:00Z",
+    "dxy_24h_change": 0.0665,
+    "btc_funding_rate": 3.863e-05,
+    "btc_open_interest": 104811.053,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T20:30:03.951574+00:00Z",
+    "dxy_24h_change": 0.1028,
+    "btc_funding_rate": 3.335e-05,
+    "btc_open_interest": 104837.769,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T21:30:03.780487+00:00Z",
+    "dxy_24h_change": 0.1301,
+    "btc_funding_rate": 2.254e-05,
+    "btc_open_interest": 104728.303,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T22:30:03.975540+00:00Z",
+    "dxy_24h_change": 0.1301,
+    "btc_funding_rate": 1.431e-05,
+    "btc_open_interest": 104873.254,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-22T23:30:03.924084+00:00Z",
+    "dxy_24h_change": 0.1301,
+    "btc_funding_rate": 1.441e-05,
+    "btc_open_interest": 104974.108,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-23T00:30:04.732706+00:00Z",
+    "dxy_24h_change": 0.1301,
+    "btc_funding_rate": 2.843e-05,
+    "btc_open_interest": 105271.9,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-23T01:30:05.694135+00:00Z",
+    "dxy_24h_change": 0.1301,
+    "btc_funding_rate": 4.237e-05,
+    "btc_open_interest": 105487.509,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-23T02:30:04.269286+00:00Z",
+    "dxy_24h_change": 0.1301,
+    "btc_funding_rate": 4.794e-05,
+    "btc_open_interest": 105548.911,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-23T03:30:04.698266+00:00Z",
+    "dxy_24h_change": 0.1301,
+    "btc_funding_rate": 5.983e-05,
+    "btc_open_interest": 105445.496,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-23T04:30:04.651103+00:00Z",
+    "dxy_24h_change": 0.1311,
+    "btc_funding_rate": 4.985e-05,
+    "btc_open_interest": 105438.347,
+    "status": "HEALTHY"
   }
 ]

@@ -17,10 +17,15 @@ import pandas as pd
 home = os.path.expanduser("~")
 sys.path.append(os.path.join(home, 'masterbot'))
 from risk.risk_manager import run_all_checks
-from sentiment.reader import get_current_sentiment, get_sentiment_signal
+from risk.stake_sizer import get_stake_multiplier
+from risk.correlation_guard import is_blocked as corr_blocked
+from sentiment.reader import get_current_sentiment, get_sentiment_signal, get_funding_rate
 from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
+from qnt.thesis.thesis_reader import read_thesis
 
 logger = logging.getLogger(__name__)
+
+_partial_exits_done: set = set()  # trade IDs that already had 50% exit
 
 def merge_macro_data(dataframe: pd.DataFrame) -> pd.DataFrame:
     """
@@ -73,11 +78,42 @@ class ScalpV1(IStrategy):
     stoploss = -0.02
     trailing_stop = True
     
+    # R:R fixed: first target equals stoploss (1:1), then decreases to exit slow trades
     minimal_roi = {
-        "0": 0.015,
-        "30": 0.01,
-        "15": 0.005
+        "0":  0.02,
+        "30": 0.015,
+        "60": 0.01,
+        "120": 0.005,
     }
+
+    # Hyperoptable / Dynamic parameters
+    buy_rsi = IntParameter(20, 40, default=30, space='buy')
+    sell_rsi = IntParameter(60, 80, default=60, space='sell')
+
+    def load_dynamic_params(self):
+        self.buy_rsi_val = self.buy_rsi.value
+        self.sell_rsi_val = self.sell_rsi.value
+        
+        try:
+            path1 = Path('/Users/aatifquamre/masterbot/config/dynamic_params.json')
+            path2 = Path('/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/config/dynamic_params.json')
+            path = path1 if path1.exists() else path2
+            
+            if path.exists():
+                with open(path, 'r') as f:
+                    params = json.load(f)
+                
+                strat_name = self.__class__.__name__
+                strat_params = params.get(strat_name, params)
+                
+                if 'buy_rsi' in strat_params:
+                    self.buy_rsi_val = int(strat_params['buy_rsi'])
+                if 'sell_rsi' in strat_params:
+                    self.sell_rsi_val = int(strat_params['sell_rsi'])
+                    
+                logger.info(f"[{strat_name}] Dynamically loaded parameters: buy_rsi={self.buy_rsi_val}, sell_rsi={self.sell_rsi_val}")
+        except Exception as e:
+            logger.warning(f"Failed to load dynamic parameters, using defaults: {e}")
 
     def informative_pairs(self):
         pairs = self.dp.current_whitelist()
@@ -88,45 +124,68 @@ class ScalpV1(IStrategy):
         return informative_pairs
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        # Load dynamic parameters first
+        self.load_dynamic_params()
+
+        import polars as pl
+        from qnt.polars_ohlcv import pandas_to_polars, ohlcv_to_pandas
+        from qnt.polars_indicators import add_rsi, add_bollinger_bands, add_sma, add_ema
+
+        # Convert to Polars
+        df_pl = pandas_to_polars(dataframe)
+
         # 5m Indicators
-        dataframe['rsi'] = ta.rsi(dataframe['close'], length=14)
-        bb = ta.bbands(dataframe['close'], length=20, std=2)
-        dataframe['bb_lower'] = bb['BBL_20_2.0']
-        dataframe['bb_middle'] = bb['BBM_20_2.0']
-        dataframe['volume_avg'] = ta.sma(dataframe['volume'], length=20)
+        df_pl = add_rsi(df_pl, period=14, alias="rsi")
+        df_pl = add_bollinger_bands(df_pl, period=20, std_dev=2.0, prefix="bb")
+        df_pl = add_sma(df_pl, period=20, column="volume", alias="volume_avg")
+        df_pl = df_pl.rename({"bb_mid": "bb_middle"})
 
         # Informative timeframes
-        if self.config['runmode'].value in ('live', 'dry_run'):
+        if getattr(self, 'config', {}).get('runmode', {}).value in ('live', 'dry_run'):
             for tf in self.informative_timeframes:
-                inf_df = self.dp.get_pair_dataframe(metadata['pair'], tf)
-                
-                if tf == '15m':
-                    inf_df['rsi'] = ta.rsi(inf_df['close'], length=14)
-                elif tf == '1h':
-                    inf_df['ema_200'] = ta.ema(inf_df['close'], length=200)
-                
-                dataframe = merge_informative_pair(dataframe, inf_df, self.timeframe, tf, ffill=True)
+                inf_df_pd = self.dp.get_pair_dataframe(metadata['pair'], tf)
+                if inf_df_pd is not None and not inf_df_pd.empty:
+                    inf_df_pl = pandas_to_polars(inf_df_pd)
+                    
+                    if tf == '15m':
+                        inf_df_pl = add_rsi(inf_df_pl, period=14, alias="rsi")
+                    elif tf == '1h':
+                        inf_df_pl = add_ema(inf_df_pl, period=200, alias="ema_200")
+                        
+                    # Back to Pandas for Freqtrade merge
+                    inf_df_pd = ohlcv_to_pandas(inf_df_pl)
+                    
+                dataframe = merge_informative_pair(ohlcv_to_pandas(df_pl), inf_df_pd, self.timeframe, tf, ffill=True)
+                df_pl = pandas_to_polars(dataframe)
 
+        # Convert back to Pandas for merge_macro_data
+        dataframe = ohlcv_to_pandas(df_pl)
         dataframe = merge_macro_data(dataframe)
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # Sentiment Gate (Current)
-        sentiment = get_current_sentiment()
-        
-        # HMM Regime Check
-        regime = detect_regime(dataframe, metadata['pair'])
-        regime_ok = get_regime_for_strategy('ScalpV1', regime)
+        self.load_dynamic_params()
+
+        is_live = self.config.get('runmode', {}).value in ('live', 'dry_run')
+
+        # External signals only available in live/dry_run — default to permissive in backtesting
+        sentiment_ok = True
+        regime_ok = True
+        if is_live:
+            sentiment = get_current_sentiment()
+            sentiment_ok = sentiment['score'] >= -0.3
+            regime = detect_regime(dataframe, metadata['pair'])
+            regime_ok = get_regime_for_strategy('ScalpV1', regime)
 
         dataframe.loc[
             (
-                (dataframe['rsi'] < 30) &
+                (dataframe['rsi'] < self.buy_rsi_val) &
+                (dataframe['rsi'] > dataframe['rsi'].shift(1)) &
                 (dataframe['close'] < dataframe['bb_lower']) &
                 (dataframe['volume'] > dataframe['volume_avg']) &
-                # HTF Context (if available)
-                (dataframe.get('rsi_15m', 50) < 60) & # Not overbought on 15m
-                (dataframe.get('close', 0) > dataframe.get('ema_200_1h', 0)) & # Above 200 EMA on 1h
-                (sentiment['score'] >= -0.3) & # Global Gate
+                (dataframe.get('rsi_15m', 50) < 60) &
+                (dataframe.get('close', 0) > dataframe.get('ema_200_1h', 0)) &
+                (sentiment_ok) &
                 (regime_ok)
             ),
             'enter_long'] = 1
@@ -134,24 +193,81 @@ class ScalpV1(IStrategy):
         return dataframe
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe.loc[
-            (
-                (dataframe['rsi'] > 60) |
-                (dataframe['close'] > dataframe['bb_middle'])
-            ),
-            'exit_long'] = 1
+        self.load_dynamic_params()
+
+        raw_exit = (
+            (dataframe['rsi'] > self.sell_rsi_val) |
+            (dataframe['close'] > dataframe['bb_middle'])
+        )
+        # Require signal on 2 consecutive candles — kills one-tick RSI spikes that exit trades at a loss
+        dataframe.loc[raw_exit & raw_exit.shift(1).fillna(False), 'exit_long'] = 1
         return dataframe
+
+    def adjust_trade_position(self, trade, current_time: datetime, current_rate: float,
+                             current_profit: float, min_stake, max_stake,
+                             current_entry_rate: float, current_exit_rate: float,
+                             current_entry_profit: float, current_exit_profit: float,
+                             **kwargs):
+        if trade.id in _partial_exits_done:
+            return None
+        if current_profit >= 0.010:
+            _partial_exits_done.add(trade.id)
+            logger.info(f"[PARTIAL EXIT] ScalpV1 {trade.pair} profit={current_profit:.2%} — exiting 50%")
+            return -(trade.stake_amount * 0.5)
+        return None
+
+    def custom_exit(self, pair: str, trade, current_time: datetime,
+                   current_rate: float, current_profit: float, **kwargs):
+        hours_open = (current_time - trade.open_date_utc).total_seconds() / 3600
+
+        # Stale scalp: cut if negative after 4 hours
+        if hours_open >= 4 and current_profit < -0.003:
+            return 'time_stop_4h'
+
+        # Dynamic profit target by regime — bear bounces fade fast, take less
+        try:
+            dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+            if dataframe is not None and not dataframe.empty:
+                regime = detect_regime(dataframe, pair)
+                if regime == 'BEAR' and current_profit >= 0.008:
+                    return 'bear_bounce_target'
+        except Exception:
+            pass
+
+        return None
+
+    def custom_stake_amount(self, current_time, current_rate, proposed_stake,
+                           min_stake, max_stake, leverage, entry_tag, side, **kwargs):
+        multiplier = get_stake_multiplier('ScalpV1')
+        stake = proposed_stake * multiplier
+        if min_stake is not None:
+            stake = max(stake, min_stake)
+        return min(stake, max_stake)
 
     def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
                            time_in_force: str, current_time: datetime, entry_tag: str,
                            side: str, **kwargs) -> bool:
+        if self.config.get('runmode', {}).value not in ('live', 'dry_run'):
+            return True
+
+        # --- LAYER 0: THESIS GATE ---
+        thesis = read_thesis(pair)
+        if thesis["bias"] == "SELL":
+            logger.info(f"[THESIS BLOCK] {pair} bias=SELL confidence={thesis['confidence']:.2f} — {thesis['reasoning']}")
+            return False
+        stake_modifier = thesis.get("stake_modifier", 1.0)
+
         # --- LAYER 1: RISK & SENTIMENT CHECKS ---
         try:
             total_balance = self.wallets.get_total('USDT')
             
             # Fetch recent trades for loss counting
             recent_trades = [
-                {'profit_ratio': t.profit_ratio, 'close_date': t.close_date} 
+                {
+                    'profit_ratio': float(getattr(t, 'close_profit', None) or
+                                         getattr(t, 'profit_ratio', None) or 0.0),
+                    'close_date': getattr(t, 'close_date', None)
+                }
                 for t in Trade.get_trades_proxy(is_open=False)
             ][:10]
             
@@ -178,7 +294,7 @@ class ScalpV1(IStrategy):
                 current_balance=total_balance,
                 start_of_day_balance=start_of_day,
                 start_of_week_balance=start_of_week,
-                trade_amount_usdt=amount * rate,
+                trade_amount_usdt=amount * rate * stake_modifier,
                 trades_last_hour=trades_last_hour,
                 recent_trades=recent_trades,
                 min_sentiment='NEUTRAL'
@@ -226,5 +342,16 @@ class ScalpV1(IStrategy):
 
         except Exception as e:
             logger.error(f"[RISK WARNING] Risk check error: {e}")
-            
+
+        base = pair.split('/')[0]
+        if corr_blocked(base, side):
+            logger.info(f"[CORR BLOCK] ScalpV1 {pair} — too many concurrent longs on {base}")
+            return False
+
+        if side == 'long':
+            funding = get_funding_rate()
+            if funding < -0.5:
+                logger.info(f"[FUNDING BLOCK] ScalpV1 {pair} funding={funding:.2f} — extreme negative funding")
+                return False
+
         return True

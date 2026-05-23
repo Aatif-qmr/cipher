@@ -1,0 +1,19 @@
+{
+  "pair": "XRP/USDT",
+  "bias": "HOLD",
+  "confidence": 0.55,
+  "stake_modifier": 0.5,
+  "reasoning": "The bear case carries higher confidence (0.85 vs 0.78) with compounding bearish signals \u2014 deeply negative Fear & Greed (-0.44), negative funding rates (-0.3493), and a rising DXY \u2014 outweighing the bull case's reliance on available capital and a clean risk shield. MeanReversionV1 being active is insufficient justification for a long entry when the trend-following strategy is paused and macro headwinds persist.",
+  "key_risks": [
+    "Negative funding rates (-0.3493) indicate market is positioned short, increasing probability of continued downside rather than mean reversion bounce",
+    "Rising DXY (+0.17%) provides macro headwind that historically suppresses crypto prices, undermining the bullish structural floor"
+  ],
+  "bull_confidence": 0.78,
+  "bear_confidence": 0.85,
+  "valid_until": "2026-05-22T16:23:58.480926+00:00",
+  "generated_at": "2026-05-22T12:23:58.480926+00:00",
+  "context_snapshot": {
+    "sentiment_score": -0.133,
+    "shield_status": "UNKNOWN"
+  }
+}

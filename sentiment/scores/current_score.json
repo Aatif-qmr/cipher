@@ -1,0 +1,27 @@
+{
+  "score": -0.3915,
+  "timestamp": "2026-05-23T05:00:40.453865+00:00",
+  "sources_used": [
+    "reddit",
+    "news",
+    "coingecko",
+    "feargreed",
+    "funding"
+  ],
+  "component_scores": {
+    "reddit": 0.13333333333333333,
+    "news": -0.2,
+    "coingecko": -0.5830458307958677,
+    "feargreed": -0.44,
+    "funding": -0.43503
+  },
+  "weights": {
+    "reddit": 0.1117,
+    "news": 0.1117,
+    "coingecko": 0.3083,
+    "feargreed": 0.1117,
+    "funding": 0.3564
+  },
+  "source": "M2",
+  "published_at": "2026-05-23T05:00:40.802045Z"
+}

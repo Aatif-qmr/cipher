@@ -1,10 +1,16 @@
 import asyncio
 import json
+import logging
 import os
 import sys
 import nats
 from pathlib import Path
 from dotenv import load_dotenv
+
+# Suppress NATS library's internal traceback logging — connection failures
+# are already handled gracefully by the outer retry loop, and the library's
+# stderr tracebacks would otherwise trigger the self-healer on every M2 outage.
+logging.getLogger('nats').setLevel(logging.CRITICAL)
 
 # Add project root to sys.path
 # Script is at masterbot/qnt/nats_subscriber.py
@@ -62,48 +68,70 @@ async def handle_anomaly(msg):
         print(f"Notification error: {e}")
 
 async def subscribe_all():
-    """Subscribe to all M2 intelligence subjects."""
+    """Subscribe to all M2 intelligence subjects with reconnect loop."""
     if not NATS_URL:
         print("Error: NATS_URL not found in environment.")
         return
 
     from nats_subjects import SUBJECTS
-    
-    print(f"Connecting to NATS at {NATS_URL}...")
-    nc = await nats.connect(servers=[NATS_URL])
-    js = nc.jetstream()
 
-    # Create durable subscriptions
-    subscriptions = [
-        (SUBJECTS['SENTIMENT'], handle_sentiment, 'm1_sentiment'),
-        (SUBJECTS['MACRO'], handle_macro, 'm1_macro'),
-        (SUBJECTS['HMM'], handle_regime, 'm1_regime'),
-        (SUBJECTS['ANOMALY'], handle_anomaly, 'm1_anomaly'),
-        (SUBJECTS['ORDERFLOW_LIVE'], handle_orderflow_live, 'm1_orderflow_live')
-    ]
-
-    for subject, callback, durable in subscriptions:
-        try:
-            await js.subscribe(
-                subject,
-                cb=callback,
-                durable=durable,
-                stream='qnt'
-            )
-            print(f"[NATS] Subscribed to {subject}")
-        except Exception as e:
-            print(f"[NATS] Subscription error for {subject}: {e}")
-
-    print("[NATS] Waiting for real-time updates...")
-
-    # Keep running forever
+    retry_delay = 10
     while True:
-        await asyncio.sleep(1)
+        try:
+            print(f"[NATS] Connecting to {NATS_URL}...", flush=True)
+
+            async def _on_error(e):
+                print(f"[NATS] Error: {e}", flush=True)
+
+            async def _on_reconnect():
+                print("[NATS] Reconnected.", flush=True)
+
+            async def _on_disconnect():
+                print("[NATS] Disconnected, waiting for server...", flush=True)
+
+            nc = await nats.connect(
+                servers=[NATS_URL],
+                max_reconnect_attempts=-1,
+                reconnect_time_wait=5,
+                connect_timeout=10,
+                error_cb=_on_error,
+                reconnected_cb=_on_reconnect,
+                disconnected_cb=_on_disconnect,
+            )
+            js = nc.jetstream()
+            retry_delay = 10  # reset on successful connect
+
+            subscriptions = [
+                (SUBJECTS['SENTIMENT'], handle_sentiment, 'm1_sentiment'),
+                (SUBJECTS['MACRO'], handle_macro, 'm1_macro'),
+                (SUBJECTS['HMM'], handle_regime, 'm1_regime'),
+                (SUBJECTS['ANOMALY'], handle_anomaly, 'm1_anomaly'),
+                (SUBJECTS['ORDERFLOW_LIVE'], handle_orderflow_live, 'm1_orderflow_live')
+            ]
+
+            for subject, callback, durable in subscriptions:
+                try:
+                    await js.subscribe(
+                        subject,
+                        cb=callback,
+                        durable=durable,
+                        stream='qnt'
+                    )
+                    print(f"[NATS] Subscribed to {subject}", flush=True)
+                except Exception as e:
+                    print(f"[NATS] Subscription error for {subject}: {e}")
+
+            print("[NATS] Waiting for real-time updates...", flush=True)
+            while True:
+                await asyncio.sleep(1)
+
+        except Exception as e:
+            print(f"[NATS] Connection failed: {e}. Retrying in {retry_delay}s...", flush=True)
+            await asyncio.sleep(retry_delay)
+            retry_delay = min(retry_delay * 2, 300)
 
 if __name__ == '__main__':
     try:
         asyncio.run(subscribe_all())
     except KeyboardInterrupt:
         pass
-    except Exception as e:
-        print(f"Fatal error: {e}")

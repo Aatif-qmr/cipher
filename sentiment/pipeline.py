@@ -9,52 +9,44 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_excep
 warnings.filterwarnings('ignore') # ignore transformer warnings
 
 # --- CONFIGURATION ---
-BASE_DIR = os.environ.get("MASTERBOT_DIR", "/Users/azmatsaif/masterbot")
+BASE_DIR = os.environ.get("MASTERBOT_DIR", os.path.join(os.path.expanduser("~"), "masterbot"))
 OUTPUT_PATH = os.path.join(BASE_DIR, "sentiment/scores/current_score.json")
 HISTORY_PATH = os.path.join(BASE_DIR, "sentiment/scores/history.csv")
 
-# Updated Weights adding News & FinBERT NLP
-WEIGHTS = {
-    "reddit": 0.26,
-    "news": 0.15,
-    "coingecko": 0.22,
-    "feargreed": 0.22,
-    "funding": 0.15
+_WEIGHTS_DEFAULT = {
+    "reddit": 0.20,
+    "news": 0.20,
+    "coingecko": 0.20,
+    "feargreed": 0.20,
+    "funding": 0.20,
 }
 
-finbert_nlp = None
+def _load_weights() -> dict:
+    path = os.path.join(BASE_DIR, "config/sentiment_weights.json")
+    try:
+        if os.path.exists(path):
+            data = json.loads(open(path).read())
+            w = data.get("weights", data)
+            if isinstance(w, dict) and len(w) == 5:
+                return w
+    except Exception:
+        pass
+    return _WEIGHTS_DEFAULT.copy()
 
-def load_finbert():
-    global finbert_nlp
-    if finbert_nlp is None:
-        try:
-            from transformers import pipeline
-            finbert_nlp = pipeline("sentiment-analysis", model="ProsusAI/finbert")
-        except Exception as e:
-            print(f"Error loading FinBERT: {e}")
-            # Fallback: use simple keyword-based sentiment
-            finbert_nlp = "fallback_keyword_mode"
+WEIGHTS = _load_weights()
 
 def score_with_finbert(titles):
-    if not titles: return 0.0
-    load_finbert()
-    
-    # Fallback mode: keyword-based sentiment
-    if finbert_nlp == "fallback_keyword_mode":
-        return _keyword_sentiment(titles)
-    
-    if not finbert_nlp: return 0.0
+    """
+    Legacy wrapper that routes to ONNX. 
+    Kept the same name to avoid breaking external callers that might import this directly.
+    """
     try:
-        results = finbert_nlp(titles)
-        score = 0.0
-        for r in results:
-            if r['label'] == 'positive': score += 1.0
-            elif r['label'] == 'negative': score -= 1.0
-        return score / len(titles)
+        import sys
+        sys.path.insert(0, str(BASE_DIR))
+        from sentiment.onnx_pipeline import score_with_onnx
+        return score_with_onnx(titles)
     except Exception as e:
-        print(f"Error scoring with FinBERT: {e}")
-        # Activate fallback
-        finbert_nlp = "fallback_keyword_mode"
+        print(f"Error routing to ONNX sentiment: {e}")
         return _keyword_sentiment(titles)
 
 def _keyword_sentiment(titles):
@@ -190,7 +182,7 @@ def run_pipeline():
     # Publish to NATS for real-time M1 delivery
     try:
         import sys
-        sys.path.insert(0, '/Users/azmatsaif/masterbot/qnt')
+        sys.path.insert(0, os.path.join(os.path.expanduser("~"), 'masterbot', 'qnt'))
         from nats_publisher import publish_sync
         from nats_subjects import SUBJECTS
 

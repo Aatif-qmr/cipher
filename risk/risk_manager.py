@@ -8,6 +8,56 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
+# ── Risk Checks Backend Selection ──────────────────────────
+# Priority: Rust (PyO3) > Cython (.so) > Pure Python fallback
+# The Rust module is compiled via maturin from risk/risk_checks_rs/
+# and provides thread-safe, zero-allocation arithmetic.
+_BACKEND = 'python'  # tracks which implementation is active
+
+try:
+    # Priority 1: Rust module (compiled via maturin develop)
+    from risk_checks import (
+        compute_drawdown_pct as _compute_drawdown_pct,
+        compute_position_pct as _compute_position_pct,
+        check_rate_exceeded as _check_rate_exceeded,
+        count_consecutive_losses as _count_consecutive_losses,
+    )
+    # Verify it's the Rust version (has `version()` function)
+    from risk_checks import version as _rc_version
+    _BACKEND = 'rust'
+except ImportError:
+    try:
+        # Priority 2: Cython module (legacy .so)
+        import sys as _sys
+        _sys.path.insert(0, str(Path(__file__).parent))
+        from risk_checks import (
+            compute_drawdown_pct as _compute_drawdown_pct,
+            compute_position_pct as _compute_position_pct,
+            check_rate_exceeded as _check_rate_exceeded,
+            count_consecutive_losses as _count_consecutive_losses,
+        )
+        _BACKEND = 'cython'
+    except ImportError:
+        # Priority 3: Pure Python fallback (always works)
+        def _compute_drawdown_pct(current, start):
+            return 0.0 if start == 0.0 else ((start - current) / start) * 100.0
+        def _compute_position_pct(trade_amount, balance):
+            return 0.0 if balance == 0.0 else (trade_amount / balance) * 100.0
+        def _check_rate_exceeded(trades_last_hour, max_trades_per_hour):
+            return trades_last_hour > max_trades_per_hour
+        def _count_consecutive_losses(profits):
+            count = 0
+            for p in profits:
+                if p < 0.0:
+                    count += 1
+                else:
+                    break
+            return count
+        _BACKEND = 'python'
+
+# Backward compat alias
+_USE_CYTHON = _BACKEND in ('rust', 'cython')
+
 # Use home directory to make it machine-agnostic
 HOME = Path.home()
 BASE_DIR = HOME / 'masterbot'
@@ -28,6 +78,9 @@ logging.basicConfig(
 
 COOLDOWN_FILE = '/tmp/risk_alert_cooldown'
 COOLDOWN_SECONDS = 3600  # 1 hour between alerts
+
+_SENTIMENT_WARN_FILE = '/tmp/qnt_sentiment_warn_ts'
+_SENTIMENT_WARN_INTERVAL = 600  # 10 minutes between sentiment log entries
 
 def _can_send_alert():
     """Checks cooldown with file locking to prevent race conditions."""
@@ -172,8 +225,8 @@ def check_daily_drawdown(current_balance: float, start_of_day_balance: float, li
     if current_balance < (start_of_day_balance * 0.5):
         current_balance = _get_cluster_balance()
 
-    drawdown_pct = ((start_of_day_balance - current_balance) / start_of_day_balance) * 100
-    
+    drawdown_pct = _compute_drawdown_pct(current_balance, start_of_day_balance)
+
     # SANITY CHECK: If drawdown > 50% something is wrong with reading, not actual loss
     if drawdown_pct > 50.0:
         logging.warning(f"Impossible daily drawdown {drawdown_pct:.1f}% detected. Skipping alert/block.")
@@ -207,8 +260,8 @@ def check_weekly_drawdown(current_balance: float, start_of_week_balance: float, 
     if current_balance < (start_of_week_balance * 0.5):
         current_balance = _get_cluster_balance()
 
-    drawdown_pct = ((start_of_week_balance - current_balance) / start_of_week_balance) * 100
-    
+    drawdown_pct = _compute_drawdown_pct(current_balance, start_of_week_balance)
+
     # SANITY CHECK: If drawdown > 50% something is wrong with reading
     if drawdown_pct > 50.0:
         logging.warning(f"Impossible weekly drawdown {drawdown_pct:.1f}% detected. Skipping alert/block.")
@@ -241,14 +294,14 @@ def check_position_size(trade_amount_usdt: float, total_balance_usdt: float, max
     if total_balance_usdt < 20000: # Heuristic for local balance
         total_balance_usdt = _get_cluster_balance()
         
-    position_pct = (trade_amount_usdt / total_balance_usdt) * 100
+    position_pct = _compute_position_pct(trade_amount_usdt, total_balance_usdt)
     if position_pct > max_pct:
         logging.warning(f"Position size check failed: {position_pct:.2f}% (Max: {max_pct}%)")
         return False
     return True
 
 def check_order_rate(trades_last_hour: int, max_trades_per_hour: int = 10) -> bool:
-    if trades_last_hour > max_trades_per_hour:
+    if _check_rate_exceeded(trades_last_hour, max_trades_per_hour):
         msg = (f"ORDER RATE CIRCUIT BREAKER\n"
                f"Trades in last hour: {trades_last_hour}\n"
                f"Maximum allowed: {max_trades_per_hour}\n"
@@ -258,27 +311,58 @@ def check_order_rate(trades_last_hour: int, max_trades_per_hour: int = 10) -> bo
         return False
     return True
 
+def _can_log_sentiment_warn() -> bool:
+    """Rate-limits sentiment warning logs to once per 10 minutes (file-locked for multi-process safety)."""
+    try:
+        f = open(_SENTIMENT_WARN_FILE, 'a+')
+        try:
+            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            f.close()
+            return False
+
+        f.seek(0)
+        content = f.read().strip()
+        now = time.time()
+
+        if content and now - float(content) < _SENTIMENT_WARN_INTERVAL:
+            fcntl.flock(f, fcntl.LOCK_UN)
+            f.close()
+            return False
+
+        f.truncate(0)
+        f.write(str(now))
+        f.flush()
+        os.fsync(f.fileno())
+        fcntl.flock(f, fcntl.LOCK_UN)
+        f.close()
+        return True
+    except Exception:
+        return True
+
+
 def check_sentiment(min_signal: str = 'NEUTRAL') -> bool:
     """Blocks entries based on global sentiment score."""
     try:
         from sentiment.reader import get_current_sentiment, get_sentiment_signal
-        
+
         sentiment = get_current_sentiment()
         signal = get_sentiment_signal()
-        
+
         # Mapping signals to numeric ranks for comparison
         # Fail closed on UNAVAILABLE (rank 0)
-        ranks = {'BEARISH': 0, 'NEUTRAL': 1, 'BULLISH': 2, 'UNAVAILABLE': 0} 
-        
+        ranks = {'BEARISH': 0, 'NEUTRAL': 1, 'BULLISH': 2, 'UNAVAILABLE': 0}
+
         current_rank = ranks.get(signal, 0)
         required_rank = ranks.get(min_signal, 1)
-        
+
         if current_rank < required_rank:
-            msg = (f"SENTIMENT BLOCK\n"
-                   f"Current Signal: {signal} ({sentiment.get('score', 0.0):.3f})\n"
-                   f"Required: {min_signal}\n"
-                   f"ACTION: New entries blocked.")
-            logging.warning(msg.replace('\n', ' | '))
+            if _can_log_sentiment_warn():
+                msg = (f"SENTIMENT BLOCK\n"
+                       f"Current Signal: {signal} ({sentiment.get('score', 0.0):.3f})\n"
+                       f"Required: {min_signal}\n"
+                       f"ACTION: New entries blocked.")
+                logging.warning(msg.replace('\n', ' | '))
             return False
         return True
     except Exception as e:
@@ -286,43 +370,43 @@ def check_sentiment(min_signal: str = 'NEUTRAL') -> bool:
         return True # Default to True to avoid total halt if reader code has a bug
 
 def check_consecutive_losses(recent_trades: list, max_consecutive: int = 3) -> bool:
-    count = 0
-    last_loss_time = None
-    
-    for trade in recent_trades:
-        if trade.get('profit_ratio', 0) < 0:
-            count += 1
-            # First one in list is most recent
-            if count == 1:
-                last_loss_time = trade.get('close_date')
-            
-            if count >= max_consecutive:
-                # Check cooldown if we have a timestamp
-                if last_loss_time:
-                    if isinstance(last_loss_time, str):
-                        try:
-                            last_loss_time = datetime.fromisoformat(last_loss_time.replace('Z', '+00:00'))
-                        except ValueError:
-                            pass # Fallback to blocking if date format is weird
-                    
-                    if isinstance(last_loss_time, datetime):
-                        if last_loss_time.tzinfo is None:
-                            last_loss_time = last_loss_time.replace(tzinfo=timezone.utc)
-                        
-                        now = datetime.now(timezone.utc)
-                        if (now - last_loss_time) > timedelta(hours=1):
-                            logging.info(f"Consecutive loss cooldown passed. Last loss was at {last_loss_time}")
-                            return True
+    def _profit(t):
+        if isinstance(t, dict):
+            return float(t.get('profit_ratio', 0) or 0.0)
+        # Trade ORM object: try close_profit (current), fall back to profit_ratio (legacy)
+        val = getattr(t, 'close_profit', None) or getattr(t, 'profit_ratio', None)
+        return float(val or 0.0)
+    profits = [_profit(t) for t in recent_trades]
+    count = _count_consecutive_losses(profits)
+    first = recent_trades[0] if count > 0 and recent_trades else None
+    if first is None:
+        last_loss_time = None
+    elif isinstance(first, dict):
+        last_loss_time = first.get('close_date')
+    else:
+        last_loss_time = getattr(first, 'close_date', None)
 
-                msg = (f"CONSECUTIVE LOSS CIRCUIT BREAKER\n"
-                       f"{count} losses in a row detected.\n"
-                       f"Last loss at: {last_loss_time}\n"
-                       f"ACTION: Entries paused for 1 hour from last loss.")
-                logging.warning(msg.replace('\n', ' | '))
-                send_telegram_alert(msg, 'WARNING')
-                return False
-        else:
-            break
+    if count >= max_consecutive:
+        if last_loss_time:
+            if isinstance(last_loss_time, str):
+                try:
+                    last_loss_time = datetime.fromisoformat(last_loss_time.replace('Z', '+00:00'))
+                except ValueError:
+                    pass
+            if isinstance(last_loss_time, datetime):
+                if last_loss_time.tzinfo is None:
+                    last_loss_time = last_loss_time.replace(tzinfo=timezone.utc)
+                if (datetime.now(timezone.utc) - last_loss_time) > timedelta(hours=1):
+                    logging.info(f"Consecutive loss cooldown passed. Last loss was at {last_loss_time}")
+                    return True
+
+        msg = (f"CONSECUTIVE LOSS CIRCUIT BREAKER\n"
+               f"{count} losses in a row detected.\n"
+               f"Last loss at: {last_loss_time}\n"
+               f"ACTION: Entries paused for 1 hour from last loss.")
+        logging.warning(msg.replace('\n', ' | '))
+        send_telegram_alert(msg, 'WARNING')
+        return False
     return True
 
 def run_all_checks(current_balance=None, start_of_day_balance=None, start_of_week_balance=None, 
@@ -368,7 +452,9 @@ def run_all_checks(current_balance=None, start_of_day_balance=None, start_of_wee
     safe = len(blocking_reasons) == 0
     
     if not safe:
-        logging.error(f"Risk checks blocked trading: {', '.join(blocking_reasons)}")
+        sentiment_only = len(blocking_reasons) == 1 and blocking_reasons[0] == 'sentiment'
+        if not sentiment_only:
+            logging.error(f"Risk checks blocked trading: {', '.join(blocking_reasons)}")
         
     return {
         "safe_to_trade": safe,

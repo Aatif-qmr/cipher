@@ -1,0 +1,18 @@
+[package]
+name = "risk-checks-rs"
+version = "1.0.0"
+edition = "2021"
+description = "Rust-backed risk check arithmetic for MasterBot — replaces Cython risk_checks.pyx"
+
+[lib]
+name = "risk_checks"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

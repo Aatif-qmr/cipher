@@ -16,10 +16,15 @@ import pandas as pd
 # Add base directory to path for custom imports
 sys.path.insert(0, '/Users/aatifquamre/masterbot')
 from risk.risk_manager import run_all_checks
-from sentiment.reader import get_current_sentiment, get_sentiment_signal
+from risk.stake_sizer import get_stake_multiplier
+from risk.correlation_guard import is_blocked as corr_blocked
+from sentiment.reader import get_current_sentiment, get_sentiment_signal, get_funding_rate
 from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
+from qnt.thesis.thesis_reader import read_thesis
 
 logger = logging.getLogger(__name__)
+
+_partial_exits_done: set = set()
 
 def merge_macro_data(dataframe: DataFrame) -> DataFrame:
     """
@@ -81,6 +86,38 @@ class MeanReversionV1(IStrategy):
     # Startup candles
     startup_candle_count: int = 50
 
+    def load_dynamic_params(self):
+        # Default fallback values
+        self.buy_rsi_val = self.buy_rsi.value
+        self.bb_period_val = self.bb_period.value
+        self.bb_std_val = self.bb_std.value
+        self.sell_rsi_val = self.sell_rsi.value
+
+        try:
+            path1 = Path('/Users/aatifquamre/masterbot/config/dynamic_params.json')
+            path2 = Path('/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/config/dynamic_params.json')
+            path = path1 if path1.exists() else path2
+            
+            if path.exists():
+                with open(path, 'r') as f:
+                    params = json.load(f)
+                
+                strat_name = self.__class__.__name__
+                strat_params = params.get(strat_name, params)
+                
+                if 'buy_rsi' in strat_params:
+                    self.buy_rsi_val = int(strat_params['buy_rsi'])
+                if 'bb_period' in strat_params:
+                    self.bb_period_val = int(strat_params['bb_period'])
+                if 'bb_std' in strat_params:
+                    self.bb_std_val = float(strat_params['bb_std'])
+                if 'sell_rsi' in strat_params:
+                    self.sell_rsi_val = int(strat_params['sell_rsi'])
+                
+                logger.info(f"[{strat_name}] Dynamically loaded parameters: buy_rsi={self.buy_rsi_val}, bb_period={self.bb_period_val}, bb_std={self.bb_std_val}, sell_rsi={self.sell_rsi_val}")
+        except Exception as e:
+            logger.warning(f"Failed to load dynamic parameters, using defaults: {e}")
+
     def feature_engineering_expand_all(self, dataframe: DataFrame, period: int,
                                      metadata: dict, **kwargs) -> DataFrame:
         # Standard indicators for the model
@@ -121,24 +158,37 @@ class MeanReversionV1(IStrategy):
         return dataframe
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # Standard Indicators with optimized params
-        dataframe['rsi'] = ta.rsi(dataframe['close'], length=14)
+        # Load dynamic parameters first
+        self.load_dynamic_params()
         
-        bb = ta.bbands(dataframe['close'], length=self.bb_period.value, std=self.bb_std.value)
-        dataframe['bb_lower'] = bb[f'BBL_{self.bb_period.value}_{self.bb_std.value}']
-        dataframe['bb_middle'] = bb[f'BBM_{self.bb_period.value}_{self.bb_std.value}']
-            
+        import polars as pl
+        from qnt.polars_ohlcv import pandas_to_polars, ohlcv_to_pandas
+        from qnt.polars_indicators import add_rsi, add_bollinger_bands, add_atr
+        
+        df_pl = pandas_to_polars(dataframe)
+
+        # Standard Indicators with optimized params
+        df_pl = add_rsi(df_pl, period=14, alias="rsi")
+        df_pl = add_bollinger_bands(df_pl, period=self.bb_period_val, std_dev=self.bb_std_val, prefix="bb")
+        df_pl = df_pl.rename({"bb_mid": "bb_middle"})
+        df_pl = add_atr(df_pl, period=14, alias="atr")
+
+        dataframe = ohlcv_to_pandas(df_pl)
         dataframe = merge_macro_data(dataframe)
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # HMM Regime Check
-        regime = detect_regime(dataframe, metadata['pair'])
-        regime_ok = get_regime_for_strategy('MeanReversionV1', regime)
+        self.load_dynamic_params()
+
+        is_live = self.config.get('runmode', {}).value in ('live', 'dry_run')
+        regime_ok = True
+        if is_live:
+            regime = detect_regime(dataframe, metadata['pair'])
+            regime_ok = get_regime_for_strategy('MeanReversionV1', regime)
 
         dataframe.loc[
             (
-                (dataframe['rsi'] < self.buy_rsi.value) &
+                (dataframe['rsi'] < self.buy_rsi_val) &
                 (dataframe['close'] < dataframe['bb_lower']) &
                 (regime_ok)
             ),
@@ -146,24 +196,91 @@ class MeanReversionV1(IStrategy):
         return dataframe
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe.loc[
-            (
-                (dataframe['rsi'] > self.sell_rsi.value)
-            ),
-            'exit_long'] = 1
+        self.load_dynamic_params()
+
+        raw_exit = (dataframe['rsi'] > self.sell_rsi_val)
+        # Require signal on 2 consecutive candles — prevents RSI spikes exiting at a loss
+        dataframe.loc[raw_exit & raw_exit.shift(1).fillna(False), 'exit_long'] = 1
         return dataframe
+
+    def adjust_trade_position(self, trade, current_time: datetime, current_rate: float,
+                             current_profit: float, min_stake, max_stake,
+                             current_entry_rate: float, current_exit_rate: float,
+                             current_entry_profit: float, current_exit_profit: float,
+                             **kwargs):
+        if trade.id in _partial_exits_done:
+            return None
+        if current_profit >= 0.015:
+            _partial_exits_done.add(trade.id)
+            logger.info(f"[PARTIAL EXIT] MeanReversionV1 {trade.pair} profit={current_profit:.2%} — exiting 50%")
+            return -(trade.stake_amount * 0.5)
+        return None
+
+    def custom_stoploss(self, pair: str, trade, current_time: datetime,
+                       current_rate: float, current_profit: float, after_fill: bool,
+                       **kwargs) -> float:
+        dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+        if dataframe is None or dataframe.empty or 'atr' not in dataframe.columns:
+            return self.stoploss
+        atr = dataframe['atr'].iloc[-1]
+        if atr and current_rate:
+            # 2× ATR below entry, capped at -6% and floored at -2%
+            atr_stop = -(2 * atr) / trade.open_rate
+            return max(-0.06, min(-0.02, atr_stop))
+        return self.stoploss
+
+    def custom_exit(self, pair: str, trade, current_time: datetime,
+                   current_rate: float, current_profit: float, **kwargs):
+        hours_open = (current_time - trade.open_date_utc).total_seconds() / 3600
+
+        # Cut losses after 48 hours if still negative
+        if hours_open >= 48 and current_profit < -0.01:
+            return 'time_stop_48h'
+
+        # In BEAR regime, take profits quickly — bounces don't last on 1h
+        try:
+            dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+            if dataframe is not None and not dataframe.empty:
+                regime = detect_regime(dataframe, pair)
+                if regime == 'BEAR' and current_profit >= 0.015 and hours_open >= 2:
+                    return 'bear_bounce_target'
+        except Exception:
+            pass
+
+        return None
+
+    def custom_stake_amount(self, current_time, current_rate, proposed_stake,
+                           min_stake, max_stake, leverage, entry_tag, side, **kwargs):
+        multiplier = get_stake_multiplier('MeanReversionV1')
+        stake = proposed_stake * multiplier
+        if min_stake is not None:
+            stake = max(stake, min_stake)
+        return min(stake, max_stake)
 
     def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
                             time_in_force: str, current_time: datetime, entry_tag: str,
                             side: str, **kwargs) -> bool:
-        
+        if self.config.get('runmode', {}).value not in ('live', 'dry_run'):
+            return True
+
+        # --- LAYER 0: THESIS GATE ---
+        thesis = read_thesis(pair)
+        if thesis["bias"] == "SELL":
+            logger.info(f"[THESIS BLOCK] {pair} bias=SELL confidence={thesis['confidence']:.2f} — {thesis['reasoning']}")
+            return False
+        stake_modifier = thesis.get("stake_modifier", 1.0)
+
         # --- LAYER 1: RISK & SENTIMENT CHECKS ---
         try:
             total_balance = self.wallets.get_total('USDT')
             
             # Fetch recent trades for loss counting
             recent_trades = [
-                {'profit_ratio': t.profit_ratio, 'close_date': t.close_date} 
+                {
+                    'profit_ratio': float(getattr(t, 'close_profit', None) or
+                                         getattr(t, 'profit_ratio', None) or 0.0),
+                    'close_date': getattr(t, 'close_date', None)
+                }
                 for t in Trade.get_trades_proxy(is_open=False)
             ][:10]
             
@@ -190,7 +307,7 @@ class MeanReversionV1(IStrategy):
                 current_balance=total_balance,
                 start_of_day_balance=start_of_day,
                 start_of_week_balance=start_of_week,
-                trade_amount_usdt=amount * rate,
+                trade_amount_usdt=amount * rate * stake_modifier,
                 trades_last_hour=trades_last_hour,
                 recent_trades=recent_trades,
                 min_sentiment='NEUTRAL'
@@ -238,5 +355,16 @@ class MeanReversionV1(IStrategy):
 
         except Exception as e:
             logger.error(f"[RISK WARNING] Risk check error: {e}")
+
+        base = pair.split('/')[0]
+        if corr_blocked(base, side):
+            logger.info(f"[CORR BLOCK] MeanReversionV1 {pair} — too many concurrent longs on {base}")
+            return False
+
+        if side == 'long':
+            funding = get_funding_rate()
+            if funding < -0.5:
+                logger.info(f"[FUNDING BLOCK] MeanReversionV1 {pair} funding={funding:.2f} — extreme negative funding")
+                return False
 
         return True

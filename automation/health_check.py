@@ -21,7 +21,7 @@ M2_IP = os.getenv('M2_TAILSCALE_IP')
 
 BASE_DIR = Path('/Users/aatifquamre/masterbot')
 LOG = BASE_DIR / 'logs' / 'health_check.log'
-DB_PATH = BASE_DIR / 'user_data' / 'tradesv3.dryrun.sqlite'
+DB_PATH = BASE_DIR / 'user_data' / 'tradesv3_micro.sqlite'
 
 def send_telegram_health_report(results: list, timestamp: str):
     """Send health check results to both Telegram bots."""
@@ -80,7 +80,9 @@ def send_telegram_health_report(results: list, timestamp: str):
             print(f"Failed to send to QNT bot: {e}")
 
 def check_freqtrade_processes():
-    cmd = [str(BASE_DIR / 'venv/bin/supervisorctl'), '-c', str(BASE_DIR / 'config/supervisord.conf'), 'status']
+    supervisor_bin = str(BASE_DIR / 'venv/bin/supervisorctl')
+    config_file = str(BASE_DIR / 'config/supervisord.conf')
+    cmd = [supervisor_bin, '-c', config_file, 'status']
     res = subprocess.run(cmd, capture_output=True, text=True)
     
     programs = [
@@ -92,17 +94,45 @@ def check_freqtrade_processes():
         'freqtrade_micro'
     ]
     
+    import time
+    
     status_map = {}
+    restart_attempts = {}
     all_running = True
+    
     for prog in programs:
         is_running = any(prog in line and 'RUNNING' in line for line in res.stdout.split('\n'))
-        status_map[prog] = 'UP' if is_running else 'DOWN'
-        if not is_running:
-            all_running = False
+        if is_running:
+            status_map[prog] = 'UP'
+        else:
+            restarted = False
+            for attempt in range(1, 4):
+                print(f"Auto-restart attempt {attempt} for {prog}...")
+                restart_cmd = [supervisor_bin, '-c', config_file, 'restart', prog]
+                subprocess.run(restart_cmd, capture_output=True, text=True)
+                
+                # Wait a bit for status to update
+                time.sleep(3)
+                
+                check_cmd = [supervisor_bin, '-c', config_file, 'status', prog]
+                check_res = subprocess.run(check_cmd, capture_output=True, text=True)
+                if 'RUNNING' in check_res.stdout:
+                    restarted = True
+                    restart_attempts[prog] = attempt
+                    break
+            
+            if restarted:
+                status_map[prog] = f'RECOVERED ({restart_attempts[prog]} attempts)'
+            else:
+                status_map[prog] = 'DOWN'
+                all_running = False
             
     message = " | ".join([f"{k[10:] if k.startswith('freqtrade_') else k}: {v}" for k, v in status_map.items()])
     
     if all_running:
+        if restart_attempts:
+            recovered_msg = ", ".join([f"{k}: recovered in {v} attempts" for k, v in restart_attempts.items()])
+            return {"name": "Freqtrade Processes", "status": "WARN", "message": f"Recovered: {recovered_msg} | {message}", "critical": False}
         return {"name": "Freqtrade Processes", "status": "PASS", "message": f"All {len(programs)} instances running", "critical": True}
     return {"name": "Freqtrade Processes", "status": "FAIL", "message": message, "critical": True}
 
@@ -197,63 +227,36 @@ def check_log_sizes():
     return {"name": "Log Sizes", "status": "WARN", "message": f"Logs large: {total_size:.1f} MB", "critical": False}
 
 def check_qnt_status():
-    try:
-        # Detect qnt binary
-        qnt_bin = shutil.which('qnt')
-        if not qnt_bin:
-            # Common paths and NVM specific path
-            potential_paths = [
-                '/usr/local/bin/qnt',
-                '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/qnt',
-                '/opt/homebrew/bin/qnt'
-            ]
-            for p in potential_paths:
-                if os.path.exists(p):
-                    qnt_bin = p
-                    break
-        
-        if not qnt_bin:
-            return {
-                'name': 'QNT Status',
-                'status': 'FAIL',
-                'message': 'qnt binary not found in PATH or common locations',
-                'critical': False
-            }
-            
-        result = subprocess.run([qnt_bin, '/model_info'], capture_output=True, text=True, timeout=45)
-        if result.returncode == 0:
-            return {
-                'name': 'QNT Status',
-                'status': 'PASS',
-                'message': 'Intelligence CLI active',
-                'critical': False
-            }
-        else:
-            return {
-                'name': 'QNT Status',
-                'status': 'WARN',
-                'message': f'qnt responded but output unexpected: {result.stdout[:100]}',
-                'critical': False
-            }
-    except subprocess.TimeoutExpired:
+    GEMINI_BIN = '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/gemini'
+    CLAUDE_BIN = '/Users/aatifquamre/.local/bin/claude'
+
+    missing = []
+    for name, path in [('gemini', GEMINI_BIN), ('claude', CLAUDE_BIN)]:
+        if not os.path.exists(path):
+            missing.append(name)
+
+    if missing:
         return {
             'name': 'QNT Status',
             'status': 'WARN',
-            'message': 'qnt timeout after 45s (quota exhausted or slow model)',
+            'message': f'Missing CLI binaries: {", ".join(missing)}',
             'critical': False
         }
-    except FileNotFoundError:
+
+    try:
+        result = subprocess.run([GEMINI_BIN, '--version'], capture_output=True, text=True, timeout=10)
+        version = result.stdout.strip() or result.stderr.strip()
         return {
             'name': 'QNT Status',
-            'status': 'FAIL',
-            'message': 'qnt binary not found — reinstall needed',
+            'status': 'PASS',
+            'message': f'gemini {version}, claude present',
             'critical': False
         }
     except Exception as e:
         return {
             'name': 'QNT Status',
             'status': 'WARN',
-            'message': f'qnt check error: {str(e)[:100]}',
+            'message': f'CLI check error: {str(e)[:100]}',
             'critical': False
         }
 
@@ -339,20 +342,52 @@ def check_m2_shadow_health() -> dict:
             'critical': False
         }
 
+def check_thesis_freshness() -> dict:
+    """Verify thesis files are not stale for all trading pairs."""
+    pairs = ["BTC_USDT", "ETH_USDT", "SOL_USDT", "BNB_USDT", "XRP_USDT"]
+    thesis_dir = BASE_DIR / "thesis"
+    stale = []
+    missing = []
+
+    for slug in pairs:
+        path = thesis_dir / f"{slug}.json"
+        if not path.exists():
+            missing.append(slug)
+            continue
+        try:
+            import json as _json
+            from datetime import datetime, timezone
+            data = _json.loads(path.read_text())
+            ts = datetime.fromisoformat(data["generated_at"])
+            age_h = (datetime.now(timezone.utc) - ts).total_seconds() / 3600
+            if age_h > 6:
+                stale.append(f"{slug}({age_h:.1f}h)")
+        except Exception:
+            stale.append(f"{slug}(unreadable)")
+
+    if missing:
+        return {"name": "Thesis Files", "status": "WARN",
+                "message": f"Missing thesis for: {', '.join(missing)}", "critical": False}
+    if stale:
+        return {"name": "Thesis Files", "status": "WARN",
+                "message": f"Stale thesis: {', '.join(stale)}", "critical": False}
+    return {"name": "Thesis Files", "status": "PASS", "message": "All thesis files fresh"}
+
 def run_all():
     timestamp = datetime.now(timezone.utc).isoformat()
     checks = [
-        check_freqtrade_processes, 
-        check_freqtrade_apis, 
-        check_sentiment_freshness, 
-        check_m2_reachable, 
-        check_binance_api, 
-        check_disk_space, 
-        check_database, 
-        check_log_sizes, 
+        check_freqtrade_processes,
+        check_freqtrade_apis,
+        check_sentiment_freshness,
+        check_m2_reachable,
+        check_binance_api,
+        check_disk_space,
+        check_database,
+        check_log_sizes,
         check_qnt_status,
         check_nats_connection,
-        check_m2_shadow_health
+        check_m2_shadow_health,
+        check_thesis_freshness,
     ]
     
     results = []

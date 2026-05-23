@@ -16,6 +16,7 @@ if str(BASE_DIR) not in sys.path:
 from risk.risk_manager import run_all_checks
 from qnt.oracle.sentiment_gate import get_sentiment_score
 from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
+from qnt.thesis.thesis_reader import read_thesis
 
 from freqtrade.strategy import IStrategy, informative
 from freqtrade.persistence import Trade
@@ -33,19 +34,34 @@ class MicroScalpV1(IStrategy):
     @informative("5m")
     @informative("15m")
     def populate_indicators(self, dataframe: pd.DataFrame, metadata: dict) -> pd.DataFrame:
-        # RSI & BB for 1m
-        dataframe["rsi_1m"] = ta.RSI(dataframe, timeperiod=7)
-        bb = ta.BBANDS(dataframe, timeperiod=15, nbdevup=1.8, nbdevdn=1.8)
-        dataframe["bb_lower_1m"] = bb["lowerband"]
-        dataframe["bb_upper_1m"] = bb["upperband"]
-        dataframe["volume_avg_20"] = dataframe["volume"].rolling(20).mean()
+        import polars as pl
+        from qnt.polars_ohlcv import pandas_to_polars, ohlcv_to_pandas
+        from qnt.polars_indicators import add_rsi, add_bollinger_bands, add_ema
+
+        # Convert Pandas to Polars
+        df_pl = pandas_to_polars(dataframe)
+
+        # 1m specific indicators (applied to whatever timeframe is passed due to @informative decorators,
+        # but named _1m for historical consistency in this strategy)
+        df_pl = add_rsi(df_pl, period=7, alias="rsi_1m")
+        df_pl = add_bollinger_bands(df_pl, period=15, std_dev=1.8, prefix="bb")
+        
+        # Add custom rolling volume and rename bb columns to match old strategy
+        df_pl = df_pl.with_columns([
+            pl.col("volume").rolling_mean(window_size=20).alias("volume_avg_20"),
+            pl.col("bb_lower").alias("bb_lower_1m"),
+            pl.col("bb_upper").alias("bb_upper_1m"),
+        ])
         
         # Informative 5m trend filter
         if metadata.get("timeframe") == "5m":
-            dataframe["ema_20_5m"] = ta.EMA(dataframe, timeperiod=20)
-            dataframe["trend_5m_bearish"] = dataframe["close"] < dataframe["ema_20_5m"]
+            df_pl = add_ema(df_pl, period=20, alias="ema_20_5m")
+            df_pl = df_pl.with_columns(
+                (pl.col("close") < pl.col("ema_20_5m")).alias("trend_5m_bearish")
+            )
         
-        return dataframe
+        # Convert back to Pandas for Freqtrade
+        return ohlcv_to_pandas(df_pl)
 
     def populate_entry_trend(self, dataframe: pd.DataFrame, metadata: dict) -> pd.DataFrame:
         # Risk & Sentiment Gate
@@ -136,6 +152,13 @@ class MicroScalpV1(IStrategy):
         """
         Final gatekeeper - Skeptic Agent review.
         """
+        # --- LAYER 0: THESIS GATE ---
+        thesis = read_thesis(pair)
+        if thesis["bias"] == "SELL":
+            logger.info(f"[THESIS BLOCK] {pair} bias=SELL confidence={thesis['confidence']:.2f} — {thesis['reasoning']}")
+            return False
+        stake_modifier = thesis.get("stake_modifier", 1.0)
+
         try:
             import sys
             sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/agents')

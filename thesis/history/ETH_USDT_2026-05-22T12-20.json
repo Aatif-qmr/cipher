@@ -1,0 +1,19 @@
+{
+  "pair": "ETH/USDT",
+  "bias": "HOLD",
+  "confidence": 0.55,
+  "stake_modifier": 0.5,
+  "reasoning": "The bear case carries higher confidence (0.85) with TrendFollowV1 paused and DXY headwinds confirming structural selling pressure rather than a squeezable short setup; while risk controls are all clear and MeanReversionV1 is active, the absence of trend confirmation and persistent fear sentiment make a long entry premature.",
+  "key_risks": [
+    "Rising DXY (+0.17%) suppressing crypto bids with no near-term catalyst for reversal",
+    "TrendFollowV1 PAUSED signals no structural bullish momentum to sustain any mean-reversion bounce"
+  ],
+  "bull_confidence": 0.75,
+  "bear_confidence": 0.85,
+  "valid_until": "2026-05-22T16:20:33.462585+00:00",
+  "generated_at": "2026-05-22T12:20:33.462585+00:00",
+  "context_snapshot": {
+    "sentiment_score": -0.133,
+    "shield_status": "UNKNOWN"
+  }
+}

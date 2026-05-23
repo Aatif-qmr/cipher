@@ -107,15 +107,16 @@ def run_skeptic(trade_proposal) -> dict:
 
 def get_vault_context(pair, strategy) -> str:
     try:
-        # Search ChromaDB for similar past trades
+        # Search vault for similar past trades
         results = recall_lessons(f"{strategy} {pair} loss failure", n_results=3)
-        
-        if results and results.get('documents') and results['documents'][0]:
+
+        if results:
             summary = "Past relevant failures:\n"
-            for i, doc in enumerate(results['documents'][0]):
+            for result in results:
+                doc = result.get("document", "")
                 summary += f"- {doc[:200]}...\n"
             return summary
-            
+
         return "No relevant vault history found"
     except:
         return "No relevant vault history found"

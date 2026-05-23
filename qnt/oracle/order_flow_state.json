@@ -1,9 +1,9 @@
 {
-  "last_updated": "2026-05-13T06:15:01.139061",
+  "last_updated": "2026-05-23T10:45:00.793330",
   "liquidation": {
-    "ratio": 0.7680833333333333,
-    "trend": "short_squeeze_risk",
-    "timestamp": "2026-05-13T06:15:02.083565"
+    "ratio": 1.4991833333333335,
+    "trend": "neutral",
+    "timestamp": "2026-05-23T10:45:01.747076"
   },
   "cvd_divergence": "bearish_divergence"
 }

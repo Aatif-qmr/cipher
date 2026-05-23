@@ -43,6 +43,12 @@ def run(mode='all'):
     
     if mode == 'sentiment' or mode == 'all':
         try:
+            import importlib.util
+            pipeline_path = os.path.join(BASE_DIR, 'sentiment', 'pipeline.py')
+            spec = importlib.util.spec_from_file_location('sentiment_pipeline', pipeline_path)
+            sentiment_pipeline = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(sentiment_pipeline)
+            sentiment_pipeline.run_pipeline()
             sentiment_check()
             log_action('oracle_sentiment_check', 'completed', device['device'])
         except Exception as e:

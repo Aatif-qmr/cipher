@@ -42,7 +42,7 @@ def get_current_sentiment() -> dict:
         
         result = {
             "score": float(data.get('score', 0.0)),
-            "available": age_minutes < 60,
+            "available": age_minutes < 120,
             "age_minutes": age_minutes,
             "sources_used": data.get('sources_used', []),
             "warning": data.get('warning')
@@ -56,6 +56,18 @@ def get_current_sentiment() -> dict:
     except (json.JSONDecodeError, ValueError, TypeError) as e:
         fallback['warning'] = f"Error reading JSON: {str(e)}"
         return fallback
+
+def get_funding_rate() -> float:
+    """Returns normalized funding rate component (-1 to 1). 0.0 if unavailable."""
+    home = os.path.expanduser("~")
+    path = os.path.join(home, "masterbot", "sentiment/scores/current_score.json")
+    try:
+        with open(path) as f:
+            data = json.load(f)
+        return float(data.get("component_scores", {}).get("funding", 0.0))
+    except Exception:
+        return 0.0
+
 
 def get_sentiment_signal(threshold_bearish=-0.3, threshold_bullish=0.3) -> str:
     """

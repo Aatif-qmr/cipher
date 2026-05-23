@@ -1,0 +1,12 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "risk-checks-rs"
+version = "1.0.0"
+description = "Rust-backed risk check arithmetic — replaces Cython risk_checks.pyx"
+requires-python = ">=3.10"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]

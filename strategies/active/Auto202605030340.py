@@ -45,11 +45,18 @@ class Auto202605030340(IStrategy):
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Calculate indicators using pandas_ta.
+        Calculate indicators using polars.
         """
-        # RSI calculation (Standard 14 period)
-        dataframe['rsi'] = ta.rsi(dataframe['close'], length=14)
+        import polars as pl
+        from qnt.polars_ohlcv import pandas_to_polars, ohlcv_to_pandas
+        from qnt.polars_indicators import add_rsi
         
+        df_pl = pandas_to_polars(dataframe)
+        
+        # RSI calculation (Standard 14 period)
+        df_pl = add_rsi(df_pl, period=14, alias="rsi")
+        
+        dataframe = ohlcv_to_pandas(df_pl)
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
@@ -94,7 +101,7 @@ class Auto202605030340(IStrategy):
             all_recent_trades = Trade.get_trades_proxy(is_open=False)
             recent_trades_data = [
                 {
-                    'profit_ratio': t.profit_ratio, 
+                    'profit_ratio': t.close_profit,
                     'close_date': t.close_date
                 } 
                 for t in all_recent_trades

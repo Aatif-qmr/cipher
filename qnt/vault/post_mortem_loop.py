@@ -17,7 +17,7 @@ sys.path.insert(0, str(BASE_DIR / 'qnt/vault'))
 sys.path.insert(0, str(BASE_DIR / 'qnt/oracle'))
 
 from memory_manager import load_memory, save_memory, log_action
-from vault import add_entry
+from vault import store_lesson
 from hmm_regime import detect_regime
 import freqtrade.data.history as history
 
@@ -194,7 +194,8 @@ def store_lesson_in_vault(lesson, trade, analysis_text):
         "category": "lesson"
     }
     
-    add_entry("trade_memory", content, metadata)
+    lesson_id = f"trade_memory_{trade.get('unique_id', trade.get('id', 'unk'))}_{int(time.time())}"
+    store_lesson(lesson_id, content, metadata)
 
 def generate_negative_constraint(lesson, trade):
     """Converts lesson into a FreqAI-compatible negative constraint."""

@@ -1,8 +1,20 @@
-```
 # Compiled Python files
 *.pyc
 __pycache__/
 
 # Original rules preserved
 *.log
-```
+
+# Thesis pipeline output
+thesis/venv/
+__pycache__/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+venv/
+user_data/
+target/
+risk/risk_checks_rs/target/
+*.onnx
+*.onnx.data
+sentiment/models/
