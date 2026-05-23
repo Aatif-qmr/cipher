@@ -46,16 +46,16 @@ def get_global_status_panel():
         
         for inst in instances:
             try:
-                r = requests.get(f'http://100.90.68.42:{inst["port"]}/api/v1/ping', auth=HTTPBasicAuth(user, pwd), timeout=0.5)
+                r = requests.get(f'http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{inst["port"]}/api/v1/ping', auth=HTTPBasicAuth(user, pwd), timeout=0.5)
                 if r.status_code == 200:
                     running_count += 1
-                    r_bal = requests.get(f'http://100.90.68.42:{inst["port"]}/api/v1/balance', auth=HTTPBasicAuth(user, pwd), timeout=0.5)
+                    r_bal = requests.get(f'http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{inst["port"]}/api/v1/balance', auth=HTTPBasicAuth(user, pwd), timeout=0.5)
                     if r_bal.status_code == 200:
                         total_bal += r_bal.json().get('total', 0)
-                    r_stat = requests.get(f'http://100.90.68.42:{inst["port"]}/api/v1/status', auth=HTTPBasicAuth(user, pwd), timeout=0.5)
+                    r_stat = requests.get(f'http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{inst["port"]}/api/v1/status', auth=HTTPBasicAuth(user, pwd), timeout=0.5)
                     if r_stat.status_code == 200:
                         total_trades += len(r_stat.json())
-            except: continue
+            except Exception as e: continue
 
         if total_bal == 0: total_bal = 50000.0
         
@@ -65,7 +65,7 @@ def get_global_status_panel():
             ("Trades:    ", "bold"), (f"{total_trades} active")
         )
         return Panel(content, title="GLOBAL SYSTEM", border_style="blue", expand=True)
-    except:
+    except Exception as e:
         return Panel("⚠️ Global Status unavailable", title="GLOBAL SYSTEM", border_style="red", expand=True)
 
 def get_market_intel_panel():
@@ -79,7 +79,7 @@ def get_market_intel_panel():
             ("Macro:     ", "bold"), ("🟢 LOW RISK", "green")
         )
         return Panel(content, title="MARKET ORACLE", border_style="cyan", expand=True)
-    except:
+    except Exception as e:
         return Panel("⚠️ Market Intel unavailable", title="MARKET ORACLE", border_style="red", expand=True)
 
 def get_shield_panel():
@@ -93,7 +93,7 @@ def get_shield_panel():
             ("Weekly DD:", "bold"), ("0.0%", "green")
         )
         return Panel(content, title="QNT SHIELD", border_style="magenta", expand=True)
-    except:
+    except Exception as e:
         return Panel("⚠️ Shield unavailable", title="QNT SHIELD", border_style="red", expand=True)
 
 def get_trades_panel():
@@ -105,10 +105,10 @@ def get_trades_panel():
         all_trades = []
         for port in ports:
             try:
-                r = requests.get(f'http://100.90.68.42:{port}/api/v1/status', auth=HTTPBasicAuth(user, pwd), timeout=0.5)
+                r = requests.get(f'http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{port}/api/v1/status', auth=HTTPBasicAuth(user, pwd), timeout=0.5)
                 if r.status_code == 200:
                     all_trades.extend(r.json())
-            except: continue
+            except Exception as e: continue
 
         if not all_trades: return Panel("No open positions", title="GLOBAL TRADES", expand=True)
         
@@ -121,7 +121,7 @@ def get_trades_panel():
             table.add_row(t['pair'], f"[{style}]{pnl:+.2f}%[/]")
             
         return Panel(table, title="GLOBAL TRADES", expand=True)
-    except:
+    except Exception as e:
         return Panel("⚠️ Trades unavailable", title="GLOBAL TRADES", expand=True)
 
 def get_logs_panel():
@@ -129,7 +129,7 @@ def get_logs_panel():
         # Just show main log
         stdout, _, _ = run_on_m1("tail -n 8 /Users/aatifquamre/masterbot/logs/freqtrade.log")
         return Panel(stdout or "No logs", title="LIVE LOG FEED", border_style="dim", expand=True)
-    except:
+    except Exception as e:
         return Panel("⚠️ Logs unavailable", title="LIVE LOG FEED", border_style="red", expand=True)
 
 def run_dashboard(once=False):

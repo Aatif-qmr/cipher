@@ -60,7 +60,7 @@ def fetch_cvd_divergence(symbol="BTCUSDT"):
             return "bullish_divergence"
             
         return "neutral"
-    except:
+    except Exception as e:
         return "neutral"
 
 def update_state():

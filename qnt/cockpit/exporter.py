@@ -10,7 +10,7 @@ load_dotenv('/Users/aatifquamre/masterbot/.env')
 
 API_USER = os.getenv('API_USERNAME', 'Aatif-qmr')
 API_PW = os.getenv('API_PASSWORD', '2001')
-BASE_IP = os.getenv('M1_TAILSCALE_IP', '100.90.68.42')
+BASE_IP = os.getenv('M1_TAILSCALE_IP', '127.0.0.1')
 
 INSTANCES = {
     "mean_reversion": 8080,

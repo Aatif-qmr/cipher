@@ -118,7 +118,7 @@ def get_vault_context(pair, strategy) -> str:
             return summary
 
         return "No relevant vault history found"
-    except:
+    except Exception as e:
         return "No relevant vault history found"
 
 def get_recent_candles_text(pair, timeframe, n=5) -> str:

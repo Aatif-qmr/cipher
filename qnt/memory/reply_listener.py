@@ -170,7 +170,7 @@ def process_update(update):
                 "text": ack_text,
                 "parse_mode": "HTML"
             })
-        except:
+        except Exception as e:
             pass
             
         log_action(f"telegram_reply_received", f"User replied: {text} to escalation {escalation_ts}")
@@ -187,7 +187,7 @@ def main():
         updates = res.json().get('result', [])
         if updates:
             offset = updates[-1]['update_id'] + 1
-    except:
+    except Exception as e:
         pass
 
     while True:

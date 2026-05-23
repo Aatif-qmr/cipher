@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from pandas import DataFrame
-import pandas_ta as ta
 import pandas as pd
 
 from freqtrade.strategy import IStrategy

@@ -38,7 +38,7 @@ def get_db_path():
                 conn.close()
                 if count > 0:
                     return p
-            except:
+            except Exception as e:
                 continue
     return paths[0] # Fallback
 
@@ -75,7 +75,7 @@ def generate_post_mortem(trade_id):
                     trade = trades_df.iloc[0]
                     db_to_use = db
                     break
-            except: continue
+            except Exception as e: continue
             
         if trade is None: return f"Trade {trade_id} not found."
         
@@ -98,7 +98,7 @@ def generate_post_mortem(trade_id):
             closest_close = hist.iloc[(hist['timestamp'] - close_dt).abs().argsort()[:1]]
             if not closest_close.empty: 
                 sentiment_at_close = f"{closest_close.iloc[0]['score']:.2f}"
-        except: pass
+        except Exception as e: pass
         
         # 2. Calendar Events
         cal = calculate_risk_level(trade['close_date'][:10])
@@ -175,7 +175,7 @@ def generate_weekly_post_mortem():
                 conn.close()
                 if not losses.empty:
                     all_losses.extend(losses['trade_id'].tolist())
-            except:
+            except Exception as e:
                 continue
                 
         if not all_losses:

@@ -102,7 +102,7 @@ def generate_ai_analysis(trade: dict, context: dict) -> str:
             datetime.fromisoformat(trade["close_date"].replace("Z", "+00:00")) -
             datetime.fromisoformat(trade["open_date"].replace("Z", "+00:00"))
         ).total_seconds() / 60 if trade["close_date"] else 0
-    except:
+    except Exception as e:
         duration_minutes = 0
 
     outcome = "WIN" if trade["profit_ratio"] > 0 else "LOSS"

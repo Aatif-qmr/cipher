@@ -132,7 +132,7 @@ def get_pending_reply(timeout_minutes=60):
         updates = res.json().get('result', [])
         if updates:
             last_update_id = updates[-1]['update_id']
-    except:
+    except Exception as e:
         pass
 
     print(f"Polling for reply (timeout {timeout_minutes}m)...")
@@ -175,7 +175,7 @@ def send_weekly_summary(actions_count, decisions_count, autonomous_count, escala
         sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
         from memory_manager import load_memory
         total_logs = len(load_memory().get('action_log', []))
-    except:
+    except Exception as e:
         total_logs = "unknown"
 
     actions_list = "\n".join([f"• {a}" for a in top_actions])
@@ -199,7 +199,7 @@ def send_weekly_summary(actions_count, decisions_count, autonomous_count, escala
             "text": text,
             "parse_mode": "HTML"
         }, timeout=10)
-    except:
+    except Exception as e:
         pass
 
 if __name__ == "__main__":

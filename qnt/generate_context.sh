@@ -1,13 +1,14 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # QNT Context Generator
 # Generates fresh brain context from live project state
 # Run after any significant project change
 
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 
-MASTERBOT_M1="/Users/aatifquamre/masterbot"
+MASTERBOT_M1="$BASE_DIR"
 MASTERBOT_M2="/Users/azmatsaif/masterbot"
 OUTPUT="$MASTERBOT_M1/qnt/QNT.md"
 
@@ -44,11 +45,11 @@ cat >> "$OUTPUT" << EOF
 
 ### M1 — Execution Node (Always On)
 - User: aatifquamre
-- Path: /Users/aatifquamre/masterbot/
+- Path: $BASE_DIR/
 - Role: Live trading, risk management, monitoring
 - Always running: Freqtrade, supervisord, caffeinate
 - Tailscale IP: $(tailscale ip -4 2>/dev/null || echo "check tailscale status")
-- Web UI: http://100.90.68.42:8080
+- Web UI: http://127.0.0.1:8080
 
 ### M2 — Intelligence Node (On Demand)
 - User: azmatsaif  
@@ -64,18 +65,18 @@ FREQTRADE_STATUS=$(supervisorctl status freqtrade 2>/dev/null | awk '{print $2}'
 SENTIMENT_SCORE=$(python3 -c "
 import json
 try:
-    with open('/Users/aatifquamre/masterbot/sentiment/scores/current_score.json') as f:
+    with open('$BASE_DIR/sentiment/scores/current_score.json') as f:
         d = json.load(f)
-    print(f\"{d['score']:.3f} ({d.get('timestamp','unknown')})\")
+    print(f"{d['score']:.3f} ({d.get('timestamp','unknown')})")
 except:
     print('unavailable')
 " 2>/dev/null)
 BALANCE=$(curl -s -u "$FREQTRADE_UI_USERNAME:$FREQTRADE_UI_PASSWORD" \
-  http://100.90.68.42:8080/api/v1/balance 2>/dev/null \
-  | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d.get('total','?')} USDT\")" \
+  http://127.0.0.1:8080/api/v1/balance 2>/dev/null \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(f"{d.get('total','?')} USDT")" \
   2>/dev/null || echo "unavailable")
 OPEN_TRADES=$(curl -s -u "$FREQTRADE_UI_USERNAME:$FREQTRADE_UI_PASSWORD" \
-  http://100.90.68.42:8080/api/v1/count 2>/dev/null \
+  http://127.0.0.1:8080/api/v1/count 2>/dev/null \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('current',0))" \
   2>/dev/null || echo "unknown")
 
@@ -95,7 +96,7 @@ cat >> "$OUTPUT" << 'EOF'
 
 EOF
 
-for STRAT in /Users/aatifquamre/masterbot/strategies/active/*.py; do
+for STRAT in $BASE_DIR/strategies/active/*.py; do
   STRAT_NAME=$(basename "$STRAT" .py)
   
   # Extract key values from strategy file
@@ -116,7 +117,7 @@ done
 
 # ── SECTION 5: Risk Rules ─────────────────────
 DAILY_LIMIT=$(grep "limit_pct.*3\|3\.0" \
-  /Users/aatifquamre/masterbot/risk/risk_manager.py \
+  $BASE_DIR/risk/risk_manager.py \
   | head -1 | grep -o "[0-9.]*%" | head -1 || echo "3%")
 
 cat >> "$OUTPUT" << EOF
@@ -331,8 +332,8 @@ EOF
 
 # ── SECTION 11: Known Issues Log ──────────────
 # This section is appended to by qnt when it fixes things
-if [ ! -f /Users/aatifquamre/masterbot/qnt/.issues_log ]; then
-  touch /Users/aatifquamre/masterbot/qnt/.issues_log
+if [ ! -f $BASE_DIR/qnt/.issues_log ]; then
+  touch $BASE_DIR/qnt/.issues_log
 fi
 
 cat >> "$OUTPUT" << 'EOF'
@@ -341,7 +342,7 @@ Format: [DATE] FIXED/NOTED: description
 
 EOF
 
-cat /Users/aatifquamre/masterbot/qnt/.issues_log >> "$OUTPUT" 2>/dev/null
+cat $BASE_DIR/qnt/.issues_log >> "$OUTPUT" 2>/dev/null
 echo "" >> "$OUTPUT"
 echo "*(qnt appends here when it fixes issues)*" >> "$OUTPUT"
 

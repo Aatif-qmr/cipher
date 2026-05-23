@@ -151,7 +151,7 @@ def run_backtest(strategy_name, timerange='20240101-20260101', timeframe=None):
         metrics['win_rate'] = float(re.search(r'Win rate.*?([\d.]+)', stdout).group(1)) if re.search(r'Win rate.*?([\d.]+)', stdout) else 0
         metrics['max_drawdown'] = float(re.search(r'Max drawdown.*?([\d.]+)', stdout).group(1)) if re.search(r'Max drawdown.*?([\d.]+)', stdout) else 0
         metrics['sharpe'] = float(re.search(r'Sharpe ratio.*?([\d.-]+)', stdout).group(1)) if re.search(r'Sharpe ratio.*?([\d.-]+)', stdout) else 0
-    except:
+    except Exception as e:
         metrics = {"error": "Could not parse all metrics"}
 
     # Pass/Fail Criteria
@@ -196,7 +196,7 @@ def evolve_strategy(strategy_name, lookback_trades=20):
         query = f"SELECT * FROM trades WHERE strategy='{strategy_name}' AND is_open=0 ORDER BY close_date DESC LIMIT {lookback_trades}"
         df = pd.read_sql_query(query, conn)
         conn.close()
-    except:
+    except Exception as e:
         return None
 
     if df.empty or len(df[df['profit_ratio'] < 0]) < 3:

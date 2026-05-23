@@ -19,7 +19,7 @@ def get_current_sentiment():
     try:
         with open(SENTIMENT_JSON, 'r') as f:
             return json.load(f)
-    except:
+    except Exception as e:
         return None
 
 def explain_sentiment():
@@ -66,7 +66,7 @@ def explain_sentiment():
             diff = score - old_score
             if diff > 0.2: trend_str = "IMPROVING"
             elif diff < -0.2: trend_str = "DECLINING"
-    except: pass
+    except Exception as e: pass
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     
@@ -115,7 +115,7 @@ def detect_sentiment_shift():
                     "old": round(old_score, 3),
                     "new": round(score, 3)
                 }
-    except: pass
+    except Exception as e: pass
     
     return {"shifted": False}
 

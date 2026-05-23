@@ -67,7 +67,7 @@ def main():
         try:
             with open(MACRO_HISTORY_FILE, 'r') as f:
                 history = json.load(f)
-        except:
+        except Exception as e:
             history = []
     
     history.append(macro_state)

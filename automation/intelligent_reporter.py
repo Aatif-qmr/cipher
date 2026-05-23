@@ -8,22 +8,26 @@ from datetime import datetime, timedelta, timezone
 from mistralai.client import Mistral
 from tenacity import retry, stop_after_attempt, wait_exponential
 
+from pathlib import Path
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 # Configuration
 DB_FILES = [
-    '/Users/aatifquamre/masterbot/user_data/micro.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/scalp.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/mean_reversion.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/trend_follow.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/daily.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/swing.sqlite'
+    str(BASE_DIR / 'user_data' / 'micro.sqlite'),
+    str(BASE_DIR / 'user_data' / 'scalp.sqlite'),
+    str(BASE_DIR / 'user_data' / 'mean_reversion.sqlite'),
+    str(BASE_DIR / 'user_data' / 'trend_follow.sqlite'),
+    str(BASE_DIR / 'user_data' / 'daily.sqlite'),
+    str(BASE_DIR / 'user_data' / 'swing.sqlite')
 ]
-SENTIMENT_PATH = '/Users/aatifquamre/masterbot/sentiment/scores/history.csv'
+SENTIMENT_PATH = str(BASE_DIR / 'sentiment' / 'scores' / 'history.csv')
 REPORTS_FOLDER_ID = '1Vdst3YI9wFFfFPurpVVGJfrA3y2aT9BI'
 DEST_EMAIL = 'aatifqmr@gmail.com'
 
 # API Keys from env
-from dotenv import load_dotenv
-load_dotenv('/Users/aatifquamre/masterbot/.env')
+load_dotenv(BASE_DIR / '.env')
 
 MISTRAL_API_KEY = "buk3FCIeMTkBXiweHG6xuRmcQ0VeeczB"
 # MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
@@ -85,7 +89,8 @@ def gather_data():
             if not last_week.empty:
                 avg = last_week['score'].mean()
                 sentiment_data = f"{avg:.3f} ({'BULLISH' if avg > 0.3 else 'BEARISH' if avg < -0.3 else 'NEUTRAL'})"
-        except: pass
+        except Exception as e:
+            print(f"Sentiment reading error: {e}")
 
     return {
         "summary": {
@@ -138,8 +143,8 @@ def notify(analysis, data):
     print("Syncing with Google Workspace...")
     try:
         subprocess.run(['qnt', '-p', doc_prompt], check=True)
-    except:
-        print("Google Workspace sync failed. Proceeding with Telegram.")
+    except Exception as e:
+        print(f"Google Workspace sync failed: {e}. Proceeding with Telegram.")
 
     # 2. Telegram
     if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:

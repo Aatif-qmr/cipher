@@ -8,8 +8,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load env from user's local path
-load_dotenv('/Users/aatifquamre/masterbot/.env')
+# Load env dynamically
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
@@ -19,7 +20,6 @@ FT_USERNAME = os.getenv('FREQTRADE_UI_USERNAME')
 FT_PASSWORD = os.getenv('FREQTRADE_UI_PASSWORD')
 M2_IP = os.getenv('M2_TAILSCALE_IP')
 
-BASE_DIR = Path('/Users/aatifquamre/masterbot')
 LOG = BASE_DIR / 'logs' / 'health_check.log'
 DB_PATH = BASE_DIR / 'user_data' / 'tradesv3_micro.sqlite'
 
@@ -143,9 +143,10 @@ def check_freqtrade_apis():
     results = {}
     all_ok = True
     
+    m1_ip = os.getenv('M1_TAILSCALE_IP', '127.0.0.1')
     for port in ports:
         try:
-            url = f"http://100.90.68.42:{port}/api/v1/ping"
+            url = f"http://{m1_ip}:{port}/api/v1/ping"
             res = requests.get(url, auth=(user, pwd), timeout=3)
             if res.status_code == 200:
                 results[port] = "OK"
@@ -267,10 +268,10 @@ def check_nats_connection() -> dict:
     import subprocess
     try:
         result = subprocess.run(
-            ['/Users/aatifquamre/masterbot/venv/bin/python', '-c',
+            [str(BASE_DIR / 'venv/bin/python'), '-c',
              'import asyncio,nats,os;'
              'from dotenv import load_dotenv;'
-             'load_dotenv("/Users/aatifquamre/masterbot/.env");'
+             f'load_dotenv("{BASE_DIR / ".env"}");'
              'asyncio.run(nats.connect(os.getenv("NATS_URL")));'
              'print("NATS_OK")'],
             capture_output=True, text=True,

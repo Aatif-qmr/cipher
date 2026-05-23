@@ -1,11 +1,12 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # QNT Browser Bridge
 # Triggers browser extraction on M2 via SSH
 # Usage: bash browser_bridge.sh <command> [url]
 # M1 calls this → M2 runs browser → result returned to M1
 
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 
 COMMAND=${1:-feargreed}
@@ -13,7 +14,7 @@ URL=${2:-""}
 M2_IP=${M2_TAILSCALE_IP}
 M2_USER="azmatsaif"
 M2_SCRIPT="/Users/azmatsaif/masterbot/qnt/browser_fetch.js"
-OUTPUT_SYNC="/Users/aatifquamre/masterbot/qnt/browser_output/"
+OUTPUT_SYNC="$BASE_DIR/qnt/browser_output/"
 
 mkdir -p "$OUTPUT_SYNC"
 

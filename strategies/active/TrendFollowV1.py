@@ -6,8 +6,6 @@ import os
 from pathlib import Path
 from datetime import timedelta, datetime
 from pandas import DataFrame
-import pandas_ta as ta
-import numpy as np
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 
 from freqtrade.strategy import IStrategy, IntParameter

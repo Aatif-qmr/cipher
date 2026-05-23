@@ -68,7 +68,7 @@ def skeptic_agent(state: AgentState):
         results = recall_lessons(f"{strategy} {pair} loss failure", n_results=3)
         if results:
             vault_context = "\n".join([r.get("document", "")[:200] for r in results])
-    except:
+    except Exception as e:
         pass
         
     client = get_mistral_client()
@@ -104,7 +104,7 @@ def obi_observer_agent(state: AgentState):
             obi_data = data.get("obi_pipeline", {}).get(symbol, {})
             if obi_data:
                 obi_snapshot = f"OBI: {obi_data.get('obi')} ({obi_data.get('imbalance_side')}), Spread: {obi_data.get('spread_pct')}%"
-        except:
+        except Exception as e:
             pass
             
     return {"obi_snapshot": obi_snapshot}

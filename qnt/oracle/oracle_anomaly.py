@@ -36,7 +36,7 @@ def check_funding_sentiment_divergence():
             return {"divergence": True, "type": "BULLISH DIVERGENCE", "severity": "HIGH", 
                     "reason": "High short leverage despite bullish news (Short Squeeze potential)"}
             
-    except: pass
+    except Exception as e: pass
     return {"divergence": False}
 
 def check_fear_greed_extreme():
@@ -54,7 +54,7 @@ def check_fear_greed_extreme():
             return {"extreme": True, "type": "EXTREME FEAR", "value": val}
         if val >= 0.7:
             return {"extreme": True, "type": "EXTREME GREED", "value": val}
-    except: pass
+    except Exception as e: pass
     return {"extreme": False}
 
 def check_sentiment_velocity():
@@ -68,7 +68,7 @@ def check_sentiment_velocity():
             
             if change > 0.5:
                 return {"alert": True, "magnitude": change, "direction": "up" if current > old else "down"}
-    except: pass
+    except Exception as e: pass
     return {"alert": False}
 
 def check_performance_divergence():
@@ -88,7 +88,7 @@ def check_performance_divergence():
             
         if win_rate < 0.35 and sentiment > 0.2:
             return {"divergence": True, "reason": f"Low win rate ({win_rate*100:.0f}%) despite bullish sentiment"}
-    except: pass
+    except Exception as e: pass
     return {"divergence": False}
 
 def run_all_anomaly_checks():

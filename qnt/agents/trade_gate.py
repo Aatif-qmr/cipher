@@ -200,7 +200,7 @@ Status:           {'ENABLED' if SKEPTIC_ENABLED else 'DISABLED'}
                     try:
                         d = json.loads(line)
                         output += f"• {d['timestamp'][11:16]} | {d['pair']} | {d['decision']} ({d['failure_confidence']:.0%})\n"
-                    except: pass
+                    except Exception as e: pass
         
         return output
     except Exception as e:

@@ -7,34 +7,37 @@ import subprocess
 import shutil
 from datetime import datetime, timedelta, timezone
 
+from pathlib import Path
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 def get_qnt_path():
     path = shutil.which('qnt')
     if path and os.path.exists(path):
         return path
-    for p in ['/Users/aatifquamre/masterbot/qnt/bin/qnt', '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/qnt']:
+    for p in [str(BASE_DIR / 'qnt/bin/qnt'), '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/qnt']:
         if os.path.exists(p): return p
     return 'qnt'
-from pathlib import Path
-from dotenv import load_dotenv
 
-load_dotenv('/Users/aatifquamre/masterbot/.env')
+load_dotenv(BASE_DIR / '.env')
 
 TELEGRAM_TOKEN = os.getenv('QNT_TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('QNT_TELEGRAM_CHAT_ID')
 
 DB_PATHS = [
-    '/Users/aatifquamre/masterbot/user_data/mean_reversion.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/trend_follow.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/scalp.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/swing.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/daily.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/micro.sqlite'
+    str(BASE_DIR / 'user_data/mean_reversion.sqlite'),
+    str(BASE_DIR / 'user_data/trend_follow.sqlite'),
+    str(BASE_DIR / 'user_data/scalp.sqlite'),
+    str(BASE_DIR / 'user_data/swing.sqlite'),
+    str(BASE_DIR / 'user_data/daily.sqlite'),
+    str(BASE_DIR / 'user_data/micro.sqlite')
 ]
-REPORT_DIR = Path('/Users/aatifquamre/masterbot/logs/reports/')
+REPORT_DIR = BASE_DIR / 'logs/reports/'
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
-SENTIMENT_PATH = '/Users/aatifquamre/masterbot/sentiment/scores/history.csv'
-RISK_LOG = '/Users/aatifquamre/masterbot/logs/risk_manager.log'
+SENTIMENT_PATH = str(BASE_DIR / 'sentiment/scores/history.csv')
+RISK_LOG = str(BASE_DIR / 'logs/risk_manager.log')
 
 def get_weekly_trades(db_paths: list, days_ago_start=7, days_ago_end=0) -> list:
     all_trades = []
@@ -129,7 +132,9 @@ def get_sentiment_correlation():
             "days_bearish": len(last_week[last_week['score'] < -0.3]),
             "days_neutral": len(last_week[(last_week['score'] >= -0.3) & (last_week['score'] <= 0.3)])
         }
-    except: return None
+    except Exception as e:
+        print(f"Sentiment error: {e}")
+        return None
 
 def get_risk_events():
     events = {"drawdown_warnings": 0, "drawdown_blocks": 0, "sentiment_blocks": 0, "risk_blocks": 0}
@@ -146,7 +151,8 @@ def get_risk_events():
                 if 'LIMIT HIT' in line_upper: events['drawdown_blocks'] += 1
                 if 'SENTIMENT BLOCK' in line_upper: events['sentiment_blocks'] += 1
                 if 'RISK BLOCK' in line_upper or 'RISK CHECKS BLOCKED' in line_upper: events['risk_blocks'] += 1
-    except: pass
+    except Exception as e:
+        print(f"Risk log parsing error: {e}")
     return events
 
 def get_qnt_intelligence(current, sentiment):
@@ -161,8 +167,8 @@ def get_qnt_intelligence(current, sentiment):
             text = result.stdout.strip()
             sentences = text.split('.')
             return '.'.join(sentences[:2]) + '.'
-    except:
-        pass
+    except Exception as e:
+        print(f"QNT intelligence error: {e}")
     return "Intelligence node busy. Continuing with standard protocols."
 
 def get_qnt_weekly_brief() -> str:
@@ -184,8 +190,8 @@ def get_m2_resource_report() -> str:
                '/Users/azmatsaif/masterbot/venv/bin/python /Users/azmatsaif/masterbot/qnt/shadow/resource_monitor.py']
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         return result.stdout.strip()
-    except:
-        return "M2 resource report unavailable"
+    except Exception as e:
+        return f"M2 resource report unavailable: {e}"
 
 def get_strategy_win_rate_trend(db_paths: list, weeks: int = 4) -> dict:
     """
@@ -277,8 +283,8 @@ def get_skeptic_summary() -> str:
             capture_output=True, text=True, timeout=15
         )
         return result.stdout.strip()
-    except:
-        return "Skeptic stats unavailable"
+    except Exception as e:
+        return f"Skeptic stats unavailable: {e}"
 
 def format_telegram_report(current, previous, sentiment, risk, intel, week_start, week_end, qnt_brief, trend_table=""):
     next_monday = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')

@@ -116,7 +116,7 @@ def parse_forexfactory(text):
             try:
                 # Placeholder for robust date parsing
                 current_date = datetime.now().strftime("%Y-%m-%d") # Use current year
-            except: pass
+            except Exception as e: pass
             
         if "Impact" in line or "High" in line or "Medium" in line:
             impact = "low"

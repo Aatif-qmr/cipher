@@ -87,7 +87,7 @@ def generate_trade_analysis(trade):
         closest = hist.iloc[(hist['timestamp'] - open_dt).abs().argsort()[:1]]
         if not closest.empty:
             sentiment_at_open = f"{closest.iloc[0]['score']:.2f}"
-    except: pass
+    except Exception as e: pass
     
     # 2. HMM Regime at Open
     regime_at_open = "Unknown"
@@ -103,7 +103,7 @@ def generate_trade_analysis(trade):
         data_at_open = data[data['date'] <= open_dt_aware].tail(200)
         regime_data = detect_regime(data_at_open)
         regime_at_open = f"{regime_data['regime']} (Conf: {regime_data['confidence']:.2f})"
-    except: pass
+    except Exception as e: pass
     
     # 3. Call QNT AI
     prompt = f"""
@@ -162,7 +162,7 @@ def extract_lesson(analysis_text):
                 match = re.search(r'\d+', line)
                 if match:
                     lesson['confidence'] = int(match.group())
-            except: pass
+            except Exception as e: pass
             
     return lesson
 

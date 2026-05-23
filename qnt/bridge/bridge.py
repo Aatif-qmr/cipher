@@ -32,14 +32,14 @@ def call_api_all(endpoint, method='GET', data=None):
     FT_PASS = os.getenv("FREQTRADE_UI_PASSWORD")
     for port in ports:
         try:
-            url = f"http://100.90.68.42:{port}/api/v1/{endpoint}"
+            url = f"http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{port}/api/v1/{endpoint}"
             if method == 'GET':
                 res = requests.get(url, auth=HTTPBasicAuth(FT_USER, FT_PASS), timeout=5)
             else:
                 res = requests.post(url, auth=HTTPBasicAuth(FT_USER, FT_PASS), json=data, timeout=5)
             if res.status_code == 200:
                 results.append(res.json())
-        except: continue
+        except Exception as e: continue
     return results
 
 def bot_status():
@@ -71,7 +71,7 @@ def bot_status():
         try:
             sentiment = json.loads(s_out)
             score = sentiment.get("score", 0)
-        except: score = 0
+        except Exception as e: score = 0
         
         regime = "NEUTRAL"
         if score >= 0.3: regime = "BULLISH"
@@ -82,7 +82,7 @@ def bot_status():
             b_state = json.loads(b_out)
             daily_pnl = total_balance - b_state.get('start_of_day', total_balance)
             daily_pnl_pct = (daily_pnl / b_state.get('start_of_day', 1)) * 100
-        except: daily_pnl, daily_pnl_pct = 0, 0
+        except Exception as e: daily_pnl, daily_pnl_pct = 0, 0
 
         # Format output
         now = get_ist_now().strftime("%H:%M IST")
@@ -152,9 +152,9 @@ def killswitch():
     FT_PASS = os.getenv("FREQTRADE_UI_PASSWORD")
     for port in all_ports:
         try:
-            requests.post(f"http://100.90.68.42:{port}/api/v1/forceexit", auth=HTTPBasicAuth(FT_USER, FT_PASS), json={"tradeid": "all"}, timeout=5)
-            requests.post(f"http://100.90.68.42:{port}/api/v1/stopentry", auth=HTTPBasicAuth(FT_USER, FT_PASS), timeout=5)
-        except: pass
+            requests.post(f"http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{port}/api/v1/forceexit", auth=HTTPBasicAuth(FT_USER, FT_PASS), json={"tradeid": "all"}, timeout=5)
+            requests.post(f"http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{port}/api/v1/stopentry", auth=HTTPBasicAuth(FT_USER, FT_PASS), timeout=5)
+        except Exception as e: pass
     run_on_m1("/Users/aatifquamre/masterbot/venv/bin/supervisorctl -c /Users/aatifquamre/masterbot/config/supervisord.conf stop all")
     return "Killswitch executed on all instances."
 

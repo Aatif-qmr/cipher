@@ -117,7 +117,7 @@ def monitor_continuously(interval=30):
                 try:
                     with open(MONITOR_FILE, 'r') as f:
                         history = json.load(f)
-                except: pass
+                except Exception as e: pass
             
             history.append(snapshot)
             # Keep only last 24h of data (approx 2880 snapshots at 30s)

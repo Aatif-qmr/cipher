@@ -1,9 +1,10 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # MasterBot Self-Healing Runner
 # ============================
 # This script runs the self-healing automation every 30 minutes.
 
-WORKSPACE="/Users/aatifquamre/masterbot"
+WORKSPACE="$BASE_DIR"
 PYTHON_BIN="$WORKSPACE/venv/bin/python"
 SCRIPT="$WORKSPACE/automation/self_healer.py"
 

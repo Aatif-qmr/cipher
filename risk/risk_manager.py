@@ -4,6 +4,7 @@ import logging
 import requests
 import time
 import fcntl
+import threading
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
@@ -81,6 +82,7 @@ COOLDOWN_SECONDS = 3600  # 1 hour between alerts
 
 _SENTIMENT_WARN_FILE = '/tmp/qnt_sentiment_warn_ts'
 _SENTIMENT_WARN_INTERVAL = 600  # 10 minutes between sentiment log entries
+_sentiment_warn_proc_lock = threading.Lock()  # in-process guard for multi-pair threads
 
 def _can_send_alert():
     """Checks cooldown with file locking to prevent race conditions."""
@@ -137,7 +139,7 @@ def _is_alert_allowed() -> bool:
         with open(ts_file, 'w') as f:
             f.write(str(time.time()))
         return True
-    except:
+    except Exception as e:
         return True  # If check fails, allow alert to be safe
 
 def _get_cluster_balance() -> float:
@@ -147,7 +149,7 @@ def _get_cluster_balance() -> float:
     """
     user = os.getenv('FREQTRADE_UI_USERNAME')
     pwd = os.getenv('FREQTRADE_UI_PASSWORD')
-    ip = "100.90.68.42"
+    ip = os.getenv("M1_TAILSCALE_IP", "127.0.0.1")
     total = 0.0
     found = 0
     for port in [8080, 8081, 8082, 8083, 8084, 8085]:
@@ -160,7 +162,7 @@ def _get_cluster_balance() -> float:
             if r.status_code == 200:
                 total += float(r.json().get('total', 0))
                 found += 1
-        except:
+        except Exception as e:
             continue
 
     # If any API fails, fall back to last seen in state file to prevent false drawdown alerts
@@ -169,7 +171,7 @@ def _get_cluster_balance() -> float:
             with open(BASE_DIR / 'risk/balance_state.json', 'r') as f:
                 state = json.load(f)
                 return state.get('last_seen_balance', 50000.0)
-        except:
+        except Exception as e:
             return 50000.0
 
     return total
@@ -189,7 +191,7 @@ def send_telegram_alert(message: str, level: str = 'WARNING') -> bool:
     try:
         res = requests.post(url, json={'chat_id': TELEGRAM_CHAT_ID, 'text': full_message}, timeout=5)
         return res.status_code == 200
-    except:
+    except Exception as e:
         return False
 
 def check_macro_headwinds() -> bool:
@@ -312,33 +314,34 @@ def check_order_rate(trades_last_hour: int, max_trades_per_hour: int = 10) -> bo
     return True
 
 def _can_log_sentiment_warn() -> bool:
-    """Rate-limits sentiment warning logs to once per 10 minutes (file-locked for multi-process safety)."""
+    """Rate-limits sentiment warning logs to once per 10 minutes (thread + file-locked)."""
+    if not _sentiment_warn_proc_lock.acquire(blocking=False):
+        return False
     try:
-        f = open(_SENTIMENT_WARN_FILE, 'a+')
+        lock_path = _SENTIMENT_WARN_FILE + '.lock'
         try:
-            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            f.close()
-            return False
+            with open(lock_path, 'w') as lf:
+                try:
+                    fcntl.flock(lf, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    return False
 
-        f.seek(0)
-        content = f.read().strip()
-        now = time.time()
+                now = time.time()
+                try:
+                    with open(_SENTIMENT_WARN_FILE, 'r') as rf:
+                        content = rf.read().strip()
+                    if content and now - float(content) < _SENTIMENT_WARN_INTERVAL:
+                        return False
+                except (FileNotFoundError, ValueError):
+                    pass
 
-        if content and now - float(content) < _SENTIMENT_WARN_INTERVAL:
-            fcntl.flock(f, fcntl.LOCK_UN)
-            f.close()
-            return False
-
-        f.truncate(0)
-        f.write(str(now))
-        f.flush()
-        os.fsync(f.fileno())
-        fcntl.flock(f, fcntl.LOCK_UN)
-        f.close()
-        return True
-    except Exception:
-        return True
+                with open(_SENTIMENT_WARN_FILE, 'w') as wf:
+                    wf.write(str(now))
+                return True
+        except Exception:
+            return True
+    finally:
+        _sentiment_warn_proc_lock.release()
 
 
 def check_sentiment(min_signal: str = 'NEUTRAL') -> bool:
@@ -426,7 +429,7 @@ def run_all_checks(current_balance=None, start_of_day_balance=None, start_of_wee
                 state = json.load(f)
             start_of_day_balance = start_of_day_balance or state.get('start_of_day', current_balance)
             start_of_week_balance = start_of_week_balance or state.get('start_of_week', current_balance)
-        except:
+        except Exception as e:
             start_of_day_balance = start_of_day_balance or current_balance
             start_of_week_balance = start_of_week_balance or current_balance
 

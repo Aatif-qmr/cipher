@@ -1,10 +1,11 @@
 #!/bin/bash
-MEMORY_FILE="/Users/aatifquamre/masterbot/qnt/memory/qnt_memory.json"
-QUEUE_FILE="/Users/aatifquamre/masterbot/qnt/memory/.sync_queue"
-LOG="/Users/aatifquamre/masterbot/logs/memory_sync.log"
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+MEMORY_FILE="$BASE_DIR/qnt/memory/qnt_memory.json"
+QUEUE_FILE="$BASE_DIR/qnt/memory/.sync_queue"
+LOG="$BASE_DIR/logs/memory_sync.log"
 
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 
 # Check internet connectivity

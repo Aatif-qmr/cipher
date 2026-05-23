@@ -43,7 +43,7 @@ def get_db_path():
                 conn.close()
                 return path
             conn.close()
-        except: continue
+        except Exception as e: continue
     return DB_PATH # Default
 
 def call_freqtrade_api_all(endpoint, method='GET', data=None):
@@ -55,14 +55,14 @@ def call_freqtrade_api_all(endpoint, method='GET', data=None):
     
     for port in ports:
         try:
-            url = f"http://100.90.68.42:{port}/api/v1/{endpoint}"
+            url = f"http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{port}/api/v1/{endpoint}"
             if method == 'GET':
                 res = requests.get(url, auth=HTTPBasicAuth(FT_USER, FT_PASS), timeout=5)
             else:
                 res = requests.post(url, auth=HTTPBasicAuth(FT_USER, FT_PASS), json=data, timeout=5)
             if res.status_code == 200:
                 results.append(res.json())
-        except:
+        except Exception as e:
             continue
     return results
 
@@ -110,7 +110,7 @@ def get_pnl(period='daily'):
             with open(BALANCE_STATE_PATH, 'r') as f:
                 b_state = json.load(f)
                 starting_balance = b_state.get('start_of_day', 50000.0)
-        except:
+        except Exception as e:
             starting_balance = 50000.0
 
         total_profit_usdt = df['profit_abs'].sum()
@@ -296,7 +296,7 @@ def risk_check(silent=False):
             for p in df['profit_abs']:
                 if p <= 0: consec_losses += 1
                 else: break
-        except: pass
+        except Exception as e: pass
             
         if consec_losses >= 5:
             results.append(f"❌ Consec. Losses:    {consec_losses} in a row")
@@ -341,7 +341,7 @@ def risk_check(silent=False):
                 fails += 1
             else:
                 results.append(f"✅ Macro Headwinds:  DXY {dxy:+.2f}%")
-        except:
+        except Exception as e:
             results.append(f"⚠️ Macro Context:    STALE/MISSING")
             warnings += 1
 

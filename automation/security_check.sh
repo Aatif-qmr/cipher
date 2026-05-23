@@ -1,7 +1,8 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # MasterBot Security Audit Script
 
-BASE_DIR="/Users/aatifquamre/masterbot"
+BASE_DIR="$BASE_DIR"
 cd "$BASE_DIR"
 source .env
 
@@ -33,10 +34,10 @@ if [ -n "$BINANCE_API_KEY" ]; then check_pass "Binance API key is not empty"; el
 
 # 6. Telegram reachable
 TG_RES=$(curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe")
-if [[ "$TG_RES" == *"\"ok\":true"* ]]; then check_pass "Telegram reachable"; else check_fail "Telegram unreachable"; fi
+if [[ "$TG_RES" == *""ok":true"* ]]; then check_pass "Telegram reachable"; else check_fail "Telegram unreachable"; fi
 
 # 7. Freqtrade API reachable
-FT_RES=$(curl -s -u "${FREQTRADE_UI_USERNAME}:${FREQTRADE_UI_PASSWORD}" http://100.90.68.42:8080/api/v1/ping)
+FT_RES=$(curl -s -u "${FREQTRADE_UI_USERNAME}:${FREQTRADE_UI_PASSWORD}" http://127.0.0.1:8080/api/v1/ping)
 if [[ "$FT_RES" == *"pong"* ]]; then check_pass "Freqtrade API accessible"; else echo -e "[\033[0;33mWARN\033[0m] Freqtrade API unreachable (bot may be starting)"; fi
 
 # 8. M2 Reachable (Tailscale)

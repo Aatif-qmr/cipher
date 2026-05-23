@@ -1,7 +1,8 @@
 #!/bin/bash
-QUEUE_FILE="/Users/aatifquamre/masterbot/qnt/memory/.sync_queue"
-SYNC_SCRIPT="/Users/aatifquamre/masterbot/qnt/memory/sync_memory.sh"
-LOG="/Users/aatifquamre/masterbot/logs/memory_sync.log"
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+QUEUE_FILE="$BASE_DIR/qnt/memory/.sync_queue"
+SYNC_SCRIPT="$BASE_DIR/qnt/memory/sync_memory.sh"
+LOG="$BASE_DIR/logs/memory_sync.log"
 WAS_OFFLINE=false
 
 while true; do

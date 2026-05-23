@@ -4,14 +4,18 @@ import subprocess
 import os
 from datetime import datetime
 
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 # Database files to check
 DB_FILES = [
-    '/Users/aatifquamre/masterbot/user_data/micro.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/scalp.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/mean_reversion.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/trend_follow.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/daily.sqlite',
-    '/Users/aatifquamre/masterbot/user_data/swing.sqlite'
+    str(BASE_DIR / 'user_data/micro.sqlite'),
+    str(BASE_DIR / 'user_data/scalp.sqlite'),
+    str(BASE_DIR / 'user_data/mean_reversion.sqlite'),
+    str(BASE_DIR / 'user_data/trend_follow.sqlite'),
+    str(BASE_DIR / 'user_data/daily.sqlite'),
+    str(BASE_DIR / 'user_data/swing.sqlite')
 ]
 
 REPORTS_FOLDER_ID = '1Vdst3YI9wFFfFPurpVVGJfrA3y2aT9BI'

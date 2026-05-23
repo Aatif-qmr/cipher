@@ -308,7 +308,7 @@ def send_escalation(situation: str, options: List[str], recommendation: str,
                 sys.path.insert(0, str(BASE_DIR / 'qnt/memory'))
                 from memory_manager import log_decision
                 log_decision(situation, options, "PENDING", recommendation)
-            except:
+            except Exception as e:
                 pass
                 
             return message_id

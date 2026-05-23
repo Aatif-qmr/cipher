@@ -42,7 +42,7 @@
     },
     "api_server": {
         "enabled": true,
-        "listen_ip_address": "100.90.68.42",
+        "listen_ip_address": "0.0.0.0",
         "listen_port": 8085,
         "verbosity": "error",
         "enable_openapi": false,
@@ -94,9 +94,20 @@
         "expiration_hours": 24,
         "write_metrics_to_disk": true,
         "feature_parameters": {
-            "include_timeframes": ["1m", "5m", "15m", "1h"],
-            "include_corr_pairlist": ["BTC/USDT", "ETH/USDT"],
-            "indicator_periods_candles": [10, 20],
+            "include_timeframes": [
+                "1m",
+                "5m",
+                "15m",
+                "1h"
+            ],
+            "include_corr_pairlist": [
+                "BTC/USDT",
+                "ETH/USDT"
+            ],
+            "indicator_periods_candles": [
+                10,
+                20
+            ],
             "label_period_candles": 15,
             "include_shifted_candles": 0,
             "DI_threshold": 0.9,

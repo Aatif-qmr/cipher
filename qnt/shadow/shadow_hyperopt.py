@@ -113,7 +113,7 @@ def run_shadow_hyperopt(strategy: str) -> dict | None:
                 try:
                     best_sharpe = float(line.split(":")[-1].strip())
                     break
-                except:
+                except Exception as e:
                     pass
         
         return {
@@ -149,7 +149,7 @@ def check_improvement(strategy: str, new_sharpe: float) -> bool:
     try:
         with open(baseline_file) as f:
             baselines = json.load(f)
-    except:
+    except Exception as e:
         baselines = {}
     
     current = baselines.get(strategy, {}).get("sharpe")

@@ -30,13 +30,13 @@ def load_hmm_model():
             return None
     try:
         return joblib.load(local_path)
-    except:
+    except Exception as e:
         # Fallback to pickle if joblib fails (since the other machine might use pickle)
         import pickle
         try:
             with open(local_path, 'rb') as f:
                 return pickle.load(f)
-        except:
+        except Exception as e:
             return None
 
 _regime_cache: dict = {}   # pair → (regime, expires_at)

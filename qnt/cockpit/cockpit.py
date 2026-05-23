@@ -66,14 +66,14 @@ class GlobalStatusPanel(DashboardPanel):
             
             for inst in instances:
                 try:
-                    r = requests.get(f'http://100.90.68.42:{inst["port"]}/api/v1/status', auth=HTTPBasicAuth(user, pwd), timeout=1)
+                    r = requests.get(f'http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{inst["port"]}/api/v1/status', auth=HTTPBasicAuth(user, pwd), timeout=1)
                     if r.status_code == 200:
                         trades = r.json()
                         inst_pnl = sum(t.get('profit_ratio', 0) for t in trades) * 100
                         open_trades += len(trades)
                         running_count += 1
                         
-                        r_bal = requests.get(f'http://100.90.68.42:{inst["port"]}/api/v1/balance', auth=HTTPBasicAuth(user, pwd), timeout=1)
+                        r_bal = requests.get(f'http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{inst["port"]}/api/v1/balance', auth=HTTPBasicAuth(user, pwd), timeout=1)
                         if r_bal.status_code == 200:
                             total_bal += r_bal.json().get('total', 0)
                         
@@ -82,7 +82,7 @@ class GlobalStatusPanel(DashboardPanel):
                         table.add_row(inst['name'], status_str, pnl_str)
                     else:
                         table.add_row(inst['name'], "[red]OFFLINE[/]", "-")
-                except:
+                except Exception as e:
                     table.add_row(inst['name'], "[red]OFFLINE[/]", "-")
 
             if total_bal == 0: total_bal = 50000.0
@@ -169,7 +169,7 @@ class IntegratedLogPanel(DashboardPanel):
                 content.append(line + "\n", style=style)
                 
             self.update(Panel(content, title="INTEGRATED LOG FEED", border_style="dim"))
-        except:
+        except Exception as e:
             self.update(Panel("Logs unavailable", title="INTEGRATED LOG FEED", border_style="red"))
 
 class Cockpit(App):

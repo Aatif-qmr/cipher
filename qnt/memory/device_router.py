@@ -16,7 +16,7 @@ M1_FREQTRADE_API = 'http://100.90.68.42:8080/api/v1'
 # Load environment
 load_dotenv(f"{M1_PATH}/.env")
 
-M1_IP = os.getenv("M1_TAILSCALE_IP", "100.90.68.42")
+M1_IP = os.getenv("M1_TAILSCALE_IP", "127.0.0.1")
 M2_IP = os.getenv("M2_TAILSCALE_IP", "100.74.110.36")
 FT_USER = os.getenv("FREQTRADE_UI_USERNAME")
 FT_PASS = os.getenv("FREQTRADE_UI_PASSWORD")

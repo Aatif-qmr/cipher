@@ -1,4 +1,5 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # Masterbot Sentiment Runner & Synchronizer
 
 BASE_DIR="/Users/azmatsaif/masterbot"
@@ -7,9 +8,9 @@ ERR_LOG="$BASE_DIR/logs/sentiment_errors.log"
 VENV_ACTIVATE="$BASE_DIR/venv/bin/activate"
 PIPELINE_PY="$BASE_DIR/sentiment/pipeline.py"
 SCORE_JSON="$BASE_DIR/sentiment/scores/current_score.json"
-M1_IP="100.90.68.42"
+M1_IP="127.0.0.1"
 M1_USER="aatifquamre"
-M1_PATH="/Users/aatifquamre/masterbot/sentiment/scores/current_score.json"
+M1_PATH="$BASE_DIR/sentiment/scores/current_score.json"
 
 # 1. Activate venv
 source "$VENV_ACTIVATE"

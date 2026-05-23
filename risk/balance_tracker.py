@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv('/Users/aatifquamre/masterbot/.env')
 
 STATE_FILE = '/Users/aatifquamre/masterbot/risk/balance_state.json'
-API_URL = 'http://100.90.68.42:8080/api/v1/balance'
+API_URL = f'http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:8080/api/v1/balance'
 USERNAME = os.getenv('API_USERNAME')
 PASSWORD = os.getenv('API_PASSWORD')
 
@@ -52,7 +52,7 @@ def get_balance_from_freqtrade_api():
     ports = [8080, 8081, 8082, 8083, 8084, 8085]
 
     for port in ports:
-        url = f'http://100.90.68.42:{port}/api/v1/balance'
+        url = f'http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{port}/api/v1/balance'
         try:
             res = requests.get(url, auth=(USERNAME, PASSWORD), timeout=5)
             if res.status_code == 200:

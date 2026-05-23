@@ -5,7 +5,6 @@ import logging
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from pandas import DataFrame
-import pandas_ta as ta
 
 from freqtrade.strategy import IStrategy
 from freqtrade.persistence import Trade
