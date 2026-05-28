@@ -62,31 +62,18 @@ class VectorVaultV1(IStrategy):
         feature_matrix = dataframe[feature_cols].values.astype(np.float64)
         future_returns = dataframe['future_return'].values
         
-        # Create an empty array for the similarity score
-        rust_predictions = np.zeros(len(dataframe))
-        
-        # Iterate over all rows of the dataframe to calculate predictions
-        # For each candle i, the historical vault contains data up to i - FORWARD_PREDICTION
-        for i in range(len(dataframe)):
-            end_idx = i - self.FORWARD_PREDICTION
-            if end_idx <= 0:
-                continue
-            
-            # Limit the historical lookback to VAULT_LOOKBACK
-            start_idx = max(0, end_idx - self.VAULT_LOOKBACK)
-            hist_matrix = feature_matrix[start_idx:end_idx]
-            hist_outcomes = future_returns[start_idx:end_idx]
-            
-            if len(hist_matrix) > 0:
-                current_vec = feature_matrix[i]
-                try:
-                    # RUST NATIVE CALL (Ultra-fast Euclidean parallel matching)
-                    best_idx, min_dist = rust_engine.find_closest_match(current_vec, hist_matrix)
-                    
-                    # Store the predicted return
-                    rust_predictions[i] = hist_outcomes[best_idx]
-                except Exception as e:
-                    print(f"Rust Engine Error at index {i}: {e}")
+        # Single batch call into Rust — eliminates O(n) FFI overhead.
+        # find_all_closest_matches handles the windowing loop in parallel via rayon.
+        try:
+            rust_predictions = rust_engine.find_all_closest_matches(
+                feature_matrix.tolist(),
+                future_returns.tolist(),
+                self.FORWARD_PREDICTION,
+                self.VAULT_LOOKBACK,
+            )
+        except Exception as e:
+            print(f"Rust Engine Error: {e}")
+            rust_predictions = [0.0] * len(dataframe)
         
         dataframe['rust_prediction'] = rust_predictions
         return dataframe

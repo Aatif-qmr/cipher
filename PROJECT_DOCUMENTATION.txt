@@ -26,7 +26,7 @@ The system is split across two physical machines connected via Tailscale.
 [M1] EXECUTION NODE (MacBook Air M1)
 - IP: 100.90.68.42
 - Role: Real-time bot execution, risk gating, and UI hosting.
-- Path: /Users/aatifquamre/cipher/
+- Path: /Users/aatifquamre/Downloads/Aatif-qmr/cipher/
 - Core Components: 
     * 5 Freqtrade instances supervised by 'supervisord'.
     * Ports: 8080 (MR), 8081 (TF), 8082 (Scalp), 8083 (Swing), 8084 (Daily).
@@ -130,7 +130,7 @@ M2 (INTELLIGENCE) CRONTAB:
 2. VERIFICATION: Every change must be validated with a test command.
 3. CREDENTIALS: Never print or commit .env, API keys, or secrets.
 4. PATHS: Always use absolute paths or dynamic home-dir resolution.
-5. VENV: Always use '/Users/aatifquamre/cipher/venv/bin/python'.
+5. VENV: Always use '/Users/aatifquamre/Downloads/Aatif-qmr/cipher/venv/bin/python'.
 6. SPAM: Respect alert cooldowns and file-locking protocols.
 
 8. RECOVERY & TROUBLESHOOTING

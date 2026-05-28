@@ -1776,7 +1776,7 @@ Purpose:
 A wrapper script that ensures Python commands are executed within the project's virtual environment.
 
 Functionality:
-Executes the specified Python command or script using the interpreter located in `/Users/aatifquamre/cipher/venv/bin/python`.
+Executes the specified Python command or script using the interpreter located in `/Users/aatifquamre/Downloads/Aatif-qmr/cipher/venv/bin/python`.
 
 Role in System:
 Ensures dependency isolation and consistent execution across all project modules.
@@ -22923,7 +22923,7 @@ File Type: Shell Script
 Purpose: Synchronizes hyperopt results between the M1 and M2 nodes.
 Functionality: Uses rsync or scp to move .json and .fthypt files from M2 training folder to M1 log folder.
 Role in System: Ensures performance data is available for reporting on the execution node.
-Dependencies: - /Users/aatifquamre/cipher/.env
+Dependencies: - /Users/aatifquamre/Downloads/Aatif-qmr/cipher/.env
 Used By: - weekly_report.py
 Notes: Requires Tailscale connectivity.
 

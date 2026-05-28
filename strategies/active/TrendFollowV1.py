@@ -1,4 +1,3 @@
-import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'cipher')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'oracle'));
 import logging
 import json
 import sys
@@ -8,11 +7,13 @@ from datetime import timedelta, datetime
 from pandas import DataFrame
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 
+# Resolve project root from this file's location (works on any machine)
+_BASE = Path(__file__).resolve().parent.parent.parent
+if str(_BASE) not in sys.path:
+    sys.path.insert(0, str(_BASE))
+
 from freqtrade.strategy import IStrategy, IntParameter
 from freqtrade.persistence import Trade
-
-# Add base directory to path for custom imports
-sys.path.insert(0, '/Users/aatifquamre/cipher')
 from risk.risk_manager import run_all_checks
 from risk.stake_sizer import get_stake_multiplier
 from risk.correlation_guard import is_blocked as corr_blocked
@@ -31,7 +32,7 @@ def merge_macro_data(dataframe: DataFrame) -> DataFrame:
     Uses timestamp-based merging to prevent look-ahead bias.
     """
     try:
-        history_file = Path('/Users/aatifquamre/cipher/risk/macro_history.json')
+        history_file = _BASE / 'risk/macro_history.json'
         if not history_file.exists():
             dataframe['dxy_24h_change'] = 0.0
             dataframe['btc_funding_rate'] = 0.0
@@ -81,7 +82,7 @@ class TrendFollowV1(IStrategy):
         try:
             import json
             from pathlib import Path
-            p = Path('/Users/aatifquamre/cipher/config/dynamic_params.json')
+            p = _BASE / 'config/dynamic_params.json'
             if p.exists():
                 sp = json.loads(p.read_text()).get('TrendFollowV1', {})
                 if 'buy_rsi_min' in sp:
@@ -107,7 +108,7 @@ class TrendFollowV1(IStrategy):
         # External signal features
         import json
         try:
-            CIPHER_PATH = '/Users/aatifquamre/cipher'
+            CIPHER_PATH = str(_BASE)
             with open(f'{CIPHER_PATH}/sentiment/scores/current_score.json') as f:
                 sentiment_data = json.load(f)
             
@@ -237,7 +238,7 @@ class TrendFollowV1(IStrategy):
             ])
             
             # Load balance state
-            state_file = Path('/Users/aatifquamre/cipher/risk/balance_state.json')
+            state_file = _BASE / 'risk/balance_state.json'
             if state_file.exists():
                 with open(state_file) as f:
                     state = json.load(f)

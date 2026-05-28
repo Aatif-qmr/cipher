@@ -1,4 +1,3 @@
-import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'cipher')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'oracle'));
 import logging
 import json
 import sys
@@ -7,14 +6,14 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from pandas import DataFrame
 
+# Resolve project root from this file's location (works on any machine)
+_BASE = Path(__file__).resolve().parent.parent.parent
+if str(_BASE) not in sys.path:
+    sys.path.insert(0, str(_BASE))
+
 from freqtrade.strategy import IStrategy
 from freqtrade.persistence import Trade
 import pandas as pd
-
-# Add base directory to path for custom imports
-home = os.path.expanduser("~")
-sys.path.append(os.path.join(home, 'cipher'))
-sys.path.append(os.path.join(home, 'cipher', 'qnt', 'memory'))
 from risk.risk_manager import run_all_checks
 from sentiment.reader import get_current_sentiment
 from qnt.oracle.oracle_calendar import is_safe_to_trade_today
@@ -29,7 +28,7 @@ def merge_macro_data(dataframe: DataFrame) -> DataFrame:
     Uses timestamp-based merging to prevent look-ahead bias.
     """
     try:
-        history_file = Path('/Users/aatifquamre/cipher/risk/macro_history.json')
+        history_file = _BASE / 'risk/macro_history.json'
         if not history_file.exists():
             dataframe['dxy_24h_change'] = 0.0
             dataframe['btc_funding_rate'] = 0.0
@@ -154,7 +153,7 @@ class DailyTrendV1(IStrategy):
             ])
             
             # Load balance state for drawdown checks
-            state_file = Path('/Users/aatifquamre/cipher/risk/balance_state.json')
+            state_file = _BASE / 'risk/balance_state.json'
             if state_file.exists():
                 with open(state_file) as f:
                     state = json.load(f)

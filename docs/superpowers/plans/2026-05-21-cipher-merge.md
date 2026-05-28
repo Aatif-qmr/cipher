@@ -1623,7 +1623,7 @@ Add this line to the file (after existing entries):
 
 ```
 # Thesis pipeline — every 4h
-0 */4 * * * cd /Users/aatifquamre/cipher && source venv/bin/activate && python qnt/thesis/thesis_runner.py BTC/USDT ETH/USDT SOL/USDT BNB/USDT XRP/USDT >> logs/thesis.log 2>&1
+0 */4 * * * cd /Users/aatifquamre/Downloads/Aatif-qmr/cipher && source venv/bin/activate && python qnt/thesis/thesis_runner.py BTC/USDT ETH/USDT SOL/USDT BNB/USDT XRP/USDT >> logs/thesis.log 2>&1
 ```
 
 - [ ] **Step 3: Run thesis_runner manually for one pair to verify end-to-end**

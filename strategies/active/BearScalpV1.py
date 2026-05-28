@@ -1,16 +1,19 @@
-import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'cipher')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'oracle'))
 import logging
 import json
+import sys
+import os
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from pandas import DataFrame
 import pandas as pd
 
+# Resolve project root from this file's location (works on any machine)
+_BASE = Path(__file__).resolve().parent.parent.parent
+if str(_BASE) not in sys.path:
+    sys.path.insert(0, str(_BASE))
+
 from freqtrade.strategy import IStrategy
 from freqtrade.persistence import Trade
-
-home = os.path.expanduser("~")
-sys.path.append(os.path.join(home, 'cipher'))
 from risk.risk_manager import run_all_checks
 from risk.stake_sizer import get_stake_multiplier
 from sentiment.reader import get_current_sentiment

@@ -1,0 +1,7 @@
+# Links PyO3 cdylib test binaries against the venv Python 3.12 framework.
+# Needed because `cargo test` on macOS can't find Python symbols without this.
+[target.aarch64-apple-darwin]
+rustflags = [
+  "-L", "/opt/homebrew/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/lib",
+  "-lpython3.12",
+]

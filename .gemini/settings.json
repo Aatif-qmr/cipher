@@ -6,7 +6,7 @@
         "-y",
         "mcp-server-sqlite",
         "--db",
-        "/Users/aatifquamre/cipher/user_data/tradesv3.sqlite"
+        "/Users/aatifquamre/Downloads/Aatif-qmr/cipher/user_data/tradesv3.sqlite"
       ]
     },
     "mistral": {

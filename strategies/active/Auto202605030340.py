@@ -9,10 +9,10 @@ from pandas import DataFrame
 from freqtrade.strategy import IStrategy
 from freqtrade.persistence import Trade
 
-# Add base directory to path for custom imports
-BASE_DIR = '/Users/aatifquamre/cipher'
-if BASE_DIR not in sys.path:
-    sys.path.insert(0, BASE_DIR)
+# Resolve project root from this file's location (works on any machine)
+_BASE = Path(__file__).resolve().parent.parent.parent
+if str(_BASE) not in sys.path:
+    sys.path.insert(0, str(_BASE))
 
 from risk.risk_manager import run_all_checks
 from sentiment.reader import get_current_sentiment, get_sentiment_signal
@@ -114,7 +114,7 @@ class Auto202605030340(IStrategy):
             ])
             
             # 4. Load balance baselines from state file
-            state_file = Path('/Users/aatifquamre/cipher/risk/balance_state.json')
+            state_file = _BASE / 'risk/balance_state.json'
             if state_file.exists():
                 with open(state_file) as f:
                     state = json.load(f)
