@@ -54,6 +54,12 @@ dependencies = [
     "requests>=2.33.0",
     "httpx>=0.28.0",
 
+    # Security floor — pin transitive deps at versions that address known CVEs:
+    #   urllib3 <2.7.0: decompression-bomb bypass + sensitive-header forwarding (high)
+    #   idna <3.16: encode() bypass of CVE-2024-3651 fix (medium)
+    "urllib3>=2.7.0",
+    "idna>=3.16",
+
     # Visualisation
     "matplotlib>=3.10.0",
     "plotly>=6.0.0",
