@@ -9,7 +9,8 @@ import pandas as pd
 from datetime import datetime, timezone
 
 # Add paths
-BASE_DIR = '/Users/aatifquamre/cipher'
+from pathlib import Path as _Path
+BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/bridge'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/shield'))
@@ -20,8 +21,8 @@ from qnt_notifier import send_notify, send_escalation, get_pending_reply, parse_
 from autonomy_router import handle
 
 DEVICE = get_current_device()
-M2_PATH = '/Users/azmatsaif/cipher'
-M1_PATH = '/Users/aatifquamre/cipher'
+M2_PATH = '/Users/azmatsaif/cipher'  # remote machine
+M1_PATH = BASE_DIR
 CANDIDATES_DIR = os.path.join(DEVICE['cipher_path'], 'strategies/candidates')
 ACTIVE_DIR = os.path.join(DEVICE['cipher_path'], 'strategies/active')
 

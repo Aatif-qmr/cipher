@@ -28,7 +28,7 @@ Purpose
 
 2) High-level architecture (big picture)
 - Two-node cluster:
-  - M1 (Execution Node): hosts Freqtrade instances, risk manager, live paper trading. Primary repo path: /Users/aatifquamre/cipher/ (absolute paths used widely).
+  - M1 (Execution Node): hosts Freqtrade instances, risk manager, live paper trading. Primary repo path: /Users/aatifquamre/Downloads/Aatif-qmr/cipher/ (absolute paths used widely).
   - M2 (Intelligence Node): heavy compute for ML training, hyperopt, Puppeteer-based browser extraction, and vault (ChromaDB) operations.
 - qnt is the intelligence/CLI layer that orchestrates task routing, runbooks, and automation. Key areas:
   - strategies/active/ and strategies/candidates/ — strategy code (Freqtrade Python strategies)

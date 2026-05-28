@@ -2,11 +2,18 @@
 *.pyc
 __pycache__/
 
+# Runtime configs with live credentials (use config_paper.json.template)
+config/config_paper.json
+.env
+
 # Original rules preserved
 *.log
+*.db
 
-# Thesis pipeline output
-thesis/venv/
+# Runtime output directories
+logs/
+data/
+thesis/
 __pycache__/
 *.sqlite
 *.sqlite-wal

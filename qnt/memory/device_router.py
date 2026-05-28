@@ -9,12 +9,13 @@ from dotenv import load_dotenv
 # --- CONFIGURATION ---
 M1_USER = 'aatifquamre'
 M2_USER = 'azmatsaif'
-M1_PATH = '/Users/aatifquamre/cipher'
-M2_PATH = '/Users/azmatsaif/cipher'
+from pathlib import Path as _Path
+M1_PATH = str(_Path(__file__).resolve().parent.parent.parent)
+M2_PATH = '/Users/azmatsaif/cipher'  # remote machine — set CIPHER_DIR env var there
 M1_FREQTRADE_API = 'http://100.90.68.42:8080/api/v1'
 
 # Load environment
-load_dotenv(f"{M1_PATH}/.env")
+load_dotenv(os.path.join(M1_PATH, '.env'))
 
 M1_IP = os.getenv("M1_TAILSCALE_IP", "127.0.0.1")
 M2_IP = os.getenv("M2_TAILSCALE_IP", "100.74.110.36")

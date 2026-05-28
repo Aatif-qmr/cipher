@@ -2,7 +2,7 @@ import os
 import ccxt
 from dotenv import load_dotenv
 
-load_dotenv('/Users/aatifquamre/cipher/.env')
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def verify():
     key = os.getenv('BINANCE_API_KEY')

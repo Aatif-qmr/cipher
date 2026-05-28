@@ -4,7 +4,8 @@ import time
 from enum import IntEnum
 
 # Add memory dir to path for imports
-sys.path.insert(0, '/Users/aatifquamre/cipher/qnt/memory')
+import os as _os, pathlib as _pl
+sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
 from memory_manager import log_action, log_decision, update_decision_outcome
 from qnt_notifier import send_notify, send_escalation, get_pending_reply, parse_reply
 

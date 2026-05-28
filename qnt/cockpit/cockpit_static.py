@@ -13,7 +13,8 @@ from rich import print
 from requests.auth import HTTPBasicAuth
 
 # Add Cipher paths
-BASE_DIR = '/Users/aatifquamre/cipher'
+from pathlib import Path as _Path
+BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/bridge'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/shield'))
@@ -127,7 +128,7 @@ def get_trades_panel():
 def get_logs_panel():
     try:
         # Just show main log
-        stdout, _, _ = run_on_m1("tail -n 8 /Users/aatifquamre/cipher/logs/freqtrade.log")
+        stdout, _, _ = run_on_m1(f"tail -n 8 {os.path.join(BASE_DIR, 'logs/freqtrade.log')}")
         return Panel(stdout or "No logs", title="LIVE LOG FEED", border_style="dim", expand=True)
     except Exception as e:
         return Panel("⚠️ Logs unavailable", title="LIVE LOG FEED", border_style="red", expand=True)

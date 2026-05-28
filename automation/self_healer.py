@@ -1,13 +1,15 @@
 import os
-import subprocess
+import json
 import time
 import glob
+import urllib.request
+import urllib.parse
 from pathlib import Path
 
 # --- CONFIGURATION ---
-LOG_DIR = "/Users/aatifquamre/cipher/logs"
-CLAUDE_BIN = "/Users/aatifquamre/.local/bin/claude"
-WORKSPACE = "/Users/aatifquamre/cipher"
+_BASE = Path(__file__).resolve().parent.parent
+LOG_DIR = str(_BASE / "logs")
+WORKSPACE = str(_BASE)
 ERROR_KEYWORDS = ["Traceback", "ERROR", "CRITICAL", "NameError", "ValueError", "TypeError"]
 
 # Patterns that indicate expected infrastructure failures — not fixable by code changes.
@@ -57,53 +59,52 @@ def get_error_context():
             
     return "\n\n".join(error_summary)
 
+def _send_telegram_alert(message: str) -> None:
+    token = os.environ.get("QNT_TELEGRAM_TOKEN", "")
+    chat_id = os.environ.get("QNT_TELEGRAM_CHAT_ID", "")
+    if not token or not chat_id:
+        return
+    try:
+        payload = urllib.parse.urlencode({"chat_id": chat_id, "text": message, "parse_mode": "HTML"}).encode()
+        req = urllib.request.Request(f"https://api.telegram.org/bot{token}/sendMessage", data=payload)
+        urllib.request.urlopen(req, timeout=10)
+    except Exception:
+        pass
+
+
 def run_self_healing():
     print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Starting self-healing scan...")
-    
+
     context = get_error_context()
-    
+
     if not context:
-        print("✅ No errors found in logs. System healthy.")
+        print("No errors found in logs. System healthy.")
         return
 
-    print("⚠️ Errors detected! Invoking QNT CLI to fix...")
-    
-    # Construct the prompt for QNT CLI
-    healing_prompt = f"""
-I am the Cipher Self-Healer. I have detected the following errors in the system logs.
-Your task:
-1. Analyze the errors below.
-2. Identify the source files causing these issues.
-3. Apply targeted, surgical fixes to resolve them.
-4. Verify the fix by checking if the project still compiles or by running a relevant check.
+    timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+    print(f"Errors detected at {timestamp} — writing findings report.")
 
-ERRORS FROM LOGS:
-{context}
+    findings = {
+        "scanned_at": timestamp,
+        "error_context": context,
+        "action_required": "Manual review needed. No automatic fixes applied.",
+    }
 
-Proceed in YOLO mode to apply the fixes immediately.
-"""
+    findings_path = os.path.join(LOG_DIR, "self_healer_findings.json")
+    os.makedirs(LOG_DIR, exist_ok=True)
+    with open(findings_path, "w") as f:
+        json.dump(findings, f, indent=2)
 
-    try:
-        cmd = [
-            CLAUDE_BIN,
-            "-p", healing_prompt,
-            "--dangerously-skip-permissions",
-        ]
-        
-        # Run and wait for it to finish
-        result = subprocess.run(cmd, cwd=WORKSPACE, capture_output=True, text=True, stdin=subprocess.DEVNULL)
-        
-        # Log the healer's output
-        with open(os.path.join(LOG_DIR, "self_healer_run.log"), "a") as f:
-            f.write(f"\n\n=== RUN AT {time.strftime('%Y-%m-%d %H:%M:%S')} ===\n")
-            f.write(result.stdout)
-            if result.stderr:
-                f.write("\nERRORS:\n" + result.stderr)
-                
-        print("✅ Healing session complete. Results logged to logs/self_healer_run.log")
-        
-    except Exception as e:
-        print(f"❌ Failed to invoke QNT CLI: {e}")
+    print(f"Findings written to {findings_path}")
+
+    # Truncate context for Telegram (4096 char limit)
+    preview = context[:800] + ("..." if len(context) > 800 else "")
+    alert = (
+        f"<b>[Cipher Self-Healer]</b> Errors detected at {timestamp}\n\n"
+        f"<pre>{preview}</pre>\n\n"
+        f"Review: <code>logs/self_healer_findings.json</code>"
+    )
+    _send_telegram_alert(alert)
 
 if __name__ == "__main__":
     run_self_healing()

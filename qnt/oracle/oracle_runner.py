@@ -2,7 +2,8 @@ import sys
 import os
 
 # Add paths
-BASE_DIR = '/Users/aatifquamre/cipher'
+from pathlib import Path as _Path
+BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/oracle'))
 from oracle_calendar import check_and_act as calendar_check

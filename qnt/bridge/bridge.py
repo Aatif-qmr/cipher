@@ -9,7 +9,8 @@ from rich.console import Console
 from requests.auth import HTTPBasicAuth
 
 # Add memory and bridge dirs to path
-BASE_DIR = '/Users/aatifquamre/cipher'
+from pathlib import Path as _Path
+BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/bridge'))
 
@@ -67,7 +68,7 @@ def bot_status():
         if total_balance == 0: total_balance = 50000.0
 
         # 3. Local state files (M1)
-        s_out, _, _ = run_on_m1("cat /Users/aatifquamre/cipher/sentiment/scores/current_score.json")
+        s_out, _, _ = run_on_m1(f"cat {os.path.join(BASE_DIR, 'sentiment/scores/current_score.json')}")
         try:
             sentiment = json.loads(s_out)
             score = sentiment.get("score", 0)
@@ -77,7 +78,7 @@ def bot_status():
         if score >= 0.3: regime = "BULLISH"
         elif score <= -0.3: regime = "BEARISH"
 
-        b_out, _, _ = run_on_m1("cat /Users/aatifquamre/cipher/risk/balance_state.json")
+        b_out, _, _ = run_on_m1(f"cat {os.path.join(BASE_DIR, 'risk/balance_state.json')}")
         try:
             b_state = json.loads(b_out)
             daily_pnl = total_balance - b_state.get('start_of_day', total_balance)
@@ -169,7 +170,7 @@ def stream_logs(lines=50, follow=False):
     ]
     
     for log_file in log_files:
-        log_path = f"/Users/aatifquamre/cipher/logs/{log_file}"
+        log_path = os.path.join(BASE_DIR, 'logs', log_file)
         bot_name = log_file.split('.')[0].replace('_', ' ').title()
         
         console.print(f"\n[bold blue]--- {bot_name} Logs ---[/bold blue]")

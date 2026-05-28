@@ -1,4 +1,3 @@
-import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'cipher')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'oracle')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'vault'));
 import os
 import sys
 import sqlite3
@@ -10,8 +9,7 @@ from pathlib import Path
 import time
 import logging
 
-# Add paths
-BASE_DIR = Path(home) / 'cipher'
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / 'qnt/memory'))
 sys.path.insert(0, str(BASE_DIR / 'qnt/vault'))
 sys.path.insert(0, str(BASE_DIR / 'qnt/oracle'))

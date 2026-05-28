@@ -5,7 +5,8 @@ import polars as pl
 from datetime import datetime, timezone, timedelta
 
 # Add paths
-BASE_DIR = '/Users/aatifquamre/cipher'
+from pathlib import Path as _Path
+BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 
 from memory_manager import load_memory, log_action

@@ -9,9 +9,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # --- CONFIGURATION ---
-BASE_DIR = Path("/Users/aatifquamre/cipher")
-M1_PATH = Path("/Users/aatifquamre/cipher")
-M2_PATH = Path("/Users/azmatsaif/cipher")
+_QNT_ROOT = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = _QNT_ROOT
+M1_PATH = _QNT_ROOT
+M2_PATH = _QNT_ROOT  # remote path is resolved via SSH in bridge.py
 MEMORY_DIR = "qnt/memory"
 MEMORY_FILENAME = "qnt_memory.json"
 MAX_ACTION_LOG_ENTRIES = 1000
