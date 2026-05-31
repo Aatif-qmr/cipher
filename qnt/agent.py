@@ -17,6 +17,8 @@ Usage:
   python qnt/agent.py significance MeanReversionV1 --source live --n 5000
   python qnt/agent.py montecarlo SwingV1
   python qnt/agent.py montecarlo MeanReversionV1 --n 2000 --ruin 0.15
+  python qnt/agent.py benchmark --period 2024-01-01:2025-01-01
+  python qnt/agent.py benchmark --period 2024-01-01:2025-01-01 --strategy ScalpV1 --strategy SwingV1
 """
 
 import os
@@ -506,6 +508,81 @@ def montecarlo(
         console.print(
             f"[yellow]⚠ {n_trades} trades only — run a longer backtest for reliable distributions.[/yellow]"
         )
+
+
+@app.command()
+def benchmark(
+    period: str = typer.Option(
+        "2024-01-01:2025-01-01", "--period", "-p",
+        help="Date range: YYYY-MM-DD:YYYY-MM-DD"
+    ),
+    strategy: list[str] = typer.Option(
+        None, "--strategy", "-s",
+        help="Strategy to include (repeat for multiple; default: all 8 active strategies)",
+    ),
+    pair: list[str] = typer.Option(
+        None, "--pair",
+        help="Trading pair (repeat for multiple; default: BTC/USDT)",
+    ),
+    no_parallel: bool = typer.Option(False, "--no-parallel", help="Disable Ray parallel execution"),
+):
+    """
+    Run all active strategies on the same backtest period and rank by Sharpe ratio.
+
+    Requires freqtrade in PATH and downloaded OHLCV data for the period.
+    Uses Ray for parallel execution (pass --no-parallel to run sequentially).
+    """
+    from qnt.tools.benchmark import ACTIVE_STRATEGIES, run_benchmark
+
+    strats = list(strategy) if strategy else None
+    pairs = list(pair) if pair else ["BTC/USDT"]
+
+    console.print(
+        f"Running benchmark: [bold]{period}[/bold] | "
+        f"strategies: [cyan]{len(strats or ACTIVE_STRATEGIES)}[/cyan] | "
+        f"pairs: {pairs}"
+    )
+
+    with console.status("Running backtests…"):
+        df = run_benchmark(
+            period=period,
+            strategies=strats,
+            pairs=pairs,
+            parallel=not no_parallel,
+        )
+
+    t = Table(title=f"Strategy Benchmark — {period}", border_style="blue")
+    columns = [
+        ("Strategy", "bold"),
+        ("Sharpe", ""),
+        ("Calmar", ""),
+        ("MaxDD%", ""),
+        ("WinRate%", ""),
+        ("PF", ""),
+        ("Trades", ""),
+        ("Total%", ""),
+        ("Error", "dim red"),
+    ]
+    for col, style in columns:
+        t.add_column(col, style=style, justify="right" if col not in ("Strategy", "Error") else "left")
+
+    def _fmt(v, fmt=".2f", suffix=""):
+        return f"{v:{fmt}}{suffix}" if v is not None else "—"
+
+    for row in df.iter_rows(named=True):
+        err = row.get("error") or ""
+        t.add_row(
+            row["strategy"],
+            _fmt(row.get("sharpe")),
+            _fmt(row.get("calmar")),
+            _fmt(row.get("max_drawdown_pct"), ".1f", "%"),
+            _fmt(row.get("win_rate_pct"), ".1f", "%"),
+            _fmt(row.get("profit_factor")),
+            str(row.get("total_trades") or "—"),
+            _fmt(row.get("total_profit_pct"), ".1f", "%"),
+            err[:60] if err else "",
+        )
+    console.print(t)
 
 
 if __name__ == "__main__":
