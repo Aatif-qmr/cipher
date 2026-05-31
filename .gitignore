@@ -1,27 +1,59 @@
-# Compiled Python files
+# Python
 *.pyc
+*.pyo
 __pycache__/
+*.egg-info/
+.eggs/
 
-# Runtime configs with live credentials (use config_paper.json.template)
-config/config_paper.json
+# Environments
+.venv/
+venv/
+temp_venv/
+
+# Secrets / credentials
 .env
+config/config_paper.json
 
-# Original rules preserved
+# Runtime logs and databases
 *.log
 *.db
-
-# Runtime output directories
-logs/
-data/
-thesis/
-__pycache__/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
-venv/
+logs/
+
+# Data directories (large, not versioned)
+data/
+thesis/
 user_data/
+
+# Rust build artifacts
 target/
 risk/risk_checks_rs/target/
+rust_engine/target/
+
+# ML model artifacts
 *.onnx
 *.onnx.data
 sentiment/models/
+storage/hyperopt/
+
+# Other AI tool configs
+.gemini/
+.antigravitycli/
+graphify-out/
+
+# Temp directories
+temp_*/
+
+# Binary / office docs
+*.docx
+*.xlsx
+*.pdf
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Claude Code session state
+.cc-session/
