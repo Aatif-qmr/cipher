@@ -62,9 +62,7 @@ def get_recent_closed_trades(limit: int = 20) -> str:
             row["db"] = db_path.stem
             all_trades.append(row)
     all_trades.sort(key=lambda t: t.get("close_date", ""), reverse=True)
-    return json.dumps(
-        {"trades": all_trades[:limit], "count": len(all_trades[:limit])}, default=str
-    )
+    return json.dumps({"trades": all_trades[:limit], "count": len(all_trades[:limit])}, default=str)
 
 
 def get_pnl_summary(period: str = "daily") -> str:

@@ -8,6 +8,7 @@ Covers:
   - VectorVaultV1.set_freqai_targets produces '&-rust_signal' column
   - VectorVaultV1 entry/exit signal logic given synthetic FreqAI output
 """
+
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -27,6 +28,7 @@ from qnt.freqai.VaultFreqaiModel import VaultFreqaiModel, _VaultEstimator
 
 # ── _VaultEstimator unit tests ───────────────────────────────────────────────
 
+
 class TestVaultEstimator:
     def test_returns_array_of_correct_length(self, vault_xy):
         X, y = vault_xy
@@ -37,7 +39,7 @@ class TestVaultEstimator:
     def test_exact_match_returns_own_label(self):
         # Use an identity matrix so every row is unique and its own nearest neighbour.
         rng = np.random.default_rng(7)
-        X = np.eye(20, dtype=np.float64)          # each row is a distinct unit vector
+        X = np.eye(20, dtype=np.float64)  # each row is a distinct unit vector
         y = rng.normal(0, 0.01, 20).astype(np.float64)
         est = _VaultEstimator(X, y, lookback=20)
         pred = est.predict(X[10:11])
@@ -57,8 +59,10 @@ class TestVaultEstimator:
 
         # Force NumPy path
         import qnt.freqai.VaultFreqaiModel as _mod
+
         with patch.object(_mod, "_RUST_AVAILABLE", False):
             from qnt.freqai.VaultFreqaiModel import _VaultEstimator as _VE2
+
             est_np = _VE2(X[:100], y[:100], lookback=100)
             preds_np = est_np.predict(X[100:110])
 
@@ -76,12 +80,11 @@ class TestVaultEstimator:
 
 # ── VaultFreqaiModel.fit ─────────────────────────────────────────────────────
 
+
 class TestVaultFreqaiModelFit:
     def _make_dk_stub(self, feature_params=None):
         dk = MagicMock()
-        dk.freqai_info = {
-            "feature_parameters": feature_params or {"vault_lookback": 200}
-        }
+        dk.freqai_info = {"feature_parameters": feature_params or {"vault_lookback": 200}}
         return dk
 
     def test_fit_returns_vault_estimator(self, vault_xy):
@@ -128,11 +131,13 @@ class TestVaultFreqaiModelFit:
 
 # ── VectorVaultV1 feature engineering ───────────────────────────────────────
 
+
 class TestVectorVaultV1Features:
     @pytest.fixture()
     def strategy(self):
         """Instantiate VectorVaultV1 without a real bot config."""
         from strategies.active.VectorVaultV1 import VectorVaultV1
+
         s = VectorVaultV1.__new__(VectorVaultV1)
         s.freqai_info = {
             "feature_parameters": {
@@ -191,10 +196,12 @@ class TestVectorVaultV1Features:
 
 # ── VectorVaultV1 entry / exit signal logic ──────────────────────────────────
 
+
 class TestVectorVaultV1Signals:
     @pytest.fixture()
     def strategy(self):
         from strategies.active.VectorVaultV1 import VectorVaultV1
+
         s = VectorVaultV1.__new__(VectorVaultV1)
         s.freqai_info = {"feature_parameters": {"label_period_candles": 5, "vault_lookback": 1000}}
         s.dp = MagicMock()
@@ -204,14 +211,16 @@ class TestVectorVaultV1Signals:
 
     def _signal_df(self, n=50, rust_signal_val=0.05, do_predict_val=1) -> pd.DataFrame:
         rng = np.random.default_rng(0)
-        df = pd.DataFrame({
-            "close": 30000.0 + rng.normal(0, 50, n),
-            "volume": rng.uniform(10, 100, n),
-            "do_predict": do_predict_val,
-            "&-rust_signal": rust_signal_val,
-            "enter_long": 0,
-            "exit_long": 0,
-        })
+        df = pd.DataFrame(
+            {
+                "close": 30000.0 + rng.normal(0, 50, n),
+                "volume": rng.uniform(10, 100, n),
+                "do_predict": do_predict_val,
+                "&-rust_signal": rust_signal_val,
+                "enter_long": 0,
+                "exit_long": 0,
+            }
+        )
         return df
 
     def test_entry_fires_when_signal_positive(self, strategy):

@@ -53,6 +53,7 @@ server = FastMCP(
 
 # ── Trade tools ──────────────────────────────────────────────────────────────
 
+
 @server.tool()
 def cipher_get_open_trades() -> str:
     """List all currently open trades across all Cipher strategy instances."""
@@ -72,6 +73,7 @@ def cipher_get_pnl(period: str = "daily") -> str:
 
 
 # ── System tools ─────────────────────────────────────────────────────────────
+
 
 @server.tool()
 def cipher_get_strategy_status() -> str:
@@ -93,6 +95,7 @@ def cipher_get_risk_status() -> str:
 
 # ── Market intelligence tools ────────────────────────────────────────────────
 
+
 @server.tool()
 def cipher_get_sentiment() -> str:
     """Return current multi-source sentiment score and component breakdown."""
@@ -113,6 +116,7 @@ def cipher_recall_vault(query: str, n_results: int = 5) -> str:
 
 # ── Hyperopt control ─────────────────────────────────────────────────────────
 
+
 @server.tool()
 def cipher_control_hyperopt(action: str, strategy: str = "") -> str:
     """
@@ -124,6 +128,7 @@ def cipher_control_hyperopt(action: str, strategy: str = "") -> str:
 
 
 # ── Entrypoint ───────────────────────────────────────────────────────────────
+
 
 def run() -> None:
     mcp_url = f"http://{args.host}:{args.port}/mcp"

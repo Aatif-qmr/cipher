@@ -51,7 +51,9 @@ class CandleFeedProducer:
         self._running = True
         logger.info(
             "CandleFeedProducer starting — pairs=%s timeframes=%s poll=%ds",
-            self.pairs, self.timeframes, self.poll_secs,
+            self.pairs,
+            self.timeframes,
+            self.poll_secs,
         )
         while self._running:
             try:
@@ -94,6 +96,7 @@ class CandleFeedProducer:
         try:
             import json
             from pathlib import Path
+
             data_dir = Path(__file__).resolve().parent.parent.parent / "user_data" / "data"
             pair_file = data_dir / "binance" / f"{pair.replace('/', '_')}_{timeframe}.json"
             if not pair_file.exists():
@@ -104,8 +107,11 @@ class CandleFeedProducer:
                 return None
             last = rows[-2]  # -2: last *closed* candle (not current open)
             return {
-                "open": last[1], "high": last[2], "low": last[3],
-                "close": last[4], "volume": last[5],
+                "open": last[1],
+                "high": last[2],
+                "low": last[3],
+                "close": last[4],
+                "volume": last[5],
             }
         except Exception:
             return None

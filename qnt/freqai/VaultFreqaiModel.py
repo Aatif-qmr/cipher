@@ -21,6 +21,7 @@ Usage in config:
         ...
     }
 """
+
 import logging
 from typing import Any
 
@@ -39,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 try:
     import rust_engine as _rust
+
     _RUST_AVAILABLE = True
 except ImportError:
     _RUST_AVAILABLE = False
@@ -98,9 +100,7 @@ class VaultFreqaiModel(BaseRegressionModel):
     def fit(self, data_dictionary: dict[str, Any], dk: FreqaiDataKitchen, **kwargs) -> Any:
         X: np.ndarray = data_dictionary["train_features"].values.astype(np.float64)
         y: np.ndarray = data_dictionary["train_labels"].values[:, 0].astype(np.float64)
-        lookback: int = (
-            dk.freqai_info.get("feature_parameters", {}).get("vault_lookback", 1000)
-        )
+        lookback: int = dk.freqai_info.get("feature_parameters", {}).get("vault_lookback", 1000)
         model = _VaultEstimator(X, y, lookback)
         logger.info(
             "VaultFreqaiModel fit: vault=%d vectors, features=%d, rust=%s",

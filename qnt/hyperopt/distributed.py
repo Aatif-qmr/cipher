@@ -93,6 +93,7 @@ def _build_objective(strategy: str, timerange: str, pair: str):
 def _ray_trial_worker(strategy: str, timerange: str, pair: str, storage_url: str, study_name: str):
     """Single Ray worker: loads the shared Optuna study and runs one trial."""
     import optuna
+
     optuna.logging.set_verbosity(optuna.logging.WARNING)
     study = optuna.load_study(study_name=study_name, storage=storage_url)
     study.optimize(_build_objective(strategy, timerange, pair), n_trials=1)
@@ -149,9 +150,7 @@ def run_study(
     while completed < n_trials:
         batch = min(batch_size, n_trials - completed)
         futures = [
-            ray.remote(_ray_trial_worker).remote(
-                strategy, timerange, pair, storage_url, study_name
-            )
+            ray.remote(_ray_trial_worker).remote(strategy, timerange, pair, storage_url, study_name)
             for _ in range(batch)
         ]
         ray.get(futures)
@@ -175,6 +174,7 @@ def get_study_status(strategy: str | None = None) -> dict:
     """Return current trial counts and best value for one or all studies."""
     try:
         import optuna
+
         optuna.logging.set_verbosity(optuna.logging.WARNING)
     except ImportError:
         return {"error": "optuna not installed"}
@@ -211,6 +211,7 @@ def get_best_params(strategy: str) -> dict:
 def start_study(strategy: str) -> dict:
     """Launch a background study (non-blocking)."""
     import threading
+
     t = threading.Thread(
         target=run_study,
         kwargs={"strategy": strategy, "n_trials": 50},
@@ -225,6 +226,7 @@ def stop_study(strategy: str | None = None) -> dict:
     """Signal Ray workers to stop. Best-effort — running trials complete first."""
     try:
         import ray
+
         if ray.is_initialized():
             ray.shutdown()
             return {"status": "ray shutdown", "strategy": strategy}

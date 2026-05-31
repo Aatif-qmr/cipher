@@ -14,6 +14,7 @@ def get_sentiment() -> str:
     """Return current multi-source sentiment score and component breakdown."""
     try:
         from sentiment.reader import get_current_sentiment
+
         data = get_current_sentiment()
         return json.dumps(data, default=str)
     except Exception as e:
@@ -29,12 +30,14 @@ def get_macro() -> str:
         with open(macro_file) as f:
             history = json.load(f)
         latest = max(history, key=lambda x: x.get("timestamp", ""))
-        return json.dumps({
-            "timestamp": latest.get("timestamp"),
-            "dxy_24h_change": latest.get("dxy_24h_change", 0.0),
-            "btc_funding_rate": latest.get("btc_funding_rate", 0.0),
-            "btc_open_interest": latest.get("btc_open_interest", 0.0),
-        })
+        return json.dumps(
+            {
+                "timestamp": latest.get("timestamp"),
+                "dxy_24h_change": latest.get("dxy_24h_change", 0.0),
+                "btc_funding_rate": latest.get("btc_funding_rate", 0.0),
+                "btc_open_interest": latest.get("btc_open_interest", 0.0),
+            }
+        )
     except Exception as e:
         return json.dumps({"error": str(e)})
 
@@ -43,6 +46,7 @@ def recall_vault(query: str, n_results: int = 5) -> str:
     """Semantic search through VectorVault trade lessons in Qdrant."""
     try:
         from qnt.tools.vault import recall
+
         results = recall(query, n_results=n_results)
         return json.dumps({"query": query, "results": results}, default=str)
     except Exception as e:

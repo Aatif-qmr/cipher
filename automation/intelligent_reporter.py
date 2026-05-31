@@ -13,22 +13,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Configuration
 DB_FILES = [
-    str(BASE_DIR / 'user_data' / 'micro.sqlite'),
-    str(BASE_DIR / 'user_data' / 'scalp.sqlite'),
-    str(BASE_DIR / 'user_data' / 'mean_reversion.sqlite'),
-    str(BASE_DIR / 'user_data' / 'trend_follow.sqlite'),
-    str(BASE_DIR / 'user_data' / 'daily.sqlite'),
-    str(BASE_DIR / 'user_data' / 'swing.sqlite')
+    str(BASE_DIR / "user_data" / "micro.sqlite"),
+    str(BASE_DIR / "user_data" / "scalp.sqlite"),
+    str(BASE_DIR / "user_data" / "mean_reversion.sqlite"),
+    str(BASE_DIR / "user_data" / "trend_follow.sqlite"),
+    str(BASE_DIR / "user_data" / "daily.sqlite"),
+    str(BASE_DIR / "user_data" / "swing.sqlite"),
 ]
-SENTIMENT_PATH = str(BASE_DIR / 'sentiment' / 'scores' / 'history.csv')
-REPORTS_FOLDER_ID = '1Vdst3YI9wFFfFPurpVVGJfrA3y2aT9BI'
-DEST_EMAIL = 'aatifqmr@gmail.com'
+SENTIMENT_PATH = str(BASE_DIR / "sentiment" / "scores" / "history.csv")
+REPORTS_FOLDER_ID = "1Vdst3YI9wFFfFPurpVVGJfrA3y2aT9BI"
+DEST_EMAIL = "aatifqmr@gmail.com"
 
 # API Keys from env
-load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR / ".env")
 
-TELEGRAM_TOKEN = os.getenv('QNT_TELEGRAM_TOKEN')
-TELEGRAM_CHAT_ID = os.getenv('QNT_TELEGRAM_CHAT_ID')
+TELEGRAM_TOKEN = os.getenv("QNT_TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("QNT_TELEGRAM_CHAT_ID")
+
 
 def gather_data():
     """Gathers all relevant data from Cipher databases and sentiment files."""
@@ -57,7 +58,7 @@ def gather_data():
             ).fetchone()
             if row and row[0]:
                 total_trades += row[0]
-                total_profit_abs += (row[1] or 0.0)
+                total_profit_abs += row[1] or 0.0
 
             # Strategy breakdown
             for s, count, profit in con.execute(
@@ -67,7 +68,7 @@ def gather_data():
                 if s not in by_strategy:
                     by_strategy[s] = {"trades": 0, "profit": 0.0}
                 by_strategy[s]["trades"] += count
-                by_strategy[s]["profit"] += (profit or 0.0)
+                by_strategy[s]["profit"] += profit or 0.0
 
             con.execute(f"DETACH {alias}")
         except Exception as e:
@@ -97,17 +98,18 @@ def gather_data():
             "total_trades": total_trades,
             "total_profit": f"{total_profit_abs:.2f} USDT",
             "open_trades_count": len(open_trades_list),
-            "by_strategy": by_strategy
+            "by_strategy": by_strategy,
         },
         "market_sentiment": sentiment_data,
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.now().isoformat(),
     }
+
 
 def generate_quant_report(data: dict) -> str:
     """Generates a detailed rule-based Senior Quant report from gathered data."""
     summary = data.get("summary", {})
     by_strategy = summary.get("by_strategy", {})
-    
+
     # 1. Identify most profitable strategy
     best_strategy = "None"
     best_profit = -999999.0
@@ -116,9 +118,13 @@ def generate_quant_report(data: dict) -> str:
         if profit > best_profit:
             best_profit = profit
             best_strategy = strat
-            
-    best_strategy_str = f"**{best_strategy}** (Profit: `{best_profit:.2f}` USDT)" if best_strategy != "None" else "No active profitable strategies recorded."
-    
+
+    best_strategy_str = (
+        f"**{best_strategy}** (Profit: `{best_profit:.2f}` USDT)"
+        if best_strategy != "None"
+        else "No active profitable strategies recorded."
+    )
+
     # 2. Risk suggestion based on sentiment
     sentiment_str = data.get("market_sentiment", "N/A")
     sentiment_score = 0.0
@@ -127,10 +133,10 @@ def generate_quant_report(data: dict) -> str:
             sentiment_score = float(sentiment_str.split()[0])
         except Exception:
             pass
-            
+
     risk_action = "MAINTAIN NEUTRAL/BALANCED RISK STATE"
     risk_rationale = "Global sentiment is in a neutral range. Execute baseline position sizes and monitor key strategy boundaries."
-    
+
     if sentiment_score > 0.3:
         risk_action = "DELEGATE DYNAMIC STAKE EXPANSION (INCREASE RISK)"
         risk_rationale = f"Global sentiment is highly bullish ({sentiment_score:.3f}). Expand trending/daily cross allocations and allow trend-following strategies full leverage parameters."
@@ -142,24 +148,38 @@ def generate_quant_report(data: dict) -> str:
     directives = []
     # Directive 1 based on best strategy
     if best_strategy != "None":
-        directives.append(f"Capitalize on **{best_strategy}** outperformance; consider routing 10% more allocation to this slot during the next rebalancing cycle.")
+        directives.append(
+            f"Capitalize on **{best_strategy}** outperformance; consider routing 10% more allocation to this slot during the next rebalancing cycle."
+        )
     else:
-        directives.append("Prioritize dry-run capital preservation across all slots until a strategy demonstrates positive expectancy.")
-        
+        directives.append(
+            "Prioritize dry-run capital preservation across all slots until a strategy demonstrates positive expectancy."
+        )
+
     # Directive 2 based on sentiment
     if sentiment_score > 0.3:
-        directives.append(f"Execute full size entries on TrendFollowV1 and DailyTrendV1. Ranging strategies should run with a 0.5x Kelly multiplier.")
+        directives.append(
+            f"Execute full size entries on TrendFollowV1 and DailyTrendV1. Ranging strategies should run with a 0.5x Kelly multiplier."
+        )
     elif sentiment_score < -0.3:
-        directives.append(f"Trigger safe-mode circuit breakers on MeanReversionV1 and SwingV1. Ensure BearScalpV1 is fully online to capture downside velocity.")
+        directives.append(
+            f"Trigger safe-mode circuit breakers on MeanReversionV1 and SwingV1. Ensure BearScalpV1 is fully online to capture downside velocity."
+        )
     else:
-        directives.append("Enforce baseline capital allocations. Maintain standard stoploss settings and run ScalpV1/SwingV1 at standard risk parameters.")
-        
+        directives.append(
+            "Enforce baseline capital allocations. Maintain standard stoploss settings and run ScalpV1/SwingV1 at standard risk parameters."
+        )
+
     # Directive 3 general quant recommendation
     open_trades_count = summary.get("open_trades_count", 0)
     if open_trades_count >= 10:
-        directives.append(f"Enforce strict correlation checks. With {open_trades_count} active slots, do not allow further asset overlap to prevent tail-risk clustering.")
+        directives.append(
+            f"Enforce strict correlation checks. With {open_trades_count} active slots, do not allow further asset overlap to prevent tail-risk clustering."
+        )
     else:
-        directives.append(f"Monitor cluster health and ensure Tailscale link connectivity to M1/M2 remains stable for automated SCP model updates.")
+        directives.append(
+            f"Monitor cluster health and ensure Tailscale link connectivity to M1/M2 remains stable for automated SCP model updates."
+        )
 
     report = f"""### Senior Quant Executive Assessment
 
@@ -181,6 +201,7 @@ def generate_quant_report(data: dict) -> str:
 """
     return report
 
+
 def notify(analysis, data):
     """Prints report locally and sends Telegram notification."""
     date_str = datetime.now().strftime("%Y-%m-%d")
@@ -197,8 +218,9 @@ def notify(analysis, data):
         msg = f"🧠 *Cipher Intelligence Brief - {date_str}*\n\n{short_analysis}\n\n_Full report in Cipher logs_"
         requests.post(
             f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
-            data={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'Markdown'},
+            data={"chat_id": TELEGRAM_CHAT_ID, "text": msg, "parse_mode": "Markdown"},
         )
+
 
 if __name__ == "__main__":
     print("Cipher Intelligent Reporter starting...")

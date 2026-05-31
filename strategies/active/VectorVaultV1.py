@@ -58,9 +58,7 @@ class VectorVaultV1(IStrategy):
         self, dataframe: DataFrame, period: int, metadata: dict, **kwargs
     ) -> DataFrame:
         """Period-parameterised features expanded across indicator_periods_candles."""
-        dataframe[f"%-rsi-period_{period}"] = ta.momentum.rsi(
-            dataframe["close"], window=period
-        )
+        dataframe[f"%-rsi-period_{period}"] = ta.momentum.rsi(dataframe["close"], window=period)
         macd_obj = ta.trend.MACD(dataframe["close"], window_slow=period * 2, window_fast=period)
         dataframe[f"%-macd-period_{period}"] = macd_obj.macd()
         dataframe[f"%-bb_width-period_{period}"] = (
@@ -78,17 +76,13 @@ class VectorVaultV1(IStrategy):
         dataframe["%-pct_change"] = dataframe["close"].pct_change().fillna(0.0)
         return dataframe
 
-    def set_freqai_targets(
-        self, dataframe: DataFrame, metadata: dict, **kwargs
-    ) -> DataFrame:
+    def set_freqai_targets(self, dataframe: DataFrame, metadata: dict, **kwargs) -> DataFrame:
         """
         Target: forward return over label_period_candles candles.
         Positive → price went up (long signal); negative → down.
         """
         label_len: int = self.freqai_info["feature_parameters"]["label_period_candles"]
-        dataframe["&-rust_signal"] = (
-            dataframe["close"].shift(-label_len) / dataframe["close"] - 1
-        )
+        dataframe["&-rust_signal"] = dataframe["close"].shift(-label_len) / dataframe["close"] - 1
         return dataframe
 
     # ── Freqtrade strategy interface ────────────────────────────────
@@ -124,8 +118,16 @@ class VectorVaultV1(IStrategy):
         return dataframe
 
     def confirm_trade_entry(
-        self, pair, order_type, amount, rate, time_in_force,
-        current_time, entry_tag, side, **kwargs,
+        self,
+        pair,
+        order_type,
+        amount,
+        rate,
+        time_in_force,
+        current_time,
+        entry_tag,
+        side,
+        **kwargs,
     ) -> bool:
         df, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
         last_candle = df.iloc[-1].squeeze()

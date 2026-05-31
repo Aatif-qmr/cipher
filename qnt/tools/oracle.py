@@ -36,6 +36,7 @@ def get_sentiment_summary() -> str:
     """Get current sentiment explanation from all sources."""
     try:
         from oracle_sentiment import explain_sentiment
+
         return explain_sentiment()
     except Exception as e:
         return f"Sentiment unavailable: {e}"
@@ -45,6 +46,7 @@ def get_current_sentiment() -> dict:
     """Get raw sentiment scores from all sources."""
     try:
         from oracle_sentiment import get_current_sentiment
+
         return get_current_sentiment()
     except Exception as e:
         return {"error": str(e)}
@@ -55,6 +57,7 @@ def get_calendar_risk() -> dict:
     try:
         from oracle_calendar import calculate_risk_level
         from datetime import datetime, timezone
+
         return calculate_risk_level(datetime.now(timezone.utc))
     except Exception as e:
         return {"error": str(e), "level": "UNKNOWN"}
@@ -64,6 +67,7 @@ def get_anomaly_scan() -> dict:
     """Run market anomaly detection."""
     try:
         from oracle_anomaly import detect_anomalies
+
         return detect_anomalies()
     except Exception as e:
         return {"error": str(e)}

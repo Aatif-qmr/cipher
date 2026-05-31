@@ -4,21 +4,21 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / 'cipher'
-SCORES_PATH      = BASE_DIR / 'qnt/learning/scores.json'
-WEIGHTS_PATH     = BASE_DIR / 'config/sentiment_weights.json'
+BASE_DIR = HOME / "cipher"
+SCORES_PATH = BASE_DIR / "qnt/learning/scores.json"
+WEIGHTS_PATH = BASE_DIR / "config/sentiment_weights.json"
 
 DEFAULTS = {
-    'reddit':    0.20,
-    'news':      0.20,
-    'coingecko': 0.20,
-    'feargreed': 0.20,
-    'funding':   0.20,
+    "reddit": 0.20,
+    "news": 0.20,
+    "coingecko": 0.20,
+    "feargreed": 0.20,
+    "funding": 0.20,
 }
 
-BLEND_ALPHA = 0.05   # 5% new signal per cycle — slow, stable convergence
-FLOOR       = 0.10   # no source below 10% — all voices represented
-CEILING     = 0.35   # no source above 35% — no source dominates
+BLEND_ALPHA = 0.05  # 5% new signal per cycle — slow, stable convergence
+FLOOR = 0.10  # no source below 10% — all voices represented
+CEILING = 0.35  # no source above 35% — no source dominates
 
 
 def _load_current_weights() -> dict:
@@ -32,14 +32,14 @@ def _load_current_weights() -> dict:
 
 def _save_weights(weights: dict):
     WEIGHTS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    out = {'updated_at': datetime.now(timezone.utc).isoformat(), 'weights': weights}
+    out = {"updated_at": datetime.now(timezone.utc).isoformat(), "weights": weights}
     WEIGHTS_PATH.write_text(json.dumps(out, indent=2))
 
 
 def run() -> dict:
     current = _load_current_weights()
-    if isinstance(current.get('weights'), dict):
-        current = current['weights']
+    if isinstance(current.get("weights"), dict):
+        current = current["weights"]
 
     scores = {}
     if SCORES_PATH.exists():
@@ -48,10 +48,10 @@ def run() -> dict:
         except Exception:
             pass
 
-    correlations = scores.get('sentiment_correlations', {})
+    correlations = scores.get("sentiment_correlations", {})
 
     if not correlations:
-        print('[sentiment_calibrator] No correlation data yet — keeping current weights')
+        print("[sentiment_calibrator] No correlation data yet — keeping current weights")
         _save_weights(current)
         return current
 
@@ -60,7 +60,7 @@ def run() -> dict:
     total = sum(clipped.values())
 
     if total == 0:
-        print('[sentiment_calibrator] All correlations zero or negative — keeping current weights')
+        print("[sentiment_calibrator] All correlations zero or negative — keeping current weights")
         _save_weights(current)
         return current
 
@@ -81,13 +81,14 @@ def run() -> dict:
         old = round(current.get(k, DEFAULTS[k]), 4)
         new = final[k]
         if abs(new - old) > 0.005:
-            print(f'  [sentiment_calibrator] {k}: {old:.4f} → {new:.4f}')
+            print(f"  [sentiment_calibrator] {k}: {old:.4f} → {new:.4f}")
 
     _save_weights(final)
-    print(f'[sentiment_calibrator] Weights updated: {final}')
+    print(f"[sentiment_calibrator] Weights updated: {final}")
     return final
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import pprint
+
     pprint.pprint(run())

@@ -6,22 +6,25 @@ from datetime import datetime, timezone, timedelta
 
 # Add paths
 from pathlib import Path as _Path
+
 BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
-sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
+sys.path.insert(0, os.path.join(BASE_DIR, "qnt/memory"))
 
 from memory_manager import load_memory, log_action
 from qnt_notifier import send_notify
 
-SENTIMENT_JSON = os.path.join(BASE_DIR, 'sentiment/scores/current_score.json')
-SENTIMENT_CSV = os.path.join(BASE_DIR, 'sentiment/scores/history.csv')
+SENTIMENT_JSON = os.path.join(BASE_DIR, "sentiment/scores/current_score.json")
+SENTIMENT_CSV = os.path.join(BASE_DIR, "sentiment/scores/history.csv")
+
 
 def get_current_sentiment():
     """Read current score and breakdown."""
     try:
-        with open(SENTIMENT_JSON, 'r') as f:
+        with open(SENTIMENT_JSON, "r") as f:
             return json.load(f)
     except Exception as e:
         return None
+
 
 def explain_sentiment():
     """Generate plain English explanation of the current sentiment."""
@@ -29,13 +32,15 @@ def explain_sentiment():
     if not data:
         return "Sentiment data unavailable."
 
-    score = data.get('score', 0)
-    components = data.get('component_scores', {})
-    weights = data.get('weights', {})
-    
+    score = data.get("score", 0)
+    components = data.get("component_scores", {})
+    weights = data.get("weights", {})
+
     regime = "NEUTRAL"
-    if score >= 0.3: regime = "BULLISH"
-    elif score <= -0.3: regime = "BEARISH"
+    if score >= 0.3:
+        regime = "BULLISH"
+    elif score <= -0.3:
+        regime = "BEARISH"
 
     # Simple logic to find the biggest driver
     driver_name = "Mixed"
@@ -48,13 +53,17 @@ def explain_sentiment():
 
     explanation = ""
     if score > 0.5:
-        explanation = f"Strong bullish momentum across major indicators, led by {driver_name} activity."
+        explanation = (
+            f"Strong bullish momentum across major indicators, led by {driver_name} activity."
+        )
     elif score > 0.1:
         explanation = f"Cautious optimism in the market. {driver_name} is currently the primary positive influence."
     elif score < -0.5:
         explanation = f"Significant market fear detected. {driver_name} signals suggest heavy selling pressure or high uncertainty."
     elif score < -0.1:
-        explanation = f"Market showing bearish tendencies, primarily driven by {driver_name} sentiment."
+        explanation = (
+            f"Market showing bearish tendencies, primarily driven by {driver_name} sentiment."
+        )
     else:
         explanation = "Market is in a balanced, range-bound state with no clear directional bias from news or funding."
 
@@ -62,25 +71,28 @@ def explain_sentiment():
     trend_str = "STABLE"
     try:
         df = pl.read_csv(SENTIMENT_CSV)
-        if len(df) > 12: # ~6 hours of 30min data
+        if len(df) > 12:  # ~6 hours of 30min data
             old_score = df.tail(12)["score"][0]
             diff = score - old_score
-            if diff > 0.2: trend_str = "IMPROVING"
-            elif diff < -0.2: trend_str = "DECLINING"
-    except Exception as e: pass
+            if diff > 0.2:
+                trend_str = "IMPROVING"
+            elif diff < -0.2:
+                trend_str = "DECLINING"
+    except Exception as e:
+        pass
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
-    
+
     output = [
         f"🧠 QNT Sentiment Analysis — {now}",
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
         f"Overall Score: {score:.3f} → {regime}",
         "",
         "Source Breakdown:",
-        f"Reddit:         {components.get('reddit', 0):.2f} ({weights.get('reddit',0)*100:.0f}% weight)",
-        f"CoinGecko:      {components.get('coingecko', 0):.2f} ({weights.get('coingecko',0)*100:.0f}% weight)",
-        f"Fear & Greed:   {components.get('feargreed', 0):.2f} ({weights.get('feargreed',0)*100:.0f}% weight)",
-        f"Funding Rate:   {components.get('funding', 0):.4f} ({weights.get('funding',0)*100:.0f}% weight)",
+        f"Reddit:         {components.get('reddit', 0):.2f} ({weights.get('reddit', 0) * 100:.0f}% weight)",
+        f"CoinGecko:      {components.get('coingecko', 0):.2f} ({weights.get('coingecko', 0) * 100:.0f}% weight)",
+        f"Fear & Greed:   {components.get('feargreed', 0):.2f} ({weights.get('feargreed', 0) * 100:.0f}% weight)",
+        f"Funding Rate:   {components.get('funding', 0):.4f} ({weights.get('funding', 0) * 100:.0f}% weight)",
         "",
         "Why this score:",
         explanation,
@@ -90,52 +102,65 @@ def explain_sentiment():
         f"TrendFollowV1:   {'TRADING' if score >= 0.3 else 'PAUSED'} (needs > +0.3)",
         "",
         f"Trend (last 6h): {trend_str}",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
     ]
-    
+
     return "\n".join(output)
+
 
 def detect_sentiment_shift():
     """Detect significant moves in sentiment over 6 hours."""
     current = get_current_sentiment()
-    if not current: return {"shifted": False}
-    
-    score = current.get('score', 0)
-    
+    if not current:
+        return {"shifted": False}
+
+    score = current.get("score", 0)
+
     try:
         df = pl.read_csv(SENTIMENT_CSV)
         if len(df) > 12:
             old_score = df.tail(12)["score"][0]
             magnitude = abs(score - old_score)
-            
+
             if magnitude >= 0.3:
                 return {
                     "shifted": True,
                     "direction": "up" if score > old_score else "down",
                     "magnitude": round(magnitude, 3),
                     "old": round(old_score, 3),
-                    "new": round(score, 3)
+                    "new": round(score, 3),
                 }
-    except Exception as e: pass
-    
+    except Exception as e:
+        pass
+
     return {"shifted": False}
+
 
 def check_and_act():
     """30-minute check for sentiment shifts."""
     shift = detect_sentiment_shift()
-    if shift.get('shifted'):
-        regime = "BULLISH" if shift['new'] >= 0.3 else "BEARISH" if shift['new'] <= -0.3 else "NEUTRAL"
-        
+    if shift.get("shifted"):
+        regime = (
+            "BULLISH" if shift["new"] >= 0.3 else "BEARISH" if shift["new"] <= -0.3 else "NEUTRAL"
+        )
+
         # Decide if we notify
         should_notify = False
-        if shift['magnitude'] >= 0.4: should_notify = True
-        
-        # Check if threshold crossed
-        if (shift['old'] > -0.3 and shift['new'] <= -0.3) or (shift['old'] < 0.3 and shift['new'] >= 0.3):
+        if shift["magnitude"] >= 0.4:
             should_notify = True
-            
+
+        # Check if threshold crossed
+        if (shift["old"] > -0.3 and shift["new"] <= -0.3) or (
+            shift["old"] < 0.3 and shift["new"] >= 0.3
+        ):
+            should_notify = True
+
         if should_notify:
-            reason = "Sentiment dropped sharply" if shift['direction'] == "down" else "Sentiment surged upward"
+            reason = (
+                "Sentiment dropped sharply"
+                if shift["direction"] == "down"
+                else "Sentiment surged upward"
+            )
             msg = (
                 f"📊 Sentiment shifted {shift['new'] - shift['old']:+.2f} in 6 hours.\n"
                 f"New score: {shift['new']} ({regime})\n"
@@ -145,6 +170,7 @@ def check_and_act():
             )
             send_notify("Sentiment Shift", msg)
             log_action("sentiment_shift_detected", f"Shift: {shift['magnitude']} to {regime}")
+
 
 if __name__ == "__main__":
     print(explain_sentiment())

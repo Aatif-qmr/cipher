@@ -70,6 +70,7 @@ def export_cryptobert_onnx(
         print("Quantizing ONNX model to INT8 (ARM64)...")
         from optimum.onnxruntime import ORTQuantizer
         from optimum.onnxruntime.configuration import AutoQuantizationConfig
+
         fp32_path = output_dir / "model.onnx"
         quantizer = ORTQuantizer.from_pretrained(str(output_dir))
         qconfig = AutoQuantizationConfig.arm64(is_static=False, per_channel=False)
@@ -123,7 +124,9 @@ def _manual_export(
 
     # Create dummy input
     dummy_text = "Bitcoin surges to new all-time high"
-    inputs = tokenizer(dummy_text, return_tensors="pt", padding="max_length", max_length=128, truncation=True)
+    inputs = tokenizer(
+        dummy_text, return_tensors="pt", padding="max_length", max_length=128, truncation=True
+    )
 
     onnx_path = output_dir / "model.onnx"
 
@@ -150,6 +153,7 @@ def _manual_export(
     print("Quantizing ONNX model to INT8 (ARM64)...")
     from optimum.onnxruntime import ORTQuantizer
     from optimum.onnxruntime.configuration import AutoQuantizationConfig
+
     quantizer = ORTQuantizer.from_pretrained(str(output_dir))
     qconfig = AutoQuantizationConfig.arm64(is_static=False, per_channel=False)
     quantizer.quantize(save_dir=str(output_dir), quantization_config=qconfig)
@@ -192,7 +196,9 @@ def verify_sentiment_output(
     results = {}
 
     for text in test_texts:
-        inputs = tokenizer(text, return_tensors="np", padding="max_length", max_length=128, truncation=True)
+        inputs = tokenizer(
+            text, return_tensors="np", padding="max_length", max_length=128, truncation=True
+        )
         ort_inputs = {
             "input_ids": inputs["input_ids"],
             "attention_mask": inputs["attention_mask"],

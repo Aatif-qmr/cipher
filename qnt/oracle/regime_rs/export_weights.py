@@ -3,6 +3,7 @@ One-time export: converts lstm_regime_model.pt → lstm_weights.bin
 Run from cipher root: python qnt/oracle/regime_rs/export_weights.py
 Requires torch (only needed once on a machine that has the .pt file).
 """
+
 import struct
 import sys
 from pathlib import Path
@@ -24,10 +25,10 @@ state = torch.load(PT_PATH, map_location="cpu")
 keys = [
     "lstm.weight_ih_l0",  # 4*64 x 1
     "lstm.weight_hh_l0",  # 4*64 x 64
-    "lstm.bias_ih_l0",    # 4*64
-    "lstm.bias_hh_l0",    # 4*64
-    "fc.weight",          # 3 x 64
-    "fc.bias",            # 3
+    "lstm.bias_ih_l0",  # 4*64
+    "lstm.bias_hh_l0",  # 4*64
+    "fc.weight",  # 3 x 64
+    "fc.bias",  # 3
 ]
 
 with open(BIN_PATH, "wb") as f:
@@ -37,4 +38,4 @@ with open(BIN_PATH, "wb") as f:
         print(f"  {key}: {tensor.shape} → {len(tensor)} floats")
 
 total = BIN_PATH.stat().st_size
-print(f"\nExported to {BIN_PATH} ({total} bytes, {total//4} floats)")
+print(f"\nExported to {BIN_PATH} ({total} bytes, {total // 4} floats)")

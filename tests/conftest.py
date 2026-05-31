@@ -1,4 +1,5 @@
 """Shared pytest fixtures for Cipher strategy and model tests."""
+
 import sys
 import types
 from unittest.mock import MagicMock
@@ -102,12 +103,12 @@ def small_ohlcv_df() -> pd.DataFrame:
 def vault_xy(ohlcv_df):
     """Pre-computed X/y arrays from synthetic OHLCV (RSI + MACD + BB_width → fwd return)."""
     import ta
+
     df = ohlcv_df.copy()
     df["rsi"] = ta.momentum.rsi(df["close"], window=14).fillna(50.0)
     df["macd"] = ta.trend.macd(df["close"]).fillna(0.0)
     df["bb_width"] = (
-        (ta.volatility.bollinger_hband(df["close"])
-         - ta.volatility.bollinger_lband(df["close"]))
+        (ta.volatility.bollinger_hband(df["close"]) - ta.volatility.bollinger_lband(df["close"]))
         / df["close"]
     ).fillna(0.0)
     df["fwd_return"] = (df["close"].shift(-5) / df["close"] - 1).fillna(0.0)

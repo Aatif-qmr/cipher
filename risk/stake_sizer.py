@@ -19,20 +19,20 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DB_MAP = {
-    'ScalpV1':         BASE_DIR / 'user_data/scalp.sqlite',
-    'MeanReversionV1': BASE_DIR / 'user_data/mean_reversion.sqlite',
-    'SwingV1':         BASE_DIR / 'user_data/swing.sqlite',
-    'TrendFollowV1':   BASE_DIR / 'user_data/trend_follow.sqlite',
-    'BearScalpV1':     BASE_DIR / 'user_data/bear_scalp.sqlite',
-    'DailyTrendV1':    BASE_DIR / 'user_data/daily.sqlite',
-    'MicroScalpV1':    BASE_DIR / 'user_data/tradesv3_micro.sqlite',
+    "ScalpV1": BASE_DIR / "user_data/scalp.sqlite",
+    "MeanReversionV1": BASE_DIR / "user_data/mean_reversion.sqlite",
+    "SwingV1": BASE_DIR / "user_data/swing.sqlite",
+    "TrendFollowV1": BASE_DIR / "user_data/trend_follow.sqlite",
+    "BearScalpV1": BASE_DIR / "user_data/bear_scalp.sqlite",
+    "DailyTrendV1": BASE_DIR / "user_data/daily.sqlite",
+    "MicroScalpV1": BASE_DIR / "user_data/tradesv3_micro.sqlite",
 }
 
 MIN_TRADES = 15
-ROLLING_N  = 40
-FLOOR      = 0.5
-CEILING    = 2.0
-CACHE_TTL  = 1800  # 30 minutes
+ROLLING_N = 40
+FLOOR = 0.5
+CEILING = 2.0
+CACHE_TTL = 1800  # 30 minutes
 
 _cache: dict[str, tuple[float, float]] = {}
 
@@ -57,6 +57,7 @@ def _fetch_via_postgres(dsn: str) -> list[float] | None:
     """Return list of close_profit values via psycopg3, or None on failure."""
     try:
         import psycopg
+
         con = psycopg.connect(dsn)
         cur = con.cursor()
         cur.execute(_TRADE_QUERY, (ROLLING_N,))

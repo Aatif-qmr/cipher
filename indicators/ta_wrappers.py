@@ -16,12 +16,14 @@ import pandas as pd
 
 try:
     import importlib.util
+
     _USE_TALIB = importlib.util.find_spec("talib") is not None
 except ImportError:
     _USE_TALIB = False
 
 try:
     import ta as _ta
+
     _USE_TA = True
 except ImportError:
     _USE_TA = False
@@ -37,6 +39,7 @@ def add_rsi(df: pd.DataFrame, period: int = 14, column: str = "close") -> pd.Ser
     _require_any()
     if _USE_TALIB:
         import talib
+
         return talib.RSI(df[column], timeperiod=period)
     return _ta.momentum.rsi(df[column], window=period)
 
@@ -46,6 +49,7 @@ def add_ema(df: pd.DataFrame, period: int = 20, column: str = "close") -> pd.Ser
     _require_any()
     if _USE_TALIB:
         import talib
+
         return talib.EMA(df[column], timeperiod=period)
     return df[column].ewm(span=period, adjust=False).mean()
 
@@ -61,6 +65,7 @@ def add_macd(
     _require_any()
     if _USE_TALIB:
         import talib
+
         return talib.MACD(df[column], fastperiod=fast, slowperiod=slow, signalperiod=signal)
     macd_obj = _ta.trend.MACD(df[column], window_fast=fast, window_slow=slow, window_sign=signal)
     return macd_obj.macd(), macd_obj.macd_signal(), macd_obj.macd_diff()
@@ -76,7 +81,10 @@ def add_bollinger_width(
     _require_any()
     if _USE_TALIB:
         import talib
-        upper, _, lower = talib.BBANDS(df[column], timeperiod=period, nbdevup=std_dev, nbdevdn=std_dev)
+
+        upper, _, lower = talib.BBANDS(
+            df[column], timeperiod=period, nbdevup=std_dev, nbdevdn=std_dev
+        )
         return (upper - lower) / df[column].replace(0, float("nan"))
     upper = _ta.volatility.bollinger_hband(df[column], window=period, window_dev=std_dev)
     lower = _ta.volatility.bollinger_lband(df[column], window=period, window_dev=std_dev)

@@ -11,15 +11,17 @@ from qdrant_client.models import Distance, VectorParams, PointStruct
 from sentence_transformers import SentenceTransformer
 
 _BASE = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(_BASE / 'qnt/memory'))
+sys.path.insert(0, str(_BASE / "qnt/memory"))
 
 try:
     from memory_manager import log_action
 except Exception:
+
     def log_action(action, msg):
         pass
 
-QDRANT_PATH = str(_BASE / 'qnt/vault/qdrant_storage')
+
+QDRANT_PATH = str(_BASE / "qnt/vault/qdrant_storage")
 COLLECTION_NAME = "trade_lessons"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 VECTOR_SIZE = 384
@@ -55,7 +57,7 @@ def _ensure_collection():
 
 
 def _stable_id(lesson_id: str) -> int:
-    return int(hashlib.md5(lesson_id.encode()).hexdigest(), 16) % (2 ** 63)
+    return int(hashlib.md5(lesson_id.encode()).hexdigest(), 16) % (2**63)
 
 
 def store_lesson(lesson_id: str, text: str, metadata: dict) -> bool:
@@ -117,8 +119,7 @@ def get_collection_stats() -> dict:
 def add_trade_memory(trade_dict: dict, analysis: str) -> bool:
     """Specific wrapper for trade post-mortems."""
     lesson_id = (
-        f"postmortem_{trade_dict.get('trade_id', trade_dict.get('id', 'unk'))}"
-        f"_{int(time.time())}"
+        f"postmortem_{trade_dict.get('trade_id', trade_dict.get('id', 'unk'))}_{int(time.time())}"
     )
     text = f"ANALYSIS OF TRADE {trade_dict.get('pair')}:\n{analysis}"
     metadata = {
@@ -134,6 +135,5 @@ def add_entry(category: str, text: str, metadata: dict) -> bool:
     """Generic entry addition for the Vault."""
     entry_id = f"{category}_{int(time.time())}"
     meta = metadata.copy() if metadata else {}
-    meta['category'] = category
+    meta["category"] = category
     return store_lesson(entry_id, text, meta)
-

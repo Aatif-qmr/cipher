@@ -98,8 +98,11 @@ def test_replay_buffer():
 
 
 def test_subscriber_count():
-    async def h1(e): pass
-    async def h2(e): pass
+    async def h1(e):
+        pass
+
+    async def h2(e):
+        pass
 
     bus = EventBus()
     bus.subscribe(EventType.SIGNAL, h1)

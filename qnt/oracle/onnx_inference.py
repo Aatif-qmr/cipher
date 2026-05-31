@@ -64,9 +64,7 @@ def _get_session():
         return _ort_session
 
     except ImportError:
-        raise ImportError(
-            "onnxruntime is required. Install with: pip install onnxruntime"
-        )
+        raise ImportError("onnxruntime is required. Install with: pip install onnxruntime")
 
 
 def infer_regime(returns: list[float] | np.ndarray, seq_len: int = 20) -> dict:
@@ -148,7 +146,11 @@ def detect_regime_onnx(dataframe, pair: str = "BTC/USDT") -> dict:
 
     try:
         # Compute log returns
-        close = dataframe["close"].to_numpy() if hasattr(dataframe["close"], "to_numpy") else np.array(dataframe["close"])
+        close = (
+            dataframe["close"].to_numpy()
+            if hasattr(dataframe["close"], "to_numpy")
+            else np.array(dataframe["close"])
+        )
         returns = np.log(close[1:] / close[:-1]).astype(np.float32)
 
         if len(returns) < 20:

@@ -25,7 +25,11 @@ async def log_signal(event: BaseEvent) -> None:
         return
     logger.info(
         "[SIGNAL] strategy=%s pair=%s direction=%s confidence=%.3f tag=%s",
-        event.strategy, event.pair, event.direction, event.confidence, event.tag,
+        event.strategy,
+        event.pair,
+        event.direction,
+        event.confidence,
+        event.tag,
     )
 
 
@@ -38,6 +42,7 @@ async def risk_gate_consumer(event: BaseEvent) -> None:
         return
     try:
         import sys
+
         sys.path.insert(0, str(_BASE))
         from bus.channel import get_bus
         from bus.events import RiskAlertEvent
@@ -68,6 +73,7 @@ async def vault_writer(event: BaseEvent) -> None:
         return
     try:
         from qnt.tools.vault import store_lesson
+
         lesson = (
             f"Strategy {event.source} closed {getattr(event, 'pair', '?')} "
             f"profit={getattr(event, 'profit_ratio', 0):.2%}"
@@ -84,5 +90,7 @@ async def halt_on_risk_alert(event: BaseEvent) -> None:
     if event.action == "halt":
         logger.critical(
             "[RISK HALT] gate=%s value=%.4f threshold=%.4f — manual review required",
-            event.gate, event.value, event.threshold,
+            event.gate,
+            event.value,
+            event.threshold,
         )

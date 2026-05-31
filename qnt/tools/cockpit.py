@@ -16,6 +16,7 @@ def get_system_status() -> dict:
     """Get system-wide status: open trades, balance, shield summary, logs tail."""
     try:
         from cockpit_static import get_global_status_panel, get_shield_panel, get_trades_panel
+
         return {
             "status": get_global_status_panel(),
             "shield": get_shield_panel(),
@@ -30,6 +31,7 @@ def get_balance() -> dict:
     balance_file = _BASE / "risk/balance_state.json"
     if balance_file.exists():
         import json
+
         try:
             return json.loads(balance_file.read_text())
         except Exception as e:

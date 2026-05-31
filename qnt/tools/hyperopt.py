@@ -17,7 +17,9 @@ def _m2_ip() -> str:
     try:
         result = subprocess.run(
             ["tailscale", "ip", "azmatsaif-m2"],
-            capture_output=True, text=True, timeout=5,
+            capture_output=True,
+            text=True,
+            timeout=5,
         )
         if result.returncode == 0:
             return result.stdout.strip()
@@ -34,7 +36,9 @@ def _ssh(command: str, timeout: int = 15) -> str:
     try:
         result = subprocess.run(
             ["ssh", "-o", "ConnectTimeout=10", f"{_M2_USER}@{ip}", command],
-            capture_output=True, text=True, timeout=timeout,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
         )
         return result.stdout.strip() or result.stderr.strip()
     except subprocess.TimeoutExpired:
@@ -71,7 +75,7 @@ def control_shadow(action: str, strategy: str | None = None) -> str:
             f"nohup python3 qnt/shadow/shadow_hyperopt.py "
             f">> logs/shadow_hyperopt_main.log 2>&1 & "
             f"echo $! > logs/shadow_hyperopt.pid && "
-            f"echo \"Started PID $(cat logs/shadow_hyperopt.pid)\""
+            f'echo "Started PID $(cat logs/shadow_hyperopt.pid)"'
         )
         return _ssh(cmd)
     elif action == "stop":
@@ -86,8 +90,7 @@ def control_shadow(action: str, strategy: str | None = None) -> str:
         if not strategy:
             return "Error: strategy name required for promote"
         cmd = (
-            f"echo \"[$(date)] PROMOTE_REQUEST: {strategy}\" "
-            f">> {_M2_PATH}/logs/shadow_promotions.log"
+            f'echo "[$(date)] PROMOTE_REQUEST: {strategy}" >> {_M2_PATH}/logs/shadow_promotions.log'
         )
         _ssh(cmd)
         return f"Promotion request for {strategy} logged. Manual parameter merge required."

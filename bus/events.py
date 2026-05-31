@@ -38,6 +38,7 @@ class BaseEvent:
 @dataclass
 class CandleEvent(BaseEvent):
     """New OHLCV candle available from exchange."""
+
     pair: str = ""
     timeframe: str = ""
     open: float = 0.0
@@ -51,10 +52,11 @@ class CandleEvent(BaseEvent):
 @dataclass
 class SignalEvent(BaseEvent):
     """Strategy generated an entry or exit signal."""
+
     strategy: str = ""
     pair: str = ""
-    direction: str = ""       # "long" | "short" | "exit"
-    confidence: float = 0.0   # 0.0–1.0, from do_predict or rust_signal strength
+    direction: str = ""  # "long" | "short" | "exit"
+    confidence: float = 0.0  # 0.0–1.0, from do_predict or rust_signal strength
     tag: str = ""
     type: EventType = EventType.SIGNAL
 
@@ -62,6 +64,7 @@ class SignalEvent(BaseEvent):
 @dataclass
 class TradeEvent(BaseEvent):
     """Trade opened or closed."""
+
     trade_id: int = 0
     strategy: str = ""
     pair: str = ""
@@ -73,17 +76,19 @@ class TradeEvent(BaseEvent):
 @dataclass
 class RiskAlertEvent(BaseEvent):
     """Risk gate triggered."""
-    gate: str = ""            # e.g. "max_drawdown", "correlation", "position_size"
+
+    gate: str = ""  # e.g. "max_drawdown", "correlation", "position_size"
     value: float = 0.0
     threshold: float = 0.0
-    action: str = ""          # "warn" | "halt"
+    action: str = ""  # "warn" | "halt"
     type: EventType = EventType.RISK_ALERT
 
 
 @dataclass
 class SentimentEvent(BaseEvent):
     """Sentiment pipeline completed a refresh cycle."""
-    score: float = 0.0        # composite [-1, +1]
+
+    score: float = 0.0  # composite [-1, +1]
     components: dict = field(default_factory=dict)
     type: EventType = EventType.SENTIMENT_UPDATE
 
@@ -91,6 +96,7 @@ class SentimentEvent(BaseEvent):
 @dataclass
 class MacroEvent(BaseEvent):
     """Macro covariate snapshot refreshed."""
+
     dxy_24h_change: float = 0.0
     btc_funding_rate: float = 0.0
     btc_open_interest: float = 0.0
@@ -100,6 +106,7 @@ class MacroEvent(BaseEvent):
 @dataclass
 class HyperoptResultEvent(BaseEvent):
     """Distributed hyperopt study completed."""
+
     strategy: str = ""
     best_params: dict = field(default_factory=dict)
     best_value: float = 0.0
@@ -110,6 +117,7 @@ class HyperoptResultEvent(BaseEvent):
 @dataclass
 class SystemHealthEvent(BaseEvent):
     """Periodic system heartbeat."""
+
     freqtrade_processes: int = 0
     open_trades: int = 0
     balance_usdt: float = 0.0

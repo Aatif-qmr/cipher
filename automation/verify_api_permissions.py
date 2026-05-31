@@ -2,23 +2,26 @@ import os
 import ccxt
 from dotenv import load_dotenv
 
-load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
+
 
 def verify():
-    key = os.getenv('BINANCE_API_KEY')
-    secret = os.getenv('BINANCE_SECRET')
-    
+    key = os.getenv("BINANCE_API_KEY")
+    secret = os.getenv("BINANCE_SECRET")
+
     if not key or not secret:
         print("❌ Error: Keys missing in .env")
         return
 
-    exchange = ccxt.binance({
-        'apiKey': key,
-        'secret': secret,
-    })
+    exchange = ccxt.binance(
+        {
+            "apiKey": key,
+            "secret": secret,
+        }
+    )
 
     print("--- Binance Permission Verification ---")
-    
+
     # 1. Test READ permission
     try:
         exchange.fetch_balance()
@@ -34,7 +37,9 @@ def verify():
         status = "RISK"
     except Exception as e:
         err_msg = str(e).lower()
-        if any(code in err_msg for code in ["-2015", "-1002", "permission denied", "not authorized"]):
+        if any(
+            code in err_msg for code in ["-2015", "-1002", "permission denied", "not authorized"]
+        ):
             print("✅ Withdrawal permission correctly DISABLED")
             status = "SECURE"
         else:
@@ -43,5 +48,6 @@ def verify():
 
     print(f"\n--- Final Status: {status} ---")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     verify()

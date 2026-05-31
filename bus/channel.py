@@ -43,7 +43,9 @@ class EventBus:
         self._handlers: dict[EventType, list[Handler]] = defaultdict(list)
         self._wildcard: list[Handler] = []
         self._dlq: list[tuple[BaseEvent, Exception]] = []
-        self._replay_buffer: deque[BaseEvent] = deque(maxlen=_MAX_REPLAY_BUFFER) if replay else deque(maxlen=0)
+        self._replay_buffer: deque[BaseEvent] = (
+            deque(maxlen=_MAX_REPLAY_BUFFER) if replay else deque(maxlen=0)
+        )
         self._replay_enabled = replay
 
     def subscribe(
@@ -64,9 +66,7 @@ class EventBus:
         if event_type is None:
             self._wildcard = [h for h in self._wildcard if h is not handler]
         else:
-            self._handlers[event_type] = [
-                h for h in self._handlers[event_type] if h is not handler
-            ]
+            self._handlers[event_type] = [h for h in self._handlers[event_type] if h is not handler]
 
     async def publish(self, event: BaseEvent) -> None:
         """

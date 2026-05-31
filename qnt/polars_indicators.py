@@ -18,6 +18,7 @@ from __future__ import annotations
 
 try:
     import polars as pl
+
     _HAS_POLARS = True
 except ImportError:
     _HAS_POLARS = False
@@ -25,12 +26,12 @@ except ImportError:
 
 def _require_polars():
     if not _HAS_POLARS:
-        raise ImportError(
-            "Polars is required for this module. Install with: pip install polars"
-        )
+        raise ImportError("Polars is required for this module. Install with: pip install polars")
 
 
-def add_ema(df: "pl.DataFrame", column: str = "close", period: int = 20, alias: str | None = None) -> "pl.DataFrame":
+def add_ema(
+    df: "pl.DataFrame", column: str = "close", period: int = 20, alias: str | None = None
+) -> "pl.DataFrame":
     """
     Add Exponential Moving Average column.
 
@@ -39,25 +40,21 @@ def add_ema(df: "pl.DataFrame", column: str = "close", period: int = 20, alias: 
     """
     _require_polars()
     col_alias = alias or f"ema_{period}"
-    return df.with_columns(
-        pl.col(column)
-        .ewm_mean(span=period, ignore_nulls=True)
-        .alias(col_alias)
-    )
+    return df.with_columns(pl.col(column).ewm_mean(span=period, ignore_nulls=True).alias(col_alias))
 
 
-def add_sma(df: "pl.DataFrame", column: str = "close", period: int = 20, alias: str | None = None) -> "pl.DataFrame":
+def add_sma(
+    df: "pl.DataFrame", column: str = "close", period: int = 20, alias: str | None = None
+) -> "pl.DataFrame":
     """Add Simple Moving Average column."""
     _require_polars()
     col_alias = alias or f"sma_{period}"
-    return df.with_columns(
-        pl.col(column)
-        .rolling_mean(window_size=period)
-        .alias(col_alias)
-    )
+    return df.with_columns(pl.col(column).rolling_mean(window_size=period).alias(col_alias))
 
 
-def add_rsi(df: "pl.DataFrame", column: str = "close", period: int = 14, alias: str = "rsi") -> "pl.DataFrame":
+def add_rsi(
+    df: "pl.DataFrame", column: str = "close", period: int = 14, alias: str = "rsi"
+) -> "pl.DataFrame":
     """
     Add Relative Strength Index column.
 
@@ -71,7 +68,7 @@ def add_rsi(df: "pl.DataFrame", column: str = "close", period: int = 14, alias: 
 
     # RS = avg_gain / avg_loss, RSI = 100 - (100 / (1 + RS))
     rs = gain / loss
-    rsi_expr = (100.0 - (100.0 / (1.0 + rs)))
+    rsi_expr = 100.0 - (100.0 / (1.0 + rs))
 
     return df.with_columns(rsi_expr.alias(alias))
 
@@ -88,11 +85,13 @@ def add_bollinger_bands(
     mid = pl.col(column).rolling_mean(window_size=period)
     std = pl.col(column).rolling_std(window_size=period)
 
-    return df.with_columns([
-        mid.alias(f"{prefix}_mid"),
-        (mid + std_dev * std).alias(f"{prefix}_upper"),
-        (mid - std_dev * std).alias(f"{prefix}_lower"),
-    ])
+    return df.with_columns(
+        [
+            mid.alias(f"{prefix}_mid"),
+            (mid + std_dev * std).alias(f"{prefix}_upper"),
+            (mid - std_dev * std).alias(f"{prefix}_lower"),
+        ]
+    )
 
 
 def add_atr(
@@ -114,9 +113,7 @@ def add_atr(
     # Element-wise max across the three TR components
     true_range = pl.max_horizontal(tr1, tr2, tr3)
 
-    return df.with_columns(
-        true_range.ewm_mean(span=period * 2 - 1, ignore_nulls=True).alias(alias)
-    )
+    return df.with_columns(true_range.ewm_mean(span=period * 2 - 1, ignore_nulls=True).alias(alias))
 
 
 def add_macd(
@@ -135,9 +132,7 @@ def add_macd(
 
     df = df.with_columns(macd_line.alias(f"{prefix}_line"))
     df = df.with_columns(
-        pl.col(f"{prefix}_line")
-        .ewm_mean(span=signal, ignore_nulls=True)
-        .alias(f"{prefix}_signal")
+        pl.col(f"{prefix}_line").ewm_mean(span=signal, ignore_nulls=True).alias(f"{prefix}_signal")
     )
     df = df.with_columns(
         (pl.col(f"{prefix}_line") - pl.col(f"{prefix}_signal")).alias(f"{prefix}_hist")
@@ -154,17 +149,15 @@ def add_vwap(df: "pl.DataFrame", alias: str = "vwap") -> "pl.DataFrame":
     typical_price = (pl.col("high") + pl.col("low") + pl.col("close")) / 3.0
     tp_volume = typical_price * pl.col("volume")
 
-    return df.with_columns(
-        (tp_volume.cum_sum() / pl.col("volume").cum_sum()).alias(alias)
-    )
+    return df.with_columns((tp_volume.cum_sum() / pl.col("volume").cum_sum()).alias(alias))
 
 
-def add_log_returns(df: "pl.DataFrame", column: str = "close", alias: str = "log_return") -> "pl.DataFrame":
+def add_log_returns(
+    df: "pl.DataFrame", column: str = "close", alias: str = "log_return"
+) -> "pl.DataFrame":
     """Add log returns column: ln(close / prev_close)."""
     _require_polars()
-    return df.with_columns(
-        (pl.col(column) / pl.col(column).shift(1)).log().alias(alias)
-    )
+    return df.with_columns((pl.col(column) / pl.col(column).shift(1)).log().alias(alias))
 
 
 def add_all_indicators(

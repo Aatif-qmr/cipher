@@ -7,16 +7,17 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DB_FILES = [
-    str(BASE_DIR / 'user_data/micro.sqlite'),
-    str(BASE_DIR / 'user_data/scalp.sqlite'),
-    str(BASE_DIR / 'user_data/mean_reversion.sqlite'),
-    str(BASE_DIR / 'user_data/trend_follow.sqlite'),
-    str(BASE_DIR / 'user_data/daily.sqlite'),
-    str(BASE_DIR / 'user_data/swing.sqlite')
+    str(BASE_DIR / "user_data/micro.sqlite"),
+    str(BASE_DIR / "user_data/scalp.sqlite"),
+    str(BASE_DIR / "user_data/mean_reversion.sqlite"),
+    str(BASE_DIR / "user_data/trend_follow.sqlite"),
+    str(BASE_DIR / "user_data/daily.sqlite"),
+    str(BASE_DIR / "user_data/swing.sqlite"),
 ]
 
-REPORTS_FOLDER_ID = '1Vdst3YI9wFFfFPurpVVGJfrA3y2aT9BI'
-DEST_EMAIL = 'aatifqmr@gmail.com'
+REPORTS_FOLDER_ID = "1Vdst3YI9wFFfFPurpVVGJfrA3y2aT9BI"
+DEST_EMAIL = "aatifqmr@gmail.com"
+
 
 def get_combined_stats():
     total_trades = 0
@@ -44,7 +45,7 @@ def get_combined_stats():
             ).fetchone()
             if row and row[0]:
                 total_trades += row[0]
-                total_profit_abs += (row[1] or 0.0)
+                total_profit_abs += row[1] or 0.0
 
             # Last 3 closed from this db
             for pair, strategy, profit, close_date in con.execute(
@@ -82,6 +83,7 @@ def get_combined_stats():
 
     return stats
 
+
 def generate_report():
     print("Generating Cipher AGGREGATED Performance Report...")
     stats = get_combined_stats()
@@ -92,6 +94,7 @@ def generate_report():
         f"{stats}\n\n## Bot Status\nMode: MULTI-STRATEGY PAPER TRADING\nStatus: ACTIVE"
     )
     print(content)
+
 
 if __name__ == "__main__":
     generate_report()

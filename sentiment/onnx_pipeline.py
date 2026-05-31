@@ -69,8 +69,7 @@ def _get_session_and_tokenizer():
 
     except ImportError as e:
         raise ImportError(
-            f"Missing dependency: {e}. "
-            f"Install with: pip install onnxruntime transformers"
+            f"Missing dependency: {e}. Install with: pip install onnxruntime transformers"
         )
 
 
@@ -97,6 +96,7 @@ def score_with_onnx(titles: list[str], max_length: int = 128) -> float:
 
     try:
         import json
+
         config_path = ONNX_MODEL_DIR / "config.json"
         label_map = {0: "neutral"}
         if config_path.exists():
@@ -149,12 +149,34 @@ def score_with_onnx(titles: list[str], max_length: int = 128) -> float:
 def _keyword_sentiment(titles: list[str]) -> float:
     """Fallback keyword-based sentiment when ONNX model is unavailable."""
     positive_words = [
-        "bull", "surge", "rally", "gain", "rise", "up", "green",
-        "profit", "moon", "breakout", "ath", "pump", "buy",
+        "bull",
+        "surge",
+        "rally",
+        "gain",
+        "rise",
+        "up",
+        "green",
+        "profit",
+        "moon",
+        "breakout",
+        "ath",
+        "pump",
+        "buy",
     ]
     negative_words = [
-        "bear", "crash", "drop", "fall", "down", "red", "loss",
-        "dump", "bleed", "fud", "scam", "hack", "liquidat",
+        "bear",
+        "crash",
+        "drop",
+        "fall",
+        "down",
+        "red",
+        "loss",
+        "dump",
+        "bleed",
+        "fud",
+        "scam",
+        "hack",
+        "liquidat",
     ]
 
     score = 0.0

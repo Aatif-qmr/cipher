@@ -14,6 +14,7 @@ def _make_df(n=5):
 
 def test_merge_macro_data_no_file(tmp_path, monkeypatch):
     import indicators.macro_merge as mm
+
     monkeypatch.setattr(mm, "_MACRO_FILE", tmp_path / "nonexistent.json")
     df = _make_df()
     result = merge_macro_data(df)
@@ -26,10 +27,18 @@ def test_merge_macro_data_with_file(tmp_path, monkeypatch):
     import indicators.macro_merge as mm
 
     macro_file = tmp_path / "macro_history.json"
-    macro_file.write_text(json.dumps([
-        {"timestamp": "2026-01-01T00:00:00", "dxy_24h_change": 0.5,
-         "btc_funding_rate": 0.01, "btc_open_interest": 1000.0},
-    ]))
+    macro_file.write_text(
+        json.dumps(
+            [
+                {
+                    "timestamp": "2026-01-01T00:00:00",
+                    "dxy_24h_change": 0.5,
+                    "btc_funding_rate": 0.01,
+                    "btc_open_interest": 1000.0,
+                },
+            ]
+        )
+    )
     monkeypatch.setattr(mm, "_MACRO_FILE", macro_file)
     df = _make_df()
     result = merge_macro_data(df)

@@ -9,6 +9,7 @@ if str(BASE_DIR) not in sys.path:
 
 from sentiment.reader import get_current_sentiment
 
+
 def get_sentiment_score():
     """Returns the current sentiment score (-1.0 to 1.0)."""
-    return get_current_sentiment().get('score', 0.0)
+    return get_current_sentiment().get("score", 0.0)

@@ -27,6 +27,7 @@ def control_hyperopt(action: str, strategy: str | None = None) -> str:
             start_study,
             stop_study,
         )
+
         if action == "status":
             return json.dumps(get_study_status(strategy))
         elif action == "start":
@@ -42,7 +43,9 @@ def control_hyperopt(action: str, strategy: str | None = None) -> str:
                 return json.dumps({"error": "strategy name required for results"})
             return json.dumps(get_best_params(strategy), default=str)
         else:
-            return json.dumps({"error": f"unknown action: {action}. Use: status/start/stop/results"})
+            return json.dumps(
+                {"error": f"unknown action: {action}. Use: status/start/stop/results"}
+            )
     except ImportError:
         return json.dumps({"error": "distributed hyperopt not installed — run: uv add optuna ray"})
     except Exception as e:

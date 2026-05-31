@@ -22,6 +22,7 @@ from pathlib import Path
 
 try:
     import polars as pl
+
     _HAS_POLARS = True
 except ImportError:
     _HAS_POLARS = False
@@ -68,9 +69,7 @@ def load_ohlcv(
 
     # Ensure date column is datetime
     if date_column in df.columns and df[date_column].dtype != pl.Datetime:
-        df = df.with_columns(
-            pl.col(date_column).str.to_datetime(strict=False).alias(date_column)
-        )
+        df = df.with_columns(pl.col(date_column).str.to_datetime(strict=False).alias(date_column))
 
     # Sort by date ascending for time-series operations
     if sort and date_column in df.columns:
@@ -185,6 +184,7 @@ def memory_comparison(path: str | Path) -> dict:
     # Pandas
     try:
         import pandas as pd
+
         df_pd = pd.read_csv(str(filepath), parse_dates=["date"])
         results["pandas_mb"] = round(df_pd.memory_usage(deep=True).sum() / (1024 * 1024), 2)
         results["pandas_rows"] = len(df_pd)
@@ -193,8 +193,6 @@ def memory_comparison(path: str | Path) -> dict:
         results["pandas_error"] = str(e)
 
     if "polars_mb" in results and "pandas_mb" in results:
-        results["savings_pct"] = round(
-            (1 - results["polars_mb"] / results["pandas_mb"]) * 100, 1
-        )
+        results["savings_pct"] = round((1 - results["polars_mb"] / results["pandas_mb"]) * 100, 1)
 
     return results

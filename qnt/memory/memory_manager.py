@@ -23,19 +23,20 @@ M2_IP = os.getenv("M2_TAILSCALE_IP", "100.74.110.36")
 M1_USER = "aatifquamre"
 M2_USER = "azmatsaif"
 
+
 def get_device_identity():
     """Detect if running on M1 or M2 and return identity dict."""
     username = os.getenv("USER") or os.getenv("USERNAME")
     hostname = socket.gethostname()
     cwd = os.getcwd()
-    
+
     if "azmatsaif" in cwd or username == M2_USER:
         return {
             "device": "M2",
             "username": M2_USER,
             "hostname": hostname,
             "role": "intelligence",
-            "cipher_path": M2_PATH
+            "cipher_path": M2_PATH,
         }
     else:
         return {
@@ -43,22 +44,24 @@ def get_device_identity():
             "username": M1_USER,
             "hostname": hostname,
             "role": "execution",
-            "cipher_path": M1_PATH
+            "cipher_path": M1_PATH,
         }
+
 
 IDENTITY = get_device_identity()
 MEMORY_FILE = IDENTITY["cipher_path"] / MEMORY_DIR / MEMORY_FILENAME
 
+
 def create_initial_memory():
     return {
         "version": "1.0",
-        "created": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
-        "last_updated": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        "created": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "last_updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "last_sync_m2": None,
         "action_log": [],
         "device_state": {
             "M1": {"last_seen": None, "last_action": None, "hostname": None},
-            "M2": {"last_seen": None, "last_action": None, "hostname": None}
+            "M2": {"last_seen": None, "last_action": None, "hostname": None},
         },
         "decisions": [],
         "site_maps": {},
@@ -66,16 +69,17 @@ def create_initial_memory():
         "strategy_history": [],
         "escalation_log": [],
         "autonomous_actions_today": 0,
-        "autonomous_actions_total": 0
+        "autonomous_actions_total": 0,
     }
+
 
 def load_memory():
     """Read memory file with file locking."""
     if not MEMORY_FILE.exists():
         return create_initial_memory()
-    
+
     try:
-        with open(MEMORY_FILE, 'r') as f:
+        with open(MEMORY_FILE, "r") as f:
             fcntl.flock(f, fcntl.LOCK_SH)
             data = json.load(f)
             fcntl.flock(f, fcntl.LOCK_UN)
@@ -83,83 +87,91 @@ def load_memory():
     except (json.JSONDecodeError, IOError):
         return create_initial_memory()
 
+
 def save_memory(data):
     """Save memory file atomically with file locking."""
     # Ensure directory exists
     MEMORY_FILE.parent.mkdir(parents=True, exist_ok=True)
-    
-    data["last_updated"] = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    data["last_updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     temp_file = MEMORY_FILE.with_name(f"{MEMORY_FILE.name}.tmp.{os.getpid()}")
-    
-    with open(temp_file, 'w') as f:
+
+    with open(temp_file, "w") as f:
         fcntl.flock(f, fcntl.LOCK_EX)
         json.dump(data, f, indent=2)
         f.flush()
         os.fsync(f.fileno())
         fcntl.flock(f, fcntl.LOCK_UN)
-        
+
     os.rename(temp_file, MEMORY_FILE)
     os.chmod(MEMORY_FILE, 0o600)
+
 
 def log_action(action, result, device=None, escalated=False, notify=False):
     """Append entry to action log and update state counters."""
     if device is None:
         device = IDENTITY["device"]
-        
+
     if device == "M2" and IDENTITY["device"] == "M2":
         # Remote write from M2 to M1
-        return write_from_m2({"action": "log_action", "args": [action, result, device, escalated, notify]})
+        return write_from_m2(
+            {"action": "log_action", "args": [action, result, device, escalated, notify]}
+        )
 
     data = load_memory()
-    
+
     entry = {
-        "timestamp": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "device": device,
         "action": action,
         "result": result,
         "escalated": escalated,
-        "notified": notify
+        "notified": notify,
     }
-    
+
     data["action_log"].append(entry)
-    
+
     # Trim log
     if len(data["action_log"]) > MAX_ACTION_LOG_ENTRIES:
         data["action_log"] = data["action_log"][-MAX_ACTION_LOG_ENTRIES:]
-        
+
     # Update state
     data["device_state"][device]["last_seen"] = entry["timestamp"]
     data["device_state"][device]["last_action"] = action
     data["device_state"][device]["hostname"] = IDENTITY["hostname"]
-    
+
     data["autonomous_actions_total"] += 1
     # Simple check for 'today' (UTC)
-    data["autonomous_actions_today"] += 1 
-    
+    data["autonomous_actions_today"] += 1
+
     save_memory(data)
+
 
 def log_decision(situation, options, chosen, reasoning, device=None):
     """Append entry to decisions log."""
     if device is None:
         device = IDENTITY["device"]
-        
+
     if device == "M2" and IDENTITY["device"] == "M2":
-        return write_from_m2({"action": "log_decision", "args": [situation, options, chosen, reasoning, device]})
+        return write_from_m2(
+            {"action": "log_decision", "args": [situation, options, chosen, reasoning, device]}
+        )
 
     data = load_memory()
-    
+
     entry = {
-        "timestamp": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "device": device,
         "situation": situation,
         "options_presented": options,
         "chosen": chosen,
         "reasoning": reasoning,
-        "outcome": None
+        "outcome": None,
     }
-    
+
     data["decisions"].append(entry)
     save_memory(data)
+
 
 def update_decision_outcome(timestamp, outcome):
     """Find decision by timestamp and update outcome."""
@@ -173,12 +185,13 @@ def update_decision_outcome(timestamp, outcome):
             break
     save_memory(data)
 
+
 def get_recent_actions(hours=24, device=None):
     """Filter actions from last N hours."""
     data = load_memory()
     now = datetime.now(timezone.utc)
     threshold = now.timestamp() - (hours * 3600)
-    
+
     recent = []
     for entry in data["action_log"]:
         # Naive parse of ISO format
@@ -189,8 +202,9 @@ def get_recent_actions(hours=24, device=None):
                     recent.append(entry)
         except ValueError:
             continue
-            
+
     return recent
+
 
 def check_connectivity():
     """Test internet connectivity via DNS port."""
@@ -201,19 +215,22 @@ def check_connectivity():
     except socket.error:
         return False
 
+
 def write_from_m2(data_update):
     """Initiate remote write from M2 to M1 via SSH."""
     if IDENTITY["device"] != "M2":
         return False
-        
+
     payload = json.dumps(data_update)
     # The remote command on M1 will be memory_manager.py's CLI interface
     cmd = [
-        "ssh", "-o", "ConnectTimeout=10",
+        "ssh",
+        "-o",
+        "ConnectTimeout=10",
         f"{M1_USER}@{os.getenv('M1_IP', '100.90.68.42')}",
-        f"python3 {M1_PATH}/qnt/memory/memory_manager.py --apply-update"
+        f"python3 {M1_PATH}/qnt/memory/memory_manager.py --apply-update",
     ]
-    
+
     try:
         proc = subprocess.run(cmd, input=payload, text=True, capture_output=True)
         return proc.returncode == 0
@@ -221,15 +238,17 @@ def write_from_m2(data_update):
         print(f"Remote write failed: {e}")
         return False
 
+
 if __name__ == "__main__":
     import sys
+
     if "--apply-update" in sys.argv:
         # Receiver logic on M1
         try:
             payload = json.load(sys.stdin)
             action = payload.get("action")
             args = payload.get("args", [])
-            
+
             if action == "log_action":
                 log_action(*args)
             elif action == "log_decision":
