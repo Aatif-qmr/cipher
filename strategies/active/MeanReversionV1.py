@@ -20,47 +20,12 @@ from risk.correlation_guard import is_blocked as corr_blocked
 from sentiment.reader import get_current_sentiment, get_sentiment_signal, get_funding_rate
 from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
 from qnt.thesis.thesis_reader import read_thesis
+from indicators.macro_merge import merge_macro_data
 
 logger = logging.getLogger(__name__)
 
 _partial_exits_done: set = set()
 
-def merge_macro_data(dataframe: DataFrame) -> DataFrame:
-    """
-    Injects macro covariates (DXY, Funding, OI) into the dataframe.
-    Uses timestamp-based merging to prevent look-ahead bias.
-    """
-    try:
-        history_file = _BASE / 'risk/macro_history.json'
-        if not history_file.exists():
-            dataframe['dxy_24h_change'] = 0.0
-            dataframe['btc_funding_rate'] = 0.0
-            dataframe['btc_open_interest'] = 0.0
-            return dataframe
-
-        with open(history_file, 'r') as f:
-            history = json.load(f)
-
-        macro_df = pd.DataFrame(history)
-        macro_df['date'] = pd.to_datetime(macro_df['timestamp'], format='ISO8601')
-        macro_df = macro_df.sort_values('date')
-
-        # Ensure main dataframe is sorted by date for asof merge
-        dataframe = dataframe.sort_values('date')
-
-        dataframe = pd.merge_asof(
-            dataframe,
-            macro_df[['date', 'dxy_24h_change', 'btc_funding_rate', 'btc_open_interest']],
-            on='date',
-            direction='backward'
-        )
-
-        dataframe[['dxy_24h_change', 'btc_funding_rate', 'btc_open_interest']] = \
-            dataframe[['dxy_24h_change', 'btc_funding_rate', 'btc_open_interest']].fillna(0.0)
-
-        return dataframe
-    except Exception as e:
-        return dataframe
 
 class MeanReversionV1(IStrategy):
     INTERFACE_VERSION = 3

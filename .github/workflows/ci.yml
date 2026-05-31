@@ -7,6 +7,35 @@ on:
     branches: [ main ]
 
 jobs:
+  rust:
+    name: Rust — Clippy + Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust stable + clippy
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust_engine/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('rust_engine/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Clippy (deny warnings)
+        working-directory: rust_engine
+        run: cargo clippy -- -D warnings
+
+      - name: Cargo tests
+        working-directory: rust_engine
+        run: cargo test --release
+
   ci:
     name: Run Linting, Formatting, and Tests
     runs-on: ubuntu-latest
@@ -40,4 +69,4 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          uv run pytest risk/test_risk_manager.py sentiment/test_pipeline.py -v
+          uv run pytest risk/test_risk_manager.py sentiment/test_pipeline.py tests/test_indicators.py tests/test_event_bus.py -v
