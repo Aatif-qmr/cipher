@@ -18,12 +18,11 @@ fn euclidean_sq(a: &[f64], b: &[f64]) -> f64 {
 /// Returns (best_index, min_euclidean_distance).
 /// Used when calling one-shot from Python without batching.
 #[pyfunction]
-fn find_closest_match(
-    query: Vec<f64>,
-    hist_matrix: Vec<Vec<f64>>,
-) -> PyResult<(usize, f64)> {
+fn find_closest_match(query: Vec<f64>, hist_matrix: Vec<Vec<f64>>) -> PyResult<(usize, f64)> {
     if hist_matrix.is_empty() {
-        return Err(pyo3::exceptions::PyValueError::new_err("hist_matrix is empty"));
+        return Err(pyo3::exceptions::PyValueError::new_err(
+            "hist_matrix is empty",
+        ));
     }
 
     let (best_idx, min_dist) = hist_matrix
@@ -78,11 +77,7 @@ fn find_all_closest_matches(
             if end_idx == 0 {
                 return 0.0;
             }
-            let start_idx = if end_idx > vault_lookback {
-                end_idx - vault_lookback
-            } else {
-                0
-            };
+            let start_idx = end_idx.saturating_sub(vault_lookback);
 
             let query = &feature_matrix[i];
             let (best_offset, _) = feature_matrix[start_idx..end_idx]
@@ -90,7 +85,11 @@ fn find_all_closest_matches(
                 .enumerate()
                 .map(|(j, row)| (j, euclidean_sq(query, row)))
                 .fold((0usize, f64::INFINITY), |(bi, bd), (j, d)| {
-                    if d < bd { (j, d) } else { (bi, bd) }
+                    if d < bd {
+                        (j, d)
+                    } else {
+                        (bi, bd)
+                    }
                 });
 
             future_returns[start_idx + best_offset]
@@ -163,7 +162,10 @@ mod tests {
         // both same distance → first wins
         assert!(preds[4] > 0.0, "Expected non-zero prediction at index 4");
         assert_eq!(preds[0], 0.0, "Expected 0.0 for first row");
-        assert_eq!(preds[1], 0.0, "Expected 0.0 for second row (i<forward_prediction)");
+        assert_eq!(
+            preds[1], 0.0,
+            "Expected 0.0 for second row (i<forward_prediction)"
+        );
     }
 
     #[test]
