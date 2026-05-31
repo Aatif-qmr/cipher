@@ -1,7 +1,6 @@
-# Links PyO3 cdylib test binaries against the venv Python 3.12 framework.
-# Needed because `cargo test` on macOS can't find Python symbols without this.
+# macOS ARM64: suppress undefined-symbol errors for `cargo test` on PyO3 cdylibs.
+# When loaded as a Python extension (maturin develop), symbols resolve from the
+# running Python process — do NOT link libpython explicitly here.
+# For unit tests that don't embed Python, use `cargo test --features pyo3/auto-initialize`.
 [target.aarch64-apple-darwin]
-rustflags = [
-  "-L", "/opt/homebrew/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/lib",
-  "-lpython3.12",
-]
+rustflags = ["-C", "link-arg=-undefined", "-C", "link-arg=dynamic_lookup"]
