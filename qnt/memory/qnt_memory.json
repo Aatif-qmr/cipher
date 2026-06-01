@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "created": "2026-05-22T11:30:04Z",
-  "last_updated": "2026-05-24T01:30:26Z",
+  "last_updated": "2026-06-01T02:46:01Z",
   "last_sync_m2": "2026-05-24T01:40:03.387358Z",
   "action_log": [
     {
@@ -2091,12 +2091,20 @@
       "result": "completed",
       "escalated": false,
       "notified": false
+    },
+    {
+      "timestamp": "2026-06-01T02:46:01Z",
+      "device": "M1",
+      "action": "risk_audit_fail",
+      "result": "1 fails, 0 warns",
+      "escalated": true,
+      "notified": false
     }
   ],
   "device_state": {
     "M1": {
-      "last_seen": "2026-05-24T01:30:26Z",
-      "last_action": "oracle_sentiment_check",
+      "last_seen": "2026-06-01T02:46:01Z",
+      "last_action": "risk_audit_fail",
       "hostname": "Aatifs-MacBook-Air.local"
     },
     "M2": {
@@ -2108,13 +2116,13 @@
   "decisions": [],
   "site_maps": {},
   "calendar_cache": {
-    "last_fetched": "2026-05-23T21:30:58.881411Z",
+    "last_fetched": "2026-06-01T02:44:29.763293Z",
     "events": []
   },
   "strategy_history": [],
   "escalation_log": [],
-  "autonomous_actions_today": 261,
-  "autonomous_actions_total": 261,
-  "shield_last_escalation_time": "2026-05-23T08:30:05.597498+00:00Z",
-  "shield_last_alert_time": "2026-05-23T10:30:07.636855+00:00Z"
+  "autonomous_actions_today": 262,
+  "autonomous_actions_total": 262,
+  "shield_last_escalation_time": "2026-05-23T08:30:05.597498+00:00",
+  "shield_last_alert_time": "2026-06-01T02:46:01.159998+00:00Z"
 }

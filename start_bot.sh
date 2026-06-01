@@ -31,16 +31,16 @@ echo "[3/7] Updating supervisord config..." | tee -a "$LOG"
 sed -i '' "s|--config [^ ]*config[^ ]*\.json|--config $CONFIG|" "$CIPHER_DIR/config/supervisord.conf"
 
 echo "[4/7] Starting supervisord..." | tee -a "$LOG"
-SCTL="$CIPHER_DIR/venv/bin/supervisorctl -c $CIPHER_DIR/config/supervisord.conf"
+SCTL="$CIPHER_DIR/.venv/bin/supervisorctl -c $CIPHER_DIR/config/supervisord.conf"
 if $SCTL status > /dev/null 2>&1; then
     $SCTL reload
 else
-    "$CIPHER_DIR/venv/bin/supervisord" -c "$CIPHER_DIR/config/supervisord.conf"
+    "$CIPHER_DIR/.venv/bin/supervisord" -c "$CIPHER_DIR/config/supervisord.conf"
 fi
 sleep 30
 
 echo "[5/7] Running health check..." | tee -a "$LOG"
-"$CIPHER_DIR/venv/bin/python" "$CIPHER_DIR/automation/health_check.py"
+"$CIPHER_DIR/.venv/bin/python3" "$CIPHER_DIR/automation/health_check.py"
 
 echo "[6/7] Enabling caffeinate..." | tee -a "$LOG"
 pkill caffeinate 2>/dev/null

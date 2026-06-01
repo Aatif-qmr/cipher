@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 # Patch secret before importing app so _SECRET is set at module load
 os.environ["TV_WEBHOOK_SECRET"] = "test-secret"
 
-from mcp.webhook import WebhookPayload, app  # noqa: E402
+from cipher_mcp.webhook import WebhookPayload, app  # noqa: E402
 
 client = TestClient(app, raise_server_exceptions=False)
 
@@ -180,7 +180,7 @@ def test_batch_empty_array():
 
 
 def test_emit_signal_falls_back_when_bus_unavailable():
-    from mcp.webhook import _emit_signal
+    from cipher_mcp.webhook import _emit_signal
 
     payload = WebhookPayload(secret="test-secret", strategy="ScalpV1", pair="BTC/USDT", side="buy")
     with patch("mcp.webhook.get_bus" if False else "builtins.__import__", side_effect=ImportError):

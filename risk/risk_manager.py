@@ -484,7 +484,10 @@ def check_consecutive_losses(recent_trades: list, max_consecutive: int = 3) -> b
         if last_loss_time:
             if isinstance(last_loss_time, str):
                 try:
-                    last_loss_time = datetime.fromisoformat(last_loss_time.replace("Z", "+00:00"))
+                    import re as _re
+                    # Strip any existing TZ suffix (+HH:MM or Z) then normalise to +00:00
+                    _clean = _re.sub(r"([+\-]\d{2}:\d{2})+Z?$|Z$", "", last_loss_time)
+                    last_loss_time = datetime.fromisoformat(_clean + "+00:00")
                 except ValueError:
                     pass
             if isinstance(last_loss_time, datetime):
