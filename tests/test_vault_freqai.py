@@ -134,7 +134,7 @@ class TestVectorVaultV1Features:
     @pytest.fixture()
     def strategy(self):
         """Instantiate VectorVaultV1 without a real bot config."""
-        from strategies.active.VectorVaultV1 import VectorVaultV1
+        from strategies.archive.VectorVaultV1 import VectorVaultV1
 
         s = VectorVaultV1.__new__(VectorVaultV1)
         s.freqai_info = {
@@ -198,7 +198,7 @@ class TestVectorVaultV1Features:
 class TestVectorVaultV1Signals:
     @pytest.fixture()
     def strategy(self):
-        from strategies.active.VectorVaultV1 import VectorVaultV1
+        from strategies.archive.VectorVaultV1 import VectorVaultV1
 
         s = VectorVaultV1.__new__(VectorVaultV1)
         s.freqai_info = {"feature_parameters": {"label_period_candles": 5, "vault_lookback": 1000}}

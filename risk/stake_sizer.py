@@ -37,8 +37,10 @@ DB_MAP = {
 
 MIN_TRADES = 15
 ROLLING_N = 40
-FLOOR = 0.5
-CEILING = 2.0
+FLOOR = 0.25       # quarter-Kelly floor
+CEILING = 1.5      # reduced ceiling (was 2.0 — full Kelly is too aggressive for unproven edges)
+KELLY_FRACTION = 0.25  # fractional Kelly to reduce variance
+MIN_WIN_RATE = 0.45  # below this WR, halt trading (return 0.0)
 CACHE_TTL = 1800  # 30 minutes
 
 _cache: dict[str, tuple[float, float]] = {}
@@ -57,12 +59,22 @@ _TRADE_QUERY_SQLITE = (
 
 
 def _compute_multiplier(win_rate: float) -> float:
-    """Kelly multiplier computed in Decimal to avoid float accumulation error."""
+    """
+    Quarter-Kelly multiplier.
+    Returns 0.0 (halt) if win_rate < MIN_WIN_RATE — negative-edge protection.
+    Formula: clamp(quarter_kelly, FLOOR, CEILING)
+    quarter_kelly = 0.25 × (2×WR - 1) / (1 - WR)  [simplified for 1:1 R/R]
+    """
+    if win_rate < MIN_WIN_RATE:
+        return 0.0  # Win rate too low — halt trading for this strategy
     wr = Decimal(str(win_rate))
     floor = Decimal(str(FLOOR))
     ceiling = Decimal(str(CEILING))
-    raw = Decimal("1.0") + (wr - Decimal("0.50")) * Decimal("2.0")
-    clamped = max(floor, min(ceiling, raw))
+    kf = Decimal(str(KELLY_FRACTION))
+    # Full Kelly for 1:1 R/R: K = 2p - 1; fractional: K * KELLY_FRACTION
+    full_kelly = Decimal("2.0") * wr - Decimal("1.0")
+    fractional = full_kelly * kf
+    clamped = max(floor, min(ceiling, fractional))
     return float(clamped.quantize(Decimal("0.01"), rounding=ROUND_HALF_EVEN))
 
 
@@ -168,7 +180,7 @@ def get_stake_multiplier(strategy: str) -> float:
         profits = _fetch_via_sqlite(DB_MAP.get(strategy, Path("/nonexistent")))
 
     if profits is None or len(profits) < MIN_TRADES:
-        return 1.0
+        return FLOOR  # Not enough history — use floor, not 1.0
 
     win_rate = sum(1 for p in profits if p > 0) / len(profits)
     multiplier = _compute_multiplier(win_rate)

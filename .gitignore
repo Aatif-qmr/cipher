@@ -12,7 +12,19 @@ temp_venv/
 
 # Secrets / credentials
 .env
+# All strategy-specific configs may contain API keys or credentials.
+# Only templates (*.template) and the base paper config template are tracked.
 config/config_paper.json
+config/config_scalp.json
+config/config_bear_scalp.json
+config/config_daily.json
+config/config_mean_reversion.json
+config/config_micro.json
+config/config_swing.json
+config/config_trend_follow.json
+config/config_freqai.json
+config/config_hyperliquid.json
+config/port_8085.json
 
 # Runtime logs and databases
 *.log

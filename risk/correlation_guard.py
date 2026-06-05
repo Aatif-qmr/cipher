@@ -19,7 +19,7 @@ DB_PATHS = [
     BASE_DIR / "user_data/daily.sqlite",
 ]
 
-MAX_LONG_SLOTS_PER_BASE = 2  # allow up to 2 concurrent longs on same asset
+MAX_LONG_SLOTS_PER_BASE = 1  # only 1 concurrent long per base asset (was 2)
 CACHE_TTL = 60  # re-scan all DBs every 60 seconds
 
 _cache: dict = {"data": None, "expires": 0.0}

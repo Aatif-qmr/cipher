@@ -33,23 +33,22 @@ def load_hmm_model():
         import subprocess
 
         try:
-            # Try to fetch from M2
             subprocess.run(
                 ["scp", f"{m2_user}@{m2_ip}:{m2_path}", str(local_path)], check=True, timeout=30
             )
         except Exception as e:
-            print(f"Error loading HMM model from M2: {e}")
+            print(f"[HMM] FAIL-SAFE: Cannot fetch model from M2: {e}. Returning None → NO_TRADE.")
             return None
     try:
         return joblib.load(local_path)
     except Exception:
-        # Fallback to pickle if joblib fails (since the other machine might use pickle)
         import pickle
 
         try:
             with open(local_path, "rb") as f:
                 return pickle.load(f)
-        except Exception:
+        except Exception as e:
+            print(f"[HMM] FAIL-SAFE: Cannot load model file: {e}. Returning None → NO_TRADE.")
             return None
 
 
@@ -70,7 +69,7 @@ def detect_regime(dataframe, pair: str = "BTC/USDT") -> str:
 
     model_data = load_hmm_model()
     if model_data is None:
-        return "RANGING"  # Safe default
+        return "UNKNOWN"  # Fail-safe: no model → no trade (see get_regime_for_strategy)
 
     # Handle both raw model and payload dict
     if isinstance(model_data, dict):
@@ -93,7 +92,7 @@ def detect_regime(dataframe, pair: str = "BTC/USDT") -> str:
             df_pl = dataframe
 
         if len(df_pl) < 10:
-            return "RANGING"
+            return "UNKNOWN"
 
         # Fast vectorized polars log returns
         returns = (
@@ -105,7 +104,7 @@ def detect_regime(dataframe, pair: str = "BTC/USDT") -> str:
         )
 
         if len(returns) < 10:
-            return "RANGING"
+            return "UNKNOWN"
 
         # Predict most likely state
         states = model.predict(returns)
@@ -132,25 +131,27 @@ def detect_regime(dataframe, pair: str = "BTC/USDT") -> str:
         _regime_cache[pair] = (result, time.time() + _REGIME_CACHE_TTL)
         return result
     except Exception as e:
-        print(f"HMM Detection Error: {e}")
-        return "RANGING"
+        print(f"[HMM] FAIL-SAFE: Detection error: {e}. Returning UNKNOWN → NO_TRADE.")
+        return "UNKNOWN"
 
 
 def get_regime_for_strategy(strategy_name: str, current_regime: str) -> bool:
     """
     Returns True if strategy should trade in current regime.
-    MicroScalpV1: trades in all regimes but reduces size in BEAR
+    UNKNOWN means model unavailable → fail-safe → no trade.
     """
+    if current_regime == "UNKNOWN":
+        return False  # Fail-safe: model unavailable, do not trade
     if strategy_name == "MicroScalpV1":
-        return True  # Always allowed, size adjusted elsewhere
+        return True
     if strategy_name in ["MeanReversionV1", "ScalpV1"]:
-        return current_regime != "BULL"  # Mean-rev underperforms in strong trends
+        return current_regime != "BULL"
     if strategy_name in ["TrendFollowV1", "DailyTrendV1"]:
-        return current_regime != "RANGING"  # Trend strategies need direction
+        return current_regime != "RANGING"
     if strategy_name == "SwingV1":
-        return current_regime == "BULL"  # EMA crossovers need a trending bull market
+        return current_regime == "BULL"
     if strategy_name == "BearScalpV1":
-        return current_regime == "BEAR"  # Short-only strategy
+        return current_regime == "BEAR"
     return True
 
 
