@@ -11,7 +11,7 @@ jobs:
     name: Rust — Clippy + Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python 3.12 (PyO3 link target)
         uses: actions/setup-python@v5
@@ -54,7 +54,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
           fetch-depth: 0
