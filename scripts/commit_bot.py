@@ -1,14 +1,15 @@
+import datetime
+import json
 import os
 import random
-import datetime
 import subprocess
-import json
 import sys
 
 STATE_FILE = ".commit_bot_state.json"
 ACTIVITY_FILE = "activity.log"
 MIN_COMMITS = 50
 MAX_COMMITS = 85
+
 
 def get_previous_count():
     if os.path.exists(STATE_FILE):
@@ -20,9 +21,11 @@ def get_previous_count():
             return 0
     return 0
 
+
 def save_current_count(count):
     with open(STATE_FILE, "w") as f:
         json.dump({"last_count": count}, f)
+
 
 def generate_commits(dry_run=False):
     previous_count = get_previous_count()
@@ -43,12 +46,15 @@ def generate_commits(dry_run=False):
 
         if not dry_run:
             with open(ACTIVITY_FILE, "a") as f:
-                f.write(f"Commit {i+1}/{count} at {timestamp}\n")
+                f.write(f"Commit {i + 1}/{count} at {timestamp}\n")
 
             subprocess.run(["git", "add", "-f", ACTIVITY_FILE, STATE_FILE], check=True)
-            subprocess.run(["git", "commit", "-m", f"chore: daily activity {timestamp}"], check=True)
+            subprocess.run(
+                ["git", "commit", "-m", f"chore: daily activity {timestamp}"], check=True
+            )
 
     print(f"Successfully generated {count} commits.")
+
 
 if __name__ == "__main__":
     dry_run = "--dry-run" in sys.argv
