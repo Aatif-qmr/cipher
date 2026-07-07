@@ -34,6 +34,9 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
+      - name: Install freqtrade
+        run: uv pip install -e ./freqtrade
+
       - name: Find changed strategies
         id: changed
         run: |
@@ -46,7 +49,7 @@ jobs:
 
       - name: Download minimal test data
         run: |
-          freqtrade download-data \
+          uv run freqtrade download-data \
             --pairs BTC/USDT \
             --timeframes 1h \
             --days 30 \
@@ -72,7 +75,7 @@ jobs:
               print(f"Testing: {strat_name}")
 
               result = subprocess.run([
-                  'freqtrade', 'backtesting',
+                  'uv', 'run', 'freqtrade', 'backtesting',
                   '--strategy', strat_name,
                   '--strategy-path', 'strategies/active/',
                   '--timerange', '20260101-20260430',
