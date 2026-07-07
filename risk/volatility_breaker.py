@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import logging
 import time
-from collections import deque
 
 import numpy as np
 
@@ -101,7 +100,9 @@ def is_vol_elevated(dataframe, pair: str, candles_per_day: int = 24) -> bool:
             "New entries blocked. Review open positions."
         )
     elif ratio > 2.0:
-        logger.info(f"[VOL BREAKER] {pair} vol={ratio:.2f}× median — ELEVATED. New entries blocked.")
+        logger.info(
+            f"[VOL BREAKER] {pair} vol={ratio:.2f}× median — ELEVATED. New entries blocked."
+        )
 
     return ratio > 2.0
 
