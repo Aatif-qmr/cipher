@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 import nats
@@ -28,20 +29,28 @@ MACRO_PATH = BASE_DIR / "risk/macro_state.json"
 REGIME_PATH = BASE_DIR / "qnt/oracle/current_regime.json"
 ORDERFLOW_PATH = BASE_DIR / "qnt/oracle/order_flow_live.json"
 
+# Locks to prevent concurrent file writes
+_FILE_LOCKS = defaultdict(asyncio.Lock)
+
+
+def _write_json_file(path, data):
+    with open(path, "w") as f:
+        json.dump(data, f, indent=2)
+
 
 async def handle_sentiment(msg):
     """Instantly write new sentiment to disk."""
     data = json.loads(msg.data.decode())
-    with open(SCORES_PATH, "w") as f:
-        json.dump(data, f, indent=2)
+    async with _FILE_LOCKS[SCORES_PATH]:
+        await asyncio.to_thread(_write_json_file, SCORES_PATH, data)
     print(f"[NATS] Sentiment updated: {data.get('score', '?'):.3f}")
 
 
 async def handle_macro(msg):
     """Instantly write macro state to disk."""
     data = json.loads(msg.data.decode())
-    with open(MACRO_PATH, "w") as f:
-        json.dump(data, f, indent=2)
+    async with _FILE_LOCKS[MACRO_PATH]:
+        await asyncio.to_thread(_write_json_file, MACRO_PATH, data)
     print(f"[NATS] Macro updated: DXY={data.get('dxy_24h_change', '?')}")
 
 
@@ -49,16 +58,16 @@ async def handle_regime(msg):
     """Instantly write HMM regime to disk."""
     data = json.loads(msg.data.decode())
     # Save as simple JSON
-    with open(REGIME_PATH, "w") as f:
-        json.dump(data, f, indent=2)
+    async with _FILE_LOCKS[REGIME_PATH]:
+        await asyncio.to_thread(_write_json_file, REGIME_PATH, data)
     print(f"[NATS] Regime updated: {data.get('regime', '?')}")
 
 
 async def handle_orderflow_live(msg):
     """Instantly update live order flow (CVD) data."""
     data = json.loads(msg.data.decode())
-    with open(ORDERFLOW_PATH, "w") as f:
-        json.dump(data, f, indent=2)
+    async with _FILE_LOCKS[ORDERFLOW_PATH]:
+        await asyncio.to_thread(_write_json_file, ORDERFLOW_PATH, data)
     # Silent for high-frequency updates
 
 
