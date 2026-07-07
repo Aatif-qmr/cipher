@@ -14,7 +14,7 @@ MAX_COMMITS = 85
 def get_previous_count():
     if os.path.exists(STATE_FILE):
         try:
-            with open(STATE_FILE, "r") as f:
+            with open(STATE_FILE) as f:
                 data = json.load(f)
                 return data.get("last_count", 0)
         except Exception:

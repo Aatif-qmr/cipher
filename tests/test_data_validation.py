@@ -2,7 +2,6 @@
 
 import numpy as np
 import pandas as pd
-import pytest
 
 from qnt.data.validation import ValidationResult, validate_ohlcv
 
