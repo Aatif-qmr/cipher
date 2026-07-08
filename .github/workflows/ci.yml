@@ -70,6 +70,7 @@ jobs:
       - name: Install Dependencies
         run: |
           uv sync --frozen --extra dev
+          uv pip install -e ./freqtrade
 
       - name: Run Ruff Format Check
         run: |
