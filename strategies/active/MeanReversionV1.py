@@ -339,9 +339,7 @@ class MeanReversionV1(IStrategy):
 
             sentiment = get_current_sentiment()
             signal = get_sentiment_signal()
-            logger.info(
-                f"[Sentiment] {pair} | Score: {sentiment['score']:.3f} | Signal: {signal}"
-            )
+            logger.info(f"[Sentiment] {pair} | Score: {sentiment['score']:.3f} | Signal: {signal}")
 
         except Exception as e:
             logger.error(f"[RISK WARNING] Risk check error: {e}")
@@ -354,9 +352,7 @@ class MeanReversionV1(IStrategy):
         if side == "long":
             funding = get_funding_rate()
             if funding < -0.5:
-                logger.info(
-                    f"[FUNDING BLOCK] MeanReversionV1 {pair} funding={funding:.2f}"
-                )
+                logger.info(f"[FUNDING BLOCK] MeanReversionV1 {pair} funding={funding:.2f}")
                 return False
 
         return True
