@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import logging
 import time
-from collections import deque
 
 import numpy as np
 
