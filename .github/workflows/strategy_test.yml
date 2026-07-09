@@ -72,6 +72,14 @@ jobs:
               print(f"Testing: {strat_name}")
 
               result = subprocess.run([
+                  'freqtrade', 'create-userdir',
+                  '--userdir', '/tmp/user_data',
+              ], capture_output=True, text=True)
+
+              with open('/tmp/user_data/config.json', 'w') as f:
+                  json.dump({"exchange": {"name": "binance"}, "dry_run": True, "stake_currency": "USDT", "stake_amount": 100}, f)
+
+              result = subprocess.run([
                   'freqtrade', 'backtesting',
                   '--strategy', strat_name,
                   '--strategy-path', 'strategies/active/',
@@ -79,6 +87,9 @@ jobs:
                   '--timeframe', '1h',
                   '--datadir', '/tmp/testdata',
                   '--export', 'none',
+                  '--userdir', '/tmp/user_data',
+                  '--config', '/tmp/user_data/config.json',
+                  '--offline-trade'
               ], capture_output=True, text=True, timeout=120)
 
               if result.returncode != 0:
