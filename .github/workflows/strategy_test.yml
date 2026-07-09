@@ -89,7 +89,6 @@ jobs:
                   '--export', 'none',
                   '--userdir', '/tmp/user_data',
                   '--config', '/tmp/user_data/config.json',
-                  '--offline-trade'
               ], capture_output=True, text=True, timeout=120)
 
               if result.returncode != 0:
