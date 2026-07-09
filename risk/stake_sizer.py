@@ -37,8 +37,8 @@ DB_MAP = {
 
 MIN_TRADES = 15
 ROLLING_N = 40
-FLOOR = 0.25       # quarter-Kelly floor
-CEILING = 1.5      # reduced ceiling (was 2.0 — full Kelly is too aggressive for unproven edges)
+FLOOR = 0.25  # quarter-Kelly floor
+CEILING = 1.5  # reduced ceiling (was 2.0 — full Kelly is too aggressive for unproven edges)
 KELLY_FRACTION = 0.25  # fractional Kelly to reduce variance
 MIN_WIN_RATE = 0.45  # below this WR, halt trading (return 0.0)
 CACHE_TTL = 1800  # 30 minutes
