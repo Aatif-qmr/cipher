@@ -189,8 +189,8 @@ class RuleEngine:
             if not rule.enabled:
                 continue
 
-            # Cooldown check
-            if now - rule._last_fired < rule.cooldown_secs:
+            # Cooldown check (only if _last_fired > 0)
+            if rule._last_fired > 0 and now - rule._last_fired < rule.cooldown_secs:
                 logger.debug(
                     "Rule '%s' in cooldown (%.0fs remaining)",
                     rule.name,
