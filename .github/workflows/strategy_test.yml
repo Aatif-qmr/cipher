@@ -34,6 +34,9 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
+      - name: Install freqtrade correctly
+        run: uv pip install -e ./freqtrade
+
       - name: Find changed strategies
         id: changed
         run: |
@@ -46,12 +49,14 @@ jobs:
 
       - name: Download minimal test data
         run: |
-          freqtrade download-data \
+          uv run freqtrade download-data \
             --pairs BTC/USDT \
             --timeframes 1h \
             --days 30 \
             --datadir /tmp/testdata \
-            --exchange binance \
+            --userdir /app/user_data \
+            -c config/config_paper.json.template \
+            --exchange kucoin \
             2>/dev/null || true
 
       - name: Run backtest validation
@@ -72,12 +77,15 @@ jobs:
               print(f"Testing: {strat_name}")
 
               result = subprocess.run([
+        "uv", "run",
                   'freqtrade', 'backtesting',
                   '--strategy', strat_name,
                   '--strategy-path', 'strategies/active/',
                   '--timerange', '20260101-20260430',
                   '--timeframe', '1h',
                   '--datadir', '/tmp/testdata',
+                  '--userdir', '/app/user_data',
+                  '-c', 'config/config_paper.json.template',
                   '--export', 'none',
               ], capture_output=True, text=True, timeout=120)
 
